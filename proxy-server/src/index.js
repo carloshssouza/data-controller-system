@@ -12,7 +12,6 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     });
     proxyRes.on('end', function () {
         body = Buffer.concat(body).toString();
-        console.log("res from proxied server:", body);
         res.end(JSON.stringify({body: "proxy", message: "Teste"}));
     });
 });
