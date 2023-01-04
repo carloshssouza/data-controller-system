@@ -1,14 +1,7 @@
-import express from 'express'
-import cors from 'cors'
+import app from './app'
+import dotenv from 'dotenv'
+dotenv.config()
 
-const app = express()
-const port = 9000
+const PORT = process.env.PORT || process.env.APP_PORT
 
-app.use(cors())
-app.use(express.json())
-
-app.get('/api/user', (req, res) => {
-  res.send('teste')
-})
-
-app.listen(port, () => console.log('listening on port ' + port))
+app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
