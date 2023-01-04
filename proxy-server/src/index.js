@@ -10,6 +10,9 @@ proxy.on('proxyRes', function (proxyRes, req, res) {
     proxyRes.on('data', function (chunk) {
         body.push(chunk);
     });
+    //Identificar dados
+    //Conectar com backend service
+    
     proxyRes.on('end', function () {
         body = Buffer.concat(body).toString();
         res.end(JSON.stringify({body: "proxy", message: "Teste"}));
