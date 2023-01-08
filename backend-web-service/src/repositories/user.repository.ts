@@ -15,15 +15,7 @@ export default class UserRepository {
     return User.findOne({ _id }).select('-password -createdAt -updatedAt')
   }
 
-  public getAllUsers () {
-    return User.find({})
-  }
-
   public updateUser (_id: TypeId, data: UserUpdateData) {
     return User.findOneAndUpdate({ _id }, data)
-  }
-
-  public deleteUser (_id: TypeId) {
-    return User.findOneAndDelete({ _id })
   }
 }
