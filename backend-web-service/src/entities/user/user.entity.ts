@@ -24,10 +24,6 @@ export default class UserEntity {
     return new UserRepository().getUser(_id)
   }
 
-  public getAllUsers () {
-    return new UserRepository().getAllUsers()
-  }
-
   public async updateUser (_id: TypeId, data: UserUpdateData) {
     const validate = await new UserValidator().updateUserValidation(data)
     if (validate.error) {
@@ -37,13 +33,5 @@ export default class UserEntity {
       data.password = await new Encrypter().hash(data.password)
     }
     return new UserRepository().updateUser(_id, data)
-  }
-
-  public deleteUser (_id: TypeId) {
-    const validate = new UserValidator().deleteUserValidation(_id)
-    if (validate.error) {
-      throw new ErrorRes(400, validate.error.message)
-    }
-    return new UserRepository().deleteUser(_id)
   }
 }

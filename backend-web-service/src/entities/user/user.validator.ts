@@ -14,8 +14,4 @@ export default class UserValidator {
   getUserValidation (_id: TypeId) {
     return new UserSchemaValidator().getUserValidation(_id)
   }
-
-  deleteUserValidation (_id: TypeId) {
-    return new UserSchemaValidator().deleteUserValidation(_id)
-  }
 }
