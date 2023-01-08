@@ -1,4 +1,4 @@
-import LoginController from '../controller/login/login.controller'
+import LoginController from '../controllers/login/login.controller'
 import { Router } from '../types/express'
 
 const routes = Router()
