@@ -14,6 +14,7 @@ class UserGetController {
 
       return res.status(201).json({ message: 'User updated successfully' })
     } catch (error) {
+      console.error(error)
       return res.status(error.status || 500).json({ message: error.message })
     }
   }
