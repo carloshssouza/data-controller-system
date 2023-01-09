@@ -22,6 +22,7 @@ class Authenticate {
 
       next()
     } catch (error) {
+      console.error(error)
       return res.status(error.status).json({ message: error.message })
     }
   }
