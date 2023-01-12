@@ -12,7 +12,7 @@ class ApiGetController {
         throw new ErrorRes(500, 'Error getting api')
       }
 
-      return res.status(201).json(api)
+      return res.status(200).json(api)
     } catch (error) {
       console.error(error)
       return res.status(error.status || 500).json({ message: error.message })

@@ -10,7 +10,7 @@ class ApiGetAllController {
         throw new ErrorRes(500, 'Error getting all Apis')
       }
 
-      return res.status(201).json(apis)
+      return res.status(200).json(apis)
     } catch (error) {
       console.log(error)
       return res.status(error.status || 500).json({ message: error.message })

@@ -12,7 +12,7 @@ class ApiDeleteController {
         throw new ErrorRes(500, 'Error deleting Api')
       }
 
-      return res.status(201).json({ message: 'Api deleted successfully' })
+      return res.status(200).json({ message: 'Api deleted successfully' })
     } catch (error) {
       return res.status(error.status || 500).json({ message: error.message })
     }
