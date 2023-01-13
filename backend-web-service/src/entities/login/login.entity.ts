@@ -20,6 +20,6 @@ export default class LoginEntity {
       throw new ErrorRes(401, 'Unauthorized')
     }
 
-    return new JwtService().generate({ sub: user._id, type: user.type })
+    return new JwtService().generate({ sub: user._id })
   }
 }
