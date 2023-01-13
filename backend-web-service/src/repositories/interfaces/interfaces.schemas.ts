@@ -20,5 +20,6 @@ export interface ILogError {
 
 export interface IApi {
     route: string;
+    typeRequest: string
     dataReturnAllowed: boolean
 }
