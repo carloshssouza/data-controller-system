@@ -3,7 +3,8 @@ import { Schema, model } from '../../types/mongoose'
 import { IApi } from '../interfaces/interfaces.schemas'
 
 const ApiSchema = new Schema<IApi>({
-  route: { type: String, required: true },
+  route: { type: String, required: true, unique: true },
+  typeRequest: { type: String, required: true, enum: ['get', 'post', 'delete', 'put', 'patch'] },
   dataReturnAllowed: { type: Boolean, required: true }
 }, {
   timestamps: true,
