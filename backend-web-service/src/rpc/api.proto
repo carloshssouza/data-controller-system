@@ -1,0 +1,13 @@
+syntax = 'proto3'
+
+service ApiService {
+  rpc GetApiPermission(ApiRequest) returns (ApiResponse) {}
+}
+
+message ApiRequest {
+  string route = 1;
+}
+
+message ApiResponse {
+  boolean dataReturnAllowed = 1;
+}

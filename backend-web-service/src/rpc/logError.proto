@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+service LogErrorService {
+  rpc SendLogDataError(LogErroRequest) returns (LogErrorResponse) {}
+}
+
+message LogErrorRequest {
+  string title = 1;
+  string description = 2;
+  string routeId = 3;
+  string routeName = 4;
+  repeated LeakData leakData = 5;
+}
+
+message LeakData {
+    string name = 1;
+    string type = 2;
+}
+
+message LogErrorResponse {
+  string statusMessage = 1;
+}
