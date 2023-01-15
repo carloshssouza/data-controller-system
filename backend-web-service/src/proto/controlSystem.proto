@@ -1,7 +1,18 @@
 syntax = "proto3";
 
-service LogErrorService {
-  rpc SendLogDataError(LogErroRequest) returns (LogErrorResponse);
+package controlSystemPackage;
+
+service ControlSystemService {
+  rpc getApiPermission(ApiRequest) returns (ApiResponse);
+  rpc sendLogDataError(LogErroRequest) returns (LogErrorResponse);
+}
+
+message ApiRequest {
+  string route = 1;
+}
+
+message ApiResponse {
+  bool dataReturnAllowed = 1;
 }
 
 message LogErrorRequest {
