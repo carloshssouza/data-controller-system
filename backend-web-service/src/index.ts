@@ -1,10 +1,15 @@
 import app from './app'
 import grpc from './grpc'
 import dotenv from 'dotenv'
+import http from 'http'
+import { Server } from 'socket.io'
+
+const server = http.createServer(app)
+export const io = new Server(server)
 
 dotenv.config()
 
 const PORT = process.env.PORT || process.env.APP_PORT
 
 grpc.start()
-app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
+server.listen(PORT, () => console.log(`App listening on port ${PORT}`))
