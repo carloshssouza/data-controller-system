@@ -4,8 +4,10 @@ package controlSystemPackage;
 
 service ControlSystemService {
   rpc getApiPermission(ApiRequest) returns (ApiResponse);
-  rpc sendLogDataError(LogErroRequest) returns (LogErrorResponse);
+  rpc createLogError(LogErroRequest) returns (void);
 }
+
+message void {}
 
 message ApiRequest {
   string route = 1;
@@ -26,8 +28,4 @@ message LogErrorRequest {
 message LeakData {
     string name = 1;
     string type = 2;
-}
-
-message LogErrorResponse {
-  string statusMessage = 1;
 }
