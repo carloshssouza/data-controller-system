@@ -18,4 +18,8 @@ export default class ApiValidator {
   deleteApiValidation (_id: TypeId) {
     return new ApiSchemaValidator().deleteApiValidation(_id)
   }
+
+  getApiPermissionValidation (route: string) {
+    return new ApiSchemaValidator().getApiPermissionValidation(route)
+  }
 }

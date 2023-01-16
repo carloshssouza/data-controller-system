@@ -41,4 +41,12 @@ export default class ApiEntity {
     }
     return new ApiRepository().deleteApi(_id)
   }
+
+  public getApiPermission (route: string) {
+    const validate = new ApiValidator().getApiPermissionValidation(route)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+    return new ApiRepository().getApiPermission(route)
+  }
 }

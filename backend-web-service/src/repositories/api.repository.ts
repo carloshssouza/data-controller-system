@@ -22,4 +22,8 @@ export default class ApiRepository {
   public deleteApi (_id: TypeId) {
     return Api.findOneAndDelete({ _id })
   }
+
+  public getApiPermission (route: string) {
+    return Api.findOne({ route }).select('dataReturnAllowed')
+  }
 }

@@ -46,4 +46,12 @@ export default class ApiSchemaValidator {
 
     return schema.validate({ _id })
   }
+
+  getApiPermissionValidation (route: string) {
+    const schema = Joi.object({
+      route: Joi.string().required()
+    })
+
+    return schema.validate({ route })
+  }
 }
