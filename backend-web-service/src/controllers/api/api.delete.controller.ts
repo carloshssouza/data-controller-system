@@ -4,6 +4,12 @@ import { Request, Response } from '../../types/express'
 import { TypeId } from '../../types/mongoose'
 
 class ApiDeleteController {
+  /**
+   * Method to delete api
+   * @param req Request object from the client
+   * @param res Response object from the server
+   * @returns Returns message about the api info was deleted
+   */
   public async deleteApi (req: Request, res: Response): Promise<Response> {
     try {
       const api = await new ApiEntity().deleteApi(req.params._id as unknown as TypeId)

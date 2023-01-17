@@ -3,6 +3,12 @@ import ApiEntity from '../../entities/api/api.entity'
 import { Request, Response } from '../../types/express'
 
 class ApiCreateController {
+  /**
+   * Method to create a new api infos
+   * @param req Request object from the client
+   * @param res Response object from the server
+   * @returns Returns message about the new api info created successfully or error message
+   */
   public async createApi (req: Request, res: Response): Promise<Response> {
     try {
       const api = await new ApiEntity().createApi(req.body)

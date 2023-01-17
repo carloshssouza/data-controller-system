@@ -3,6 +3,12 @@ import ApiEntity from '../../entities/api/api.entity'
 import { Request, Response } from '../../types/express'
 
 class ApiGetAllController {
+  /**
+   * Method to create a new api infos
+   * @param req Request object from the client
+   * @param res Response object from the server
+   * @returns Returns array if api data
+   */
   public async getAllApis (req: Request, res: Response): Promise<Response> {
     try {
       const apis = await new ApiEntity().getAllApis()

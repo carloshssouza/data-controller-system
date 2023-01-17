@@ -3,7 +3,13 @@ import ApiEntity from '../../entities/api/api.entity'
 import { Request, Response } from '../../types/express'
 import { TypeId } from '../../types/mongoose'
 
-class ApiGetController {
+class ApiUpdateController {
+  /**
+   * Method to update an api info
+   * @param req Request object from the client
+   * @param res Response object from the server
+   * @returns Returns message about the api info was updated
+   */
   public async updateApi (req: Request, res: Response): Promise<Response> {
     try {
       const api = await new ApiEntity().updateApi(req.params._id as unknown as TypeId, req.body)
@@ -20,4 +26,4 @@ class ApiGetController {
   }
 }
 
-export default new ApiGetController()
+export default new ApiUpdateController()

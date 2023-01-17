@@ -3,24 +3,39 @@ import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
 
 export default class ApiSchemaValidator {
-  createApiValidation (httpBody: ApiCreateData) {
+  /**
+   * Method to validate the using joi - create validation
+   * @param apiData Object containing the body of the request
+   * @returns Returns the schema or error
+   */
+  createApiValidation (apiData: ApiCreateData) {
     const schema = Joi.object<ApiCreateData>({
       route: Joi.string().required(),
       dataReturnAllowed: Joi.boolean().required()
     })
 
-    return schema.validate(httpBody)
+    return schema.validate(apiData)
   }
 
-  updateApiValidation (httpBody: ApiUpdateData) {
+  /**
+   * Method to validate the using joi - update validation
+   * @param apiData Object containing the body of the request
+   * @returns Returns the schema or error
+   */
+  updateApiValidation (apiData: ApiUpdateData) {
     const schema = Joi.object<ApiUpdateData>({
       route: Joi.string().optional(),
       dataReturnAllowed: Joi.boolean().optional()
     }).or('route', 'dataReturnAllowed')
 
-    return schema.validate(httpBody)
+    return schema.validate(apiData)
   }
 
+  /**
+   * Method to validate the using joi - get validation
+   * @param _id Id of the api to validate
+   * @returns Returns the schema or error
+   */
   getApiValidation (_id: TypeId) {
     const schema = Joi.object({
       _id: Joi.string().hex().length(24).required().messages({
@@ -34,6 +49,11 @@ export default class ApiSchemaValidator {
     return schema.validate({ _id })
   }
 
+  /**
+   * Method to validate the using joi - delete validation
+   * @param _id Id of the api to validate
+   * @returns Returns the schema or error
+   */
   deleteApiValidation (_id: TypeId) {
     const schema = Joi.object({
       _id: Joi.string().hex().length(24).required().messages({
@@ -47,6 +67,11 @@ export default class ApiSchemaValidator {
     return schema.validate({ _id })
   }
 
+  /**
+   * Method to validate the using joi - get permission validation
+   * @param route Route name of the api to validate
+   * @returns Returns the schema or error
+   */
   getApiPermissionValidation (route: string) {
     const schema = Joi.object({
       route: Joi.string().required()

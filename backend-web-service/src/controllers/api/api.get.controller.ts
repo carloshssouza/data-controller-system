@@ -4,6 +4,12 @@ import { Request, Response } from '../../types/express'
 import { TypeId } from '../../types/mongoose'
 
 class ApiGetController {
+  /**
+   * Method to get api info
+   * @param req Request object from the client
+   * @param res Response object from the server
+   * @returns Returns the api data object
+   */
   public async getApi (req: Request, res: Response): Promise<Response> {
     try {
       const api = await new ApiEntity().getApi(req.params._id as unknown as TypeId)
