@@ -1,1 +1,0 @@
-const privateData = require('./privateDataList')
