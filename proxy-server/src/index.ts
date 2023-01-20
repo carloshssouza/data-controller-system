@@ -13,19 +13,25 @@ proxy.on('proxyRes', async function (proxyRes: any, req: any, res: any) {
   proxyRes.on('data', function (chunk: any) {
     body.push(chunk)
   })
+
   const personalData = await new Identifier().findPersonalData(res)
   const sensibleData = await new Identifier().findSensibleData(res)
-  if (personalData.length) {
-    // gerar erro
+  const result = {}
+  if (personalData.length || sensibleData.length) {
+    result = {
+      title: '',
+      description: '',
+      routeId: '',
+      routeName: '',
+      leakData: []
+    }
   }
-  if (sensibleData.length) {
-    // gerar erro
-  }
+
   // Conectar com backend service
 
   proxyRes.on('end', function () {
     body = Buffer.concat(body).toString()
-    res.end(JSON.stringify({ body: 'proxy', message: 'Teste' }))
+    res.end(JSON.stringify({ body: 'Your api is returning unauthorized data' }))
   })
 })
 
