@@ -10,6 +10,10 @@ const option = {
 
 proxy.on('proxyRes', async function (proxyRes: any, req: any, res: any) {
   let body: any = []
+  // get the route name in the request
+  // call the grpc method to get api permission
+  // if the permission is false, check the response
+
   proxyRes.on('data', function (chunk: any) {
     body.push(chunk)
   })
