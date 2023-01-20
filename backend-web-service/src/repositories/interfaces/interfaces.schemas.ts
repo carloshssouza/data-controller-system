@@ -14,12 +14,20 @@ export interface ILogError {
     title: string;
     description: string;
     routeId: TypeId
+    endpointPath: string;
     routeName: string
     leakData: ILeakData[]
 }
 
 export interface IApi {
-    route: string;
+    routeName: string;
+    endpointPath: string;
     typeRequest: string
     dataReturnAllowed: boolean
+}
+
+export interface IHost {
+    url: string;
+    port: string;
+    prefix: string;
 }
