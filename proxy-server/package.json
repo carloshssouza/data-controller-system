@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@grpc/grpc-js": "^1.8.4",
     "@grpc/proto-loader": "^0.7.4",
     "@types/http-proxy": "^1.17.9",
     "cors": "^2.8.5",
@@ -31,9 +32,9 @@
     "jest": "^28.1.0",
     "jest-cli": "^28.1.3",
     "morgan": "^1.10.0",
+    "nodemon": "^2.0.19",
     "ts-jest": "^28.0.4",
     "ts-node": "^10.7.0",
-    "typescript": "^4.6.4",
-    "nodemon": "^2.0.19"
+    "typescript": "^4.6.4"
   }
 }
