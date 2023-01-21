@@ -7,11 +7,9 @@ service ControlSystemService {
   rpc createLogError(LogErroRequest) returns (void);
 }
 
-message void {}
 
 message ApiRequest {
-  string endpointPath = 1;
-  string requestType = 2;
+  string route = 1;
 }
 
 message ApiResponse {
@@ -27,6 +25,11 @@ message LogErrorRequest {
   string routeName = 5;
   repeated LeakData leakData = 6;
 }
+
+message LogErrorResponse {
+  string message = 1;
+}
+
 
 message LeakData {
     string name = 1;
