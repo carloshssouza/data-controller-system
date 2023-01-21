@@ -4,17 +4,19 @@ package controlSystemPackage;
 
 service ControlSystemService {
   rpc getApiPermission(ApiRequest) returns (ApiResponse);
-  rpc createLogError(LogErroRequest) returns (void);
+  rpc createLogError(LogErroRequest) returns (LogErrorResponse);
 }
 
-
 message ApiRequest {
-  string route = 1;
+  string endpointPath = 1;
+  string requestType = 2;
 }
 
 message ApiResponse {
-  string endpointPath = 1;
-  bool dataReturnAllowed = 2;
+  string _id = 1;
+  string routeName = 2;
+  string endpointPath = 3;
+  bool dataReturnAllowed = 4;
 }
 
 message LogErrorRequest {
@@ -24,6 +26,7 @@ message LogErrorRequest {
   string endpointPath = 4;
   string routeName = 5;
   repeated LeakData leakData = 6;
+  string level = 7;
 }
 
 message LogErrorResponse {
