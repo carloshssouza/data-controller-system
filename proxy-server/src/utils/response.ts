@@ -1,13 +1,13 @@
-
+import { ServerResponse, IncomingMessage } from '../types/http'
 export default class Response {
-  private proxyRes: any
+  private proxyRes: IncomingMessage
 
-  constructor (proxyRes: any) {
+  constructor (proxyRes: IncomingMessage) {
     this.proxyRes = proxyRes
     this.proxyRes.statusCode = proxyRes.statusCode
   }
 
-  public responseServer (res: any, body: any) {
+  public responseServer (res: ServerResponse, body: any) {
     return this.proxyRes.on('end', function () {
       body = Buffer.concat(body).toString()
       res.end(body)
