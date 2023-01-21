@@ -1,7 +1,8 @@
 import { createProxyServer } from 'http-proxy'
 import { http } from '../src/types/http'
-import ControlDataService from './services/ControlDataService'
+import DataControlService from './services/DataControlService'
 import { IncomingMessage } from './types/http'
+import ErrorRes from './utils/error'
 
 const proxy = createProxyServer()
 const option = {
@@ -10,12 +11,16 @@ const option = {
 }
 
 proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMessage, res: http.ServerResponse) {
-  const body: any = []
-  proxyRes.on('data', function (chunk: any) {
-    body.push(chunk)
-  })
+  try {
+    const body: any = []
+    proxyRes.on('data', function (chunk: any) {
+      body.push(chunk)
+    })
 
-  await new ControlDataService().runController(proxyRes, req, res, body)
+    await new DataControlService().runController(proxyRes, req, res, body)
+  } catch (error) {
+    return await new ErrorRes(proxyRes).errorInternalServer(res, error.message, error.stack)
+  }
 })
 
 const server = http.createServer((req: any, res: any) => {

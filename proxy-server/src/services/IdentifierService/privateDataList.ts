@@ -1,3 +1,8 @@
+export interface IPrivateDataList {
+  personal: string[],
+  sensible: string[]
+}
+
 const privateDataList = {
   personal: [
     'name',
