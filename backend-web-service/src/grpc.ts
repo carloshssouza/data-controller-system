@@ -34,8 +34,9 @@ class GrpcServer {
 
   private async getApiPermission (call: any, callback: any) {
     try {
-      const route = call.request.route
-      const apiPermission = await new ApiEntity().getApiPermission(route)
+      const endpointPath = call.request.endpointPath
+      const requestType = call.request.requestType
+      const apiPermission = await new ApiEntity().getApiPermission(endpointPath, requestType)
       if (!apiPermission) {
         throw new Error('Error getting api permission')
       }
@@ -51,8 +52,10 @@ class GrpcServer {
         title: call.request.title,
         description: call.request.description,
         routeId: call.request.routeId,
+        endpointPath: call.request.endpointPath,
         routeName: call.request.routeName,
-        leakData: call.request.leakData
+        leakData: call.request.leakData,
+        level: call.request.level
       }
       const logError = await new LogErrorEntity().createLogError(logErrorData)
       if (!logError) {
