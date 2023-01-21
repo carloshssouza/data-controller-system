@@ -1,7 +1,14 @@
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
+import {
+  PackageDefinition,
+  GrpcObject,
+  ServiceClientConstructor,
+  ProtobufTypeDefinition
+} from '../../types/grpc'
 
 interface IGetApiPermissionResponse {
+  _id: any
   endpointPath: string
   dataReturnAllowed: boolean
 }
@@ -18,10 +25,10 @@ interface ILogErrorRequest {
   leakData: LeakData[]
 }
 
-class GrpcClient {
-  private packageDef: any
-  private grpcObject: any
-  private controlSystemPackage: any
+export default class GrpcClient {
+  private packageDef: PackageDefinition
+  private grpcObject: GrpcObject
+  private controlSystemPackage: ServiceClientConstructor | ProtobufTypeDefinition | GrpcObject | any
   private client: any
 
   constructor () {
@@ -62,5 +69,3 @@ class GrpcClient {
     }
   }
 }
-
-export default GrpcClient
