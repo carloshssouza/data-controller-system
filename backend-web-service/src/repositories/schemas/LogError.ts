@@ -12,7 +12,8 @@ const LogErrorSchema = new Schema<ILogError>({
   description: { type: String, required: true },
   routeId: { type: Schema.Types.ObjectId, required: true, ref: 'Api' },
   routeName: { type: String, required: true, ref: 'Api' },
-  leakData: { type: [LeakDataSchema], required: true }
+  leakData: { type: [LeakDataSchema], required: true },
+  level: { type: String, required: true, enum: ['low', 'medium', 'high'] }
 }, {
   timestamps: true,
   versionKey: false

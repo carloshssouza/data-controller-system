@@ -16,7 +16,8 @@ export interface ILogError {
     routeId: TypeId
     endpointPath: string;
     routeName: string
-    leakData: ILeakData[]
+    leakData: ILeakData[],
+    level: string
 }
 
 export interface IApi {
