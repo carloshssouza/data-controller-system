@@ -1,7 +1,14 @@
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
+import {
+  PackageDefinition,
+  GrpcObject,
+  ServiceClientConstructor,
+  ProtobufTypeDefinition
+} from '../../types/grpc'
 
 interface IGetApiPermissionResponse {
+  _id: any
   endpointPath: string
   dataReturnAllowed: boolean
 }
@@ -9,7 +16,7 @@ interface LeakData {
   name: string
   type: string
 }
-interface ILogErrorRequest {
+interface IErrorLogRequest {
   title: string
   description: string
   routeId: string
@@ -18,10 +25,10 @@ interface ILogErrorRequest {
   leakData: LeakData[]
 }
 
-class GrpcClient {
-  private packageDef: any
-  private grpcObject: any
-  private controlSystemPackage: any
+export default class GrpcClient {
+  private packageDef: PackageDefinition
+  private grpcObject: GrpcObject
+  private controlSystemPackage: ServiceClientConstructor | ProtobufTypeDefinition | GrpcObject | any
   private client: any
 
   constructor () {
@@ -31,36 +38,37 @@ class GrpcClient {
     this.client = new this.controlSystemPackage.ControlSystem('0.0.0.0:8080', grpc.credentials.createInsecure())
   }
 
+  /**
+   * Method responsible for get Api info about permission using gRPC
+   * @param endpointPath
+   * @param requestType
+   * @returns Returns the api info or error
+   */
   public async getApiPermission (endpointPath: string, requestType: string): Promise<IGetApiPermissionResponse | any> {
-    try {
-      this.client.getApiPermission({
-        endpointPath,
-        requestType
-      }, (err: any, response: any) => {
-        if (err) {
-          throw new Error(err)
-        }
-        return response
-      })
-    } catch (error) {
-      return error
-    }
+    this.client.getApiPermission({
+      endpointPath,
+      requestType
+    }, (err: any, response: any) => {
+      if (err) {
+        return err
+      }
+      return response
+    })
   }
 
-  public async createLogError (data: ILogErrorRequest): Promise<string | any> {
-    try {
-      this.client.createLogError({
-        ...data
-      }, (err: any, response: any) => {
-        if (err) {
-          throw new Error(err)
-        }
-        return response
-      })
-    } catch (error) {
-      return error
-    }
+  /**
+   * Method responsible for create a log error using gRPC
+   * @param errorLogData Object containing the log error data to be created
+   * @returns Returns the response with message confirmation or error
+   */
+  public async createErrorLog (errorLogData: IErrorLogRequest): Promise<string | any> {
+    this.client.createErrorLog({
+      ...errorLogData
+    }, (err: any, response: any) => {
+      if (err) {
+        return err
+      }
+      return response
+    })
   }
 }
-
-export default GrpcClient

@@ -6,17 +6,18 @@ export interface IUser {
     password: string;
 }
 
-export interface ILeakData {
+export interface ILeakedData {
   name: string;
   type: string
 }
-export interface ILogError {
+export interface IErrorLog {
     title: string;
     description: string;
     routeId: TypeId
     endpointPath: string;
     routeName: string
-    leakData: ILeakData[]
+    leakData: ILeakedData[],
+    level: string
 }
 
 export interface IApi {

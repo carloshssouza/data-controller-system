@@ -1,14 +1,14 @@
 import ErrorRes from '../../utils/Erro'
-import LogErrorEntity from '../../entities/logError/logError.entity'
+import ErrorLogEntity from '../../entities/errorLog/erroLog.entity'
 import { Request, Response } from '../../types/express'
 import { TypeId } from '../../types/mongoose'
 
-class LogErrorDeleteController {
-  public async deleteLogError (req: Request, res: Response): Promise<Response> {
+class ErrorLogDeleteController {
+  public async deleteErrorLog (req: Request, res: Response): Promise<Response> {
     try {
-      const logError = await new LogErrorEntity().deleteLogError(req.params._id as unknown as TypeId)
+      const errorLog = await new ErrorLogEntity().deleteErrorLog(req.params._id as unknown as TypeId)
 
-      if (!logError) {
+      if (!errorLog) {
         throw new ErrorRes(500, 'Error deleting log error')
       }
 
@@ -19,4 +19,4 @@ class LogErrorDeleteController {
   }
 }
 
-export default new LogErrorDeleteController()
+export default new ErrorLogDeleteController()

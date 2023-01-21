@@ -1,6 +1,8 @@
 import { createProxyServer } from 'http-proxy'
-import http from 'http'
-import Identifier from './services/IdentifierService/identifier'
+import { http } from '../src/types/http'
+import DataControlService from './services/DataControlService'
+import { IncomingMessage } from './types/http'
+import ErrorRes from './utils/error'
 
 const proxy = createProxyServer()
 const option = {
@@ -8,35 +10,17 @@ const option = {
   selfHandleResponse: true
 }
 
-proxy.on('proxyRes', async function (proxyRes: any, req: any, res: any) {
-  let body: any = []
-  // get the route name in the request
-  // call the grpc method to get api permission
-  // if the permission is false, check the response
+proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMessage, res: http.ServerResponse) {
+  try {
+    const body: any = []
+    proxyRes.on('data', function (chunk: any) {
+      body.push(chunk)
+    })
 
-  proxyRes.on('data', function (chunk: any) {
-    body.push(chunk)
-  })
-
-  const personalData = await new Identifier().findPersonalData(res)
-  const sensibleData = await new Identifier().findSensibleData(res)
-  const result = {}
-  if (personalData.length || sensibleData.length) {
-    result = {
-      title: '',
-      description: '',
-      routeId: '',
-      routeName: '',
-      leakData: []
-    }
+    await new DataControlService().runController(proxyRes, req, res, body)
+  } catch (error) {
+    return await new ErrorRes(proxyRes).errorInternalServer(res, error.message, error.stack)
   }
-
-  // Conectar com backend service
-
-  proxyRes.on('end', function () {
-    body = Buffer.concat(body).toString()
-    res.end(JSON.stringify({ body: 'Your api is returning unauthorized data' }))
-  })
 })
 
 const server = http.createServer((req: any, res: any) => {

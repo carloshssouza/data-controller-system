@@ -6,7 +6,7 @@ export default class ErrorRes {
     this.proxyRes = proxyRes
   }
 
-  public errorResponse (res: any, message: string, stack: any) {
+  public errorInternalServer (res: any, message: string, stack: any) {
     return this.proxyRes.on('end', function () {
       res.statusCode = 500
       res.end(JSON.stringify({
@@ -14,6 +14,15 @@ export default class ErrorRes {
           message: 'Proxy error:' + message,
           stack: JSON.stringify(stack)
         }
+      }))
+    })
+  }
+
+  public errorProxyResponse (res: any, dataLeak: any) {
+    return this.proxyRes.on('end', function () {
+      res.statusCode = 500
+      res.end(JSON.stringify({
+        ...dataLeak
       }))
     })
   }

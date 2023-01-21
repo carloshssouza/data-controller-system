@@ -1,10 +1,10 @@
-import { LogErrorCreateData, LogErrorUpdateData } from '../../../interfaces/logError'
+import { ErrorLogCreateData, ErrorLogUpdateData } from '../../../interfaces/errorLog'
 import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
 
-export default class LogErrorSchemaValidator {
-  createLogErrorValidation (httpBody: LogErrorCreateData) {
-    const schema = Joi.object<LogErrorCreateData>({
+export default class ErrorLogSchemaValidator {
+  createErrorLogValidation (httpBody: ErrorLogCreateData) {
+    const schema = Joi.object<ErrorLogCreateData>({
       title: Joi.string().required(),
       description: Joi.string().required(),
       routeId: Joi.string().hex().length(24).required().messages({
@@ -23,8 +23,8 @@ export default class LogErrorSchemaValidator {
     return schema.validate(httpBody)
   }
 
-  updateLogErrorValidation (httpBody: LogErrorUpdateData) {
-    const schema = Joi.object<LogErrorUpdateData>({
+  updateErrorLogValidation (httpBody: ErrorLogUpdateData) {
+    const schema = Joi.object<ErrorLogUpdateData>({
       title: Joi.string().optional(),
       description: Joi.string().optional(),
       routeId: Joi.string().hex().length(24).required().messages({
@@ -43,7 +43,7 @@ export default class LogErrorSchemaValidator {
     return schema.validate(httpBody)
   }
 
-  getLogErrorValidation (_id: TypeId) {
+  getErrorLogValidation (_id: TypeId) {
     const schema = Joi.object({
       _id: Joi.string().hex().length(24).required().messages({
         'string.base': 'Invalid type',
@@ -56,7 +56,7 @@ export default class LogErrorSchemaValidator {
     return schema.validate({ _id })
   }
 
-  deleteLogErrorValidation (_id: TypeId) {
+  deleteErrorLogValidation (_id: TypeId) {
     const schema = Joi.object({
       _id: Joi.string().hex().length(24).required().messages({
         'string.base': 'Invalid type',

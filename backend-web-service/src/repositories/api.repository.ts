@@ -52,7 +52,7 @@ export default class ApiRepository {
    * @param _id Id of the api to get permission
    * @returns Returns the api data
    */
-  public getApiPermission (route: string) {
-    return Api.findOne({ route }).select('dataReturnAllowed')
+  public getApiPermission (endpointPath: string, requestType: string) {
+    return Api.findOne({ endpointPath, requestType }).select('_id routeName endpointPath dataReturnAllowed')
   }
 }

@@ -44,7 +44,7 @@ export default class ApiValidator {
    * @param route Route name of the api to validate
    * @returns Returns the schema validation or error
    */
-  getApiPermissionValidation (route: string) {
-    return new ApiSchemaValidator().getApiPermissionValidation(route)
+  getApiPermissionValidation (endpointPath: string, requestType: string) {
+    return new ApiSchemaValidator().getApiPermissionValidation(endpointPath, requestType)
   }
 }

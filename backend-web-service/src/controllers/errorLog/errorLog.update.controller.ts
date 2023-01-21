@@ -1,14 +1,14 @@
 import ErrorRes from '../../utils/Erro'
-import LogErrorEntity from '../../entities/logError/logError.entity'
+import ErrorLogEntity from '../../entities/errorLog/erroLog.entity'
 import { Request, Response } from '../../types/express'
 import { TypeId } from '../../types/mongoose'
 
-class LogErrorUpdateController {
-  public async updateLogError (req: Request, res: Response): Promise<Response> {
+class ErrorLogUpdateController {
+  public async updateErrorLog (req: Request, res: Response): Promise<Response> {
     try {
-      const logError = await new LogErrorEntity().updateLogError(req.params._id as unknown as TypeId, req.body)
+      const ErrorLog = await new ErrorLogEntity().updateErrorLog(req.params._id as unknown as TypeId, req.body)
 
-      if (!logError) {
+      if (!ErrorLog) {
         throw new ErrorRes(500, 'Error updating log error')
       }
 
@@ -20,4 +20,4 @@ class LogErrorUpdateController {
   }
 }
 
-export default new LogErrorUpdateController()
+export default new ErrorLogUpdateController()

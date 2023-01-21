@@ -72,11 +72,11 @@ export default class ApiEntity {
    * @param route Route name of the api
    * @returns Return boolean
    */
-  public getApiPermission (route: string) {
-    const validate = new ApiValidator().getApiPermissionValidation(route)
+  public getApiPermission (endpointPath: string, requestType: string) {
+    const validate = new ApiValidator().getApiPermissionValidation(endpointPath, requestType)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ApiRepository().getApiPermission(route)
+    return new ApiRepository().getApiPermission(endpointPath, requestType)
   }
 }
