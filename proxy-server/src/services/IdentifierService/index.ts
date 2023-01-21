@@ -1,44 +1,46 @@
 import privateDataList from './privateDataList'
 
+export interface IFindPrivateData {
+  name: string
+  type: string
+}
+
 export default class Identifier {
   /**
    * Method to find personal data
    * @param responseObject
-   * @returns Returns the list of personal data founded
+   * @returns Returns the list of personal and sensible data
    */
-  public async findPersonalData (responseObject: object): Promise<string[]> {
-    return await this.findGeneric(responseObject, privateDataList.personal)
-  }
-
-  /**
-   * Method to find sensible data
-   * @param responseObject
-   * @returns Returns the list of sensible data founded
-   */
-  public async findSensibleData (responseObject: object): Promise<string[]> {
-    return await this.findGeneric(responseObject, privateDataList.sensible)
+  public async findPrivateData (responseObject: object): Promise<IFindPrivateData[]> {
+    const personalDataFound = await this.findGeneric(responseObject, privateDataList.personal, 'personal')
+    const sensibleDataFound = await this.findGeneric(responseObject, privateDataList.sensible, 'sensible')
+    const unionDataFound = personalDataFound.resultDataFound.concat(sensibleDataFound.resultDataFound)
+    return unionDataFound
   }
 
   /**
    * Method to iterate over the object, comparing the keys with the words of the array passed
-   * @param object Object with response data from external server
-   * @param array Array with the words to search
-   * @returns Returns the search results with the words found
+   * @param responseData Object with response data from external server
+   * @param privateDataList Array with the words to search
+   * @returns Returns a object with result array and the responseData object with deleted keys
    */
-  private async findGeneric (responseData: any, privateDataList: string[]) {
+  private async findGeneric (responseData: any, privateDataList: string[], type?: string) {
+    const resultDataFound = []
     if (Array.isArray(responseData)) {
       return [...new Set(responseData.flatMap((subResponseData) => this.findGeneric(subResponseData, privateDataList)))]
     } else {
       const dataFound = new Map<string, boolean>()
-      for (const prop in responseData) {
-        if (responseData.hasOwnProperty(prop)) {
-          if (privateDataList.indexOf(prop) !== -1) {
-            if (!dataFound.has(prop)) {
-              dataFound.set(prop, true)
+      for (const data in responseData) {
+        if (responseData.hasOwnProperty(data)) {
+          if (privateDataList.indexOf(data) !== -1) {
+            if (!dataFound.has(data)) {
+              dataFound.set(data, true)
+              resultDataFound.push({ name: data, type })
+              delete responseData[data]
             }
           }
-          if (typeof responseData[prop] === 'object') {
-            for (const key of this.findGeneric(responseData[prop], privateDataList)) {
+          if (typeof responseData[data] === 'object') {
+            for (const key of this.findGeneric(responseData[data], privateDataList)) {
               if (!dataFound.has(key)) {
                 dataFound.set(key, true)
               }
@@ -46,7 +48,10 @@ export default class Identifier {
           }
         }
       }
-      return [...dataFound.keys()]
+      return {
+        responseData,
+        resultDataFound
+      }
     }
   }
 }
