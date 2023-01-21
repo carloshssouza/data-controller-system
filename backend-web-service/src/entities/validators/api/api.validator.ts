@@ -72,11 +72,12 @@ export default class ApiSchemaValidator {
    * @param route Route name of the api to validate
    * @returns Returns the schema or error
    */
-  getApiPermissionValidation (route: string) {
+  getApiPermissionValidation (endpointPath: string, requestType: string) {
     const schema = Joi.object({
-      route: Joi.string().required()
+      endpointPath: Joi.string().required(),
+      requestType: Joi.string().required().valid('GET', 'POST', 'PUT', 'DELETE', 'PATCH')
     })
 
-    return schema.validate({ route })
+    return schema.validate({ endpointPath, requestType })
   }
 }
