@@ -19,7 +19,7 @@ proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMes
 
     await new DataControlService().runController(proxyRes, req, res, body)
   } catch (error) {
-    return await new ErrorRes(proxyRes).errorInternalServer(res, error.message, error.stack)
+    return await new ErrorRes(proxyRes).internalServerError(res, error.message, error.stack)
   }
 })
 
