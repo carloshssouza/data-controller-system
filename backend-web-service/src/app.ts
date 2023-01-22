@@ -1,10 +1,9 @@
 import { Express, express } from './types/express'
 import cors from 'cors'
 import morgan from 'morgan'
-// import setupRoutes from './routes'
 import Database from './repositories/database/config'
-// import swaggerUI from 'swagger-ui-express'
-// import swaggerDocument from '../../../docs/swagger.json'
+import swaggerUI from 'swagger-ui-express'
+import swaggerDocument from '../docs/swagger.json'
 import dotenv from 'dotenv'
 import {
   LoginRoutes,
@@ -26,7 +25,7 @@ class App {
     this.express.use(express.json())
     this.express.use(cors())
     this.express.use(morgan('dev'))
-    // this.express.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
+    this.express.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
   }
 
   private database (): void {

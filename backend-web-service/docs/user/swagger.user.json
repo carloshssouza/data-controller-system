@@ -1,0 +1,59 @@
+{
+  "post": {
+    "operationId": "createUser",
+    "tags": ["User"],
+    "requestBody": {
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "required": true
+              },
+              "email": {
+                "type": "string",
+                "required": true
+              },
+              "password": {
+                "type": "string",
+                "required": true
+              }
+            },
+            "example": {
+              "name": "Will",
+              "email": "will@example.com",
+              "password": "1234"
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "User created successfully"
+      },
+      "400": {
+        "description": "field is required"
+      }
+    }
+  },
+  "get": {
+    "summary": "Get All User",
+    "operationId": "getAllUser",
+    "tags": ["User"],
+    "security": [{ "bearerAuth": [] }],
+    "responses": {
+      "200": {
+        "description": "OK"
+      },
+      "401": {
+        "description": "Unauthorized"
+      },
+      "404": {
+        "description": "User Not Found"
+      }
+    }
+  }
+}
