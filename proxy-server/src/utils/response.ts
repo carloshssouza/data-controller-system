@@ -7,7 +7,7 @@ export default class Response {
     this.proxyRes.statusCode = proxyRes.statusCode
   }
 
-  public responseServer (res: ServerResponse, body: any) {
+  public async responseServer (res: ServerResponse, body: any) {
     return this.proxyRes.on('end', function () {
       body = Buffer.concat(body).toString()
       res.end(body)

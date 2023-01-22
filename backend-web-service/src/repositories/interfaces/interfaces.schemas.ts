@@ -26,9 +26,3 @@ export interface IApi {
     typeRequest: string
     dataReturnAllowed: boolean
 }
-
-export interface IHost {
-    url: string;
-    port: string;
-    prefix: string;
-}

@@ -1,5 +1,6 @@
 import * as grpc from '@grpc/grpc-js'
 import * as protoLoader from '@grpc/proto-loader'
+import path from 'path'
 import ApiEntity from './entities/api/api.entity'
 import ErrorLogEntity from './entities/errorLog/erroLog.entity'
 import { io } from '.'
@@ -8,11 +9,11 @@ class GrpcServer {
   private server: grpc.Server
 
   constructor () {
-    const packageDef = protoLoader.loadSync('./controlSystem.proto', {})
+    const packageDef = protoLoader.loadSync(path.resolve(__dirname, './proto/controlSystem.proto'), {})
     const grpcObject = grpc.loadPackageDefinition(packageDef)
     const controlSystemPackage = grpcObject.controlSystemPackage as any
     this.server = new grpc.Server()
-    this.server.addService(controlSystemPackage.ControlSystem.service, {
+    this.server.addService(controlSystemPackage.ControlSystemService.service, {
       getApiPermission: this.getApiPermission,
       createErrorLog: this.createErrorLog
     })

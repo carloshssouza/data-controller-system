@@ -1,10 +1,11 @@
 import GrpcClient from '../GrpcService/grpc'
-import Response from 'src/utils/response'
-import Identifier, { IFindPrivateData } from '../IdentifierService'
+import Response from '../../utils/response'
+import Identifier from '../IdentifierService'
 import { IncomingMessage, ServerResponse } from '../../types/http'
 import Auxiliary from './utils/auxiliary'
 import privateDataList from '../IdentifierService/privateDataList'
 import ErrorRes from '../../utils/error'
+import { ILeakedData } from '../../interfaces/errorLogData.interface'
 
 export default class DataControlService extends Auxiliary {
   /**
@@ -20,17 +21,17 @@ export default class DataControlService extends Auxiliary {
     await this.checkForError(apiResponse, proxyRes, res)
 
     if (!apiResponse.dataReturnAllowed) {
-      const privateDataFound = await new Identifier().findPrivateData(body, privateDataList) as IFindPrivateData[]
+      const privateDataFound = await new Identifier().findPrivateData(body, privateDataList) as ILeakedData[]
       if (privateDataFound.length) {
-        const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse, req)
+        const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse)
 
         const errorLogCreateResponse = await new GrpcClient().createErrorLog(errorLogData)
         await this.checkForError(errorLogCreateResponse, proxyRes, res)
 
-        return new ErrorRes(proxyRes).errorProxyResponse(res, errorLogData)
+        return await new ErrorRes(proxyRes).proxyLeakedDataErrorResponse(res, errorLogData)
       }
     }
 
-    return new Response(proxyRes).responseServer(res, body)
+    return await new Response(proxyRes).responseServer(res, body)
   }
 }

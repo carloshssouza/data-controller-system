@@ -1,10 +1,5 @@
 import { IPrivateDataList } from './privateDataList'
 
-export interface IFindPrivateData {
-  name: string
-  type: string
-}
-
 export default class Identifier {
   /**
    * Method to find personal and sensible data inside the external server response

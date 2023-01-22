@@ -1,7 +1,6 @@
 import { createProxyServer } from 'http-proxy'
-import { http } from '../src/types/http'
 import DataControlService from './services/DataControlService'
-import { IncomingMessage } from './types/http'
+import { IncomingMessage, http } from './types/http'
 import ErrorRes from './utils/error'
 
 const proxy = createProxyServer()
@@ -19,7 +18,7 @@ proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMes
 
     await new DataControlService().runController(proxyRes, req, res, body)
   } catch (error) {
-    return await new ErrorRes(proxyRes).errorInternalServer(res, error.message, error.stack)
+    return await new ErrorRes(proxyRes).internalServerError(res, error.message, error.stack)
   }
 })
 
