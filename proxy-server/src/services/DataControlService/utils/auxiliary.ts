@@ -1,29 +1,29 @@
-import { IFindPrivateData } from '../../IdentifierService'
 import { IncomingMessage, ServerResponse } from '../../../types/http'
-import ErrorRes from 'src/utils/error'
+import ErrorRes from '../../../utils/error'
+import { IErrorLogData, ILeakedData } from '../../../interfaces/errorLogData.interface'
+import IApiData from '../../../interfaces/apiData.interface'
 
 export default abstract class Auxiliary {
   /**
    * Method responsible for create a log error object with your properties
    * @param privateDataFound Array with the data leaked by the external server
    * @param apiResponse Response object from gRPC about api info
-   * @param req Variable provided by the proxy lib in the method proxyOn(http request)
    * @returns Returns object with error log data
    */
-  protected async createErrorLogData (privateDataFound: IFindPrivateData[], apiResponse: any, req: IncomingMessage) {
+  protected async createErrorLogData (privateDataFound: ILeakedData[], apiResponse: IApiData): Promise<IErrorLogData> {
     return {
       title: 'Leaking data',
       description: await this.getDescriptionErrorLog(privateDataFound),
       routeId: apiResponse._id,
-      endpointPath: req.url,
+      endpointPath: apiResponse.endpointPath,
       routeName: apiResponse.routeName,
-      leakData: privateDataFound,
+      leakedData: privateDataFound,
       level: await this.getErrorLogLevel(privateDataFound.length)
     }
   }
 
-  private async getDescriptionErrorLog (privateDataFound: IFindPrivateData[]) {
-    const dataTypes = privateDataFound.map((element: IFindPrivateData) => element.type)
+  private async getDescriptionErrorLog (privateDataFound: ILeakedData[]) {
+    const dataTypes = privateDataFound.map((element: ILeakedData) => element.type)
     let description = 'Your API is leaking '
     if (dataTypes.includes('personal') && !dataTypes.includes('sensible')) {
       description += 'personal data'
@@ -36,6 +36,11 @@ export default abstract class Auxiliary {
     return description
   }
 
+  /**
+   * Method responsible for get the error log level(low, medium or high)
+   * @param privateDataFoundLength
+   * @returns Returns the error log level(low, medium or high)
+   */
   private async getErrorLogLevel (privateDataFoundLength: number) {
     if (privateDataFoundLength >= 1 || privateDataFoundLength <= 2) {
       return 'low'
@@ -55,7 +60,7 @@ export default abstract class Auxiliary {
    */
   protected async checkForError (responseFromGrpc: any, proxyRes: IncomingMessage, res: ServerResponse) {
     if (responseFromGrpc && responseFromGrpc.constructor().toString() === 'Error') {
-      return new ErrorRes(proxyRes).errorInternalServer(res, responseFromGrpc.message, responseFromGrpc.stack)
+      return new ErrorRes(proxyRes).internalServerError(res, responseFromGrpc.message, responseFromGrpc.stack)
     }
   }
 }
