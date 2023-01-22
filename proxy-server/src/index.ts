@@ -1,7 +1,6 @@
 import { createProxyServer } from 'http-proxy'
-import { http } from '../src/types/http'
 import DataControlService from './services/DataControlService'
-import { IncomingMessage } from './types/http'
+import { IncomingMessage, http } from './types/http'
 import ErrorRes from './utils/error'
 
 const proxy = createProxyServer()
