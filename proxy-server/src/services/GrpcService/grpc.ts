@@ -6,24 +6,8 @@ import {
   ServiceClientConstructor,
   ProtobufTypeDefinition
 } from '../../types/grpc'
-
-interface IGetApiPermissionResponse {
-  _id: any
-  endpointPath: string
-  dataReturnAllowed: boolean
-}
-interface LeakData {
-  name: string
-  type: string
-}
-interface IErrorLogRequest {
-  title: string
-  description: string
-  routeId: string
-  endpointPath: string
-  routeName : string
-  leakData: LeakData[]
-}
+import { IErrorLogData } from '../../interfaces/errorLogData.interface'
+import IApiData from '../../interfaces/apiData.interface'
 
 export default class GrpcClient {
   private packageDef: PackageDefinition
@@ -44,7 +28,7 @@ export default class GrpcClient {
    * @param requestType
    * @returns Returns the api info or error
    */
-  public async getApiPermission (endpointPath: string, requestType: string): Promise<IGetApiPermissionResponse | any> {
+  public async getApiPermission (endpointPath: string, requestType: string): Promise<IApiData | any> {
     this.client.getApiPermission({
       endpointPath,
       requestType
@@ -61,7 +45,7 @@ export default class GrpcClient {
    * @param errorLogData Object containing the log error data to be created
    * @returns Returns the response with message confirmation or error
    */
-  public async createErrorLog (errorLogData: IErrorLogRequest): Promise<string | any> {
+  public async createErrorLog (errorLogData: IErrorLogData): Promise<string | any> {
     this.client.createErrorLog({
       ...errorLogData
     }, (err: any, response: any) => {
