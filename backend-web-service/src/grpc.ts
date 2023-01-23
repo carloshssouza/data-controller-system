@@ -20,7 +20,7 @@ class GrpcServer {
   }
 
   public start () {
-    this.server.bindAsync('0.0.0.0:8080', grpc.ServerCredentials.createInsecure(), (err, port) => {
+    this.server.bindAsync(`${process.env.GRPC_HOST}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
       if (err) {
         console.error(err)
       }

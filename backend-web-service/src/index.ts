@@ -9,7 +9,7 @@ export const io = new Server(server)
 
 dotenv.config()
 
-const PORT = process.env.PORT || process.env.APP_PORT
+const PORT = process.env.EXPRESS_PORT || 9000
 
 grpc.start()
 server.listen(PORT, () => console.log(`App listening on port ${PORT}`))

@@ -20,7 +20,7 @@ export default class GrpcClient {
     this.packageDef = protoLoader.loadSync(path.resolve(__dirname, './proto/controlSystem.proto'), {})
     this.grpcObject = grpc.loadPackageDefinition(this.packageDef)
     this.controlSystemPackage = this.grpcObject.controlSystemPackage
-    this.client = new this.controlSystemPackage.ControlSystem('0.0.0.0:8080', grpc.credentials.createInsecure())
+    this.client = new this.controlSystemPackage.ControlSystem(`${process.env.GRPC_HOST}`, grpc.credentials.createInsecure())
   }
 
   /**

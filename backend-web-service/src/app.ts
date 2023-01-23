@@ -33,9 +33,8 @@ class App {
   }
 
   private routes (): void {
-    const prefix = '/api/v1'
-    this.express.use(prefix, LoginRoutes)
-    this.express.use(prefix, UserRoutes)
+    this.express.use(process.env.PREFIX, LoginRoutes)
+    this.express.use(process.env.PREFIX, UserRoutes)
   }
 }
 
