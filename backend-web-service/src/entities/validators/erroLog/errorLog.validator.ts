@@ -2,7 +2,7 @@ import { ErrorLogCreateData, ErrorLogUpdateData } from '../../../interfaces/erro
 import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
 
-export default class ErrorLogSchemaValidator {
+class ErrorLogSchemaValidator {
   createErrorLogValidation (httpBody: ErrorLogCreateData) {
     const schema = Joi.object<ErrorLogCreateData>({
       title: Joi.string().required(),
@@ -69,3 +69,5 @@ export default class ErrorLogSchemaValidator {
     return schema.validate({ _id })
   }
 }
+
+export default new ErrorLogSchemaValidator()

@@ -2,16 +2,18 @@ import { UserCreateData, UserUpdateData } from '../../interfaces/user'
 import { TypeId } from '../../types/mongoose'
 import UserSchemaValidator from '../validators/user/user.validator'
 
-export default class UserValidator {
+class UserValidator {
   async createUserValidation (userData: UserCreateData) {
-    return new UserSchemaValidator().createUserValidation(userData)
+    return UserSchemaValidator.createUserValidation(userData)
   }
 
   async updateUserValidation (userData: UserUpdateData) {
-    return new UserSchemaValidator().updateUserValidation(userData)
+    return UserSchemaValidator.updateUserValidation(userData)
   }
 
   getUserValidation (_id: TypeId) {
-    return new UserSchemaValidator().getUserValidation(_id)
+    return UserSchemaValidator.getUserValidation(_id)
   }
 }
+
+export default new UserValidator()

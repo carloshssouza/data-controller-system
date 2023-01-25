@@ -4,41 +4,43 @@ import { ErrorLogCreateData, ErrorLogUpdateData } from '../../interfaces/errorLo
 import ErrorLogValidator from './errorLog.validator'
 import ErrorRes from '../../utils/Erro'
 
-export default class ErrorLogEntity {
+class ErrorLogEntity {
   public async createErrorLog (data: ErrorLogCreateData) {
-    const validate = await new ErrorLogValidator().createErrorLogValidation(data)
+    const validate = await ErrorLogValidator.createErrorLogValidation(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ErrorLogRepository().createErrorLog(data)
+    return ErrorLogRepository.createErrorLog(data)
   }
 
   public getErrorLog (_id: TypeId) {
-    const validate = new ErrorLogValidator().getErrorLogValidation(_id)
+    const validate = ErrorLogValidator.getErrorLogValidation(_id)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ErrorLogRepository().getErrorLog(_id)
+    return ErrorLogRepository.getErrorLog(_id)
   }
 
   public getAllErrorLogs () {
-    return new ErrorLogRepository().getAllErrorLogs()
+    return ErrorLogRepository.getAllErrorLogs()
   }
 
   public async updateErrorLog (_id: TypeId, data: ErrorLogUpdateData) {
-    const validate = await new ErrorLogValidator().updateErrorLogValidation(data)
+    const validate = await ErrorLogValidator.updateErrorLogValidation(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
 
-    return new ErrorLogRepository().updateErrorLog(_id, data)
+    return ErrorLogRepository.updateErrorLog(_id, data)
   }
 
   public deleteErrorLog (_id: TypeId) {
-    const validate = new ErrorLogValidator().deleteErrorLogValidation(_id)
+    const validate = ErrorLogValidator.deleteErrorLogValidation(_id)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ErrorLogRepository().deleteErrorLog(_id)
+    return ErrorLogRepository.deleteErrorLog(_id)
   }
 }
+
+export default new ErrorLogEntity()

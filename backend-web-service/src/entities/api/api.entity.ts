@@ -4,18 +4,18 @@ import { ApiCreateData, ApiUpdateData } from '../../interfaces/api'
 import ApiValidator from './api.validator'
 import ErrorRes from '../../utils/Erro'
 
-export default class ApiEntity {
+class ApiEntity {
   /**
    * Method to create a new api instance
    * @param data Object containing the data to create the new api instance
    * @returns Returns the new api instance
    */
   public async createApi (data: ApiCreateData) {
-    const validate = await new ApiValidator().createApiValidation(data)
+    const validate = await ApiValidator.createApiValidation(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ApiRepository().createApi(data)
+    return ApiRepository.createApi(data)
   }
 
   /**
@@ -24,11 +24,11 @@ export default class ApiEntity {
    * @returns Returns the data about the api specified
    */
   public getApi (_id: TypeId) {
-    const validate = new ApiValidator().getApiValidation(_id)
+    const validate = ApiValidator.getApiValidation(_id)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ApiRepository().getApi(_id)
+    return ApiRepository.getApi(_id)
   }
 
   /**
@@ -36,7 +36,7 @@ export default class ApiEntity {
    * @returns Returns array of all api info
    */
   public getAllApis () {
-    return new ApiRepository().getAllApis()
+    return ApiRepository.getAllApis()
   }
 
   /**
@@ -46,12 +46,12 @@ export default class ApiEntity {
    * @returns Returns api instance updated
    */
   public async updateApi (_id: TypeId, data: ApiUpdateData) {
-    const validate = await new ApiValidator().updateApiValidation(data)
+    const validate = await ApiValidator.updateApiValidation(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
 
-    return new ApiRepository().updateApi(_id, data)
+    return ApiRepository.updateApi(_id, data)
   }
 
   /**
@@ -60,11 +60,11 @@ export default class ApiEntity {
    * @returns Return boolean indicating the successfully or error
    */
   public deleteApi (_id: TypeId) {
-    const validate = new ApiValidator().deleteApiValidation(_id)
+    const validate = ApiValidator.deleteApiValidation(_id)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ApiRepository().deleteApi(_id)
+    return ApiRepository.deleteApi(_id)
   }
 
   /**
@@ -73,10 +73,12 @@ export default class ApiEntity {
    * @returns Return boolean
    */
   public getApiPermission (endpointPath: string, requestType: string) {
-    const validate = new ApiValidator().getApiPermissionValidation(endpointPath, requestType)
+    const validate = ApiValidator.getApiPermissionValidation(endpointPath, requestType)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return new ApiRepository().getApiPermission(endpointPath, requestType)
+    return ApiRepository.getApiPermission(endpointPath, requestType)
   }
 }
+
+export default new ApiEntity()
