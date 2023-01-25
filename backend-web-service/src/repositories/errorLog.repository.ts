@@ -2,7 +2,7 @@ import { ErrorLogCreateData, ErrorLogUpdateData } from '../interfaces/errorLog'
 import { TypeId } from '../types/mongoose'
 import ErrorLog from './schemas/ErrorLog'
 
-export default class ErrorLogRepository {
+class ErrorLogRepository {
   public createErrorLog (data: ErrorLogCreateData) {
     return ErrorLog.create(data)
   }
@@ -23,3 +23,5 @@ export default class ErrorLogRepository {
     return ErrorLog.findOneAndDelete({ _id })
   }
 }
+
+export default new ErrorLogRepository()

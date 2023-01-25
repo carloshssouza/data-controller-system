@@ -2,7 +2,7 @@ import { ApiCreateData, ApiUpdateData } from '../interfaces/api'
 import { TypeId } from '../types/mongoose'
 import Api from './schemas/Api'
 
-export default class ApiRepository {
+class ApiRepository {
   /**
    * Method to insert a new api in the database
    * @param data Object containing data about api
@@ -56,3 +56,5 @@ export default class ApiRepository {
     return Api.findOne({ endpointPath, requestType }).select('_id routeName endpointPath dataReturnAllowed')
   }
 }
+
+export default new ApiRepository()
