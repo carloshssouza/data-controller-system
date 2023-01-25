@@ -5,7 +5,7 @@ import { Request, Response } from '../../types/express'
 class ErrorLogGetAllController {
   public async getAllErrorLogs (req: Request, res: Response): Promise<Response> {
     try {
-      const ErrorLogs = await new ErrorLogEntity().getAllErrorLogs()
+      const ErrorLogs = await ErrorLogEntity.getAllErrorLogs()
       if (!ErrorLogs) {
         throw new ErrorRes(500, 'Error getting all log errors')
       }

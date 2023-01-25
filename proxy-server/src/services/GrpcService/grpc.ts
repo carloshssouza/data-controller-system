@@ -10,7 +10,7 @@ import {
 import { IErrorLogData } from '../../interfaces/errorLogData.interface'
 import IApiData from '../../interfaces/apiData.interface'
 
-export default class GrpcClient {
+class GrpcClient {
   private packageDef: PackageDefinition
   private grpcObject: GrpcObject
   private controlSystemPackage: ServiceClientConstructor | ProtobufTypeDefinition | GrpcObject | any
@@ -20,7 +20,7 @@ export default class GrpcClient {
     this.packageDef = protoLoader.loadSync(path.resolve(__dirname, './proto/controlSystem.proto'), {})
     this.grpcObject = grpc.loadPackageDefinition(this.packageDef)
     this.controlSystemPackage = this.grpcObject.controlSystemPackage
-    this.client = new this.controlSystemPackage.ControlSystem('0.0.0.0:8080', grpc.credentials.createInsecure())
+    this.client = new this.controlSystemPackage.ControlSystem(`${process.env.GRPC_HOST}`, grpc.credentials.createInsecure())
   }
 
   /**
@@ -57,3 +57,5 @@ export default class GrpcClient {
     })
   }
 }
+
+export default new GrpcClient()

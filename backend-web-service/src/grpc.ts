@@ -20,7 +20,7 @@ class GrpcServer {
   }
 
   public start () {
-    this.server.bindAsync('0.0.0.0:8080', grpc.ServerCredentials.createInsecure(), (err, port) => {
+    this.server.bindAsync(`${process.env.GRPC_HOST}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
       if (err) {
         console.error(err)
       }
@@ -37,7 +37,7 @@ class GrpcServer {
     try {
       const endpointPath = call.request.endpointPath
       const requestType = call.request.requestType
-      const apiPermission = await new ApiEntity().getApiPermission(endpointPath, requestType)
+      const apiPermission = await ApiEntity.getApiPermission(endpointPath, requestType)
       if (!apiPermission) {
         throw new Error('Error getting api permission')
       }
@@ -58,7 +58,7 @@ class GrpcServer {
         leakData: call.request.leakData,
         level: call.request.level
       }
-      const ErrorLog = await new ErrorLogEntity().createErrorLog(ErrorLogData)
+      const ErrorLog = await ErrorLogEntity.createErrorLog(ErrorLogData)
       if (!ErrorLog) {
         throw new Error('Error creating log error')
       }

@@ -2,7 +2,7 @@ import { UserCreateData, UserUpdateData } from '../../../interfaces/user'
 import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
 
-export default class UserSchemaValidator {
+class UserSchemaValidator {
   createUserValidation (httpBody: UserCreateData) {
     const schema = Joi.object({
       name: Joi.string().required(),
@@ -36,3 +36,5 @@ export default class UserSchemaValidator {
     return schema.validate({ _id })
   }
 }
+
+export default new UserSchemaValidator()

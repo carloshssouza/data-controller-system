@@ -1,16 +1,11 @@
 import { ServerResponse, IncomingMessage } from '../types/http'
-export default class Response {
-  private proxyRes: IncomingMessage
-
-  constructor (proxyRes: IncomingMessage) {
-    this.proxyRes = proxyRes
-    this.proxyRes.statusCode = proxyRes.statusCode
-  }
-
-  public async responseServer (res: ServerResponse, body: any) {
-    return this.proxyRes.on('end', function () {
+class Response {
+  public async responseServer (proxyRes: IncomingMessage, res: ServerResponse, body: any) {
+    return proxyRes.on('end', function () {
       body = Buffer.concat(body).toString()
       res.end(body)
     })
   }
 }
+
+export default new Response()

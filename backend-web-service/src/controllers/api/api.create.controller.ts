@@ -11,7 +11,7 @@ class ApiCreateController {
    */
   public async createApi (req: Request, res: Response): Promise<Response> {
     try {
-      const api = await new ApiEntity().createApi(req.body)
+      const api = await ApiEntity.createApi(req.body)
 
       if (!api) {
         throw new ErrorRes(500, 'Error creating api')

@@ -1,8 +1,7 @@
 import { ApiCreateData, ApiUpdateData } from '../../../interfaces/api'
 import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
-
-export default class ApiSchemaValidator {
+class ApiSchemaValidator {
   /**
    * Method to validate the using joi - create validation
    * @param apiData Object containing the body of the request
@@ -81,3 +80,5 @@ export default class ApiSchemaValidator {
     return schema.validate({ endpointPath, requestType })
   }
 }
+
+export default new ApiSchemaValidator()

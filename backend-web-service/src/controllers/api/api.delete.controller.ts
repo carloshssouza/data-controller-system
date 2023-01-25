@@ -12,7 +12,7 @@ class ApiDeleteController {
    */
   public async deleteApi (req: Request, res: Response): Promise<Response> {
     try {
-      const api = await new ApiEntity().deleteApi(req.params._id as unknown as TypeId)
+      const api = await ApiEntity.deleteApi(req.params._id as unknown as TypeId)
 
       if (!api) {
         throw new ErrorRes(500, 'Error deleting Api')

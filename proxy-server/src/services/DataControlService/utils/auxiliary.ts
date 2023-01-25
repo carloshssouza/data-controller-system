@@ -60,7 +60,7 @@ export default abstract class Auxiliary {
    */
   protected async checkForError (responseFromGrpc: any, proxyRes: IncomingMessage, res: ServerResponse) {
     if (responseFromGrpc && responseFromGrpc.constructor().toString() === 'Error') {
-      return new ErrorRes(proxyRes).internalServerError(res, responseFromGrpc.message, responseFromGrpc.stack)
+      return ErrorRes.internalServerError(proxyRes, res, responseFromGrpc.message, responseFromGrpc.stack)
     }
   }
 }

@@ -12,7 +12,7 @@ class ApiUpdateController {
    */
   public async updateApi (req: Request, res: Response): Promise<Response> {
     try {
-      const api = await new ApiEntity().updateApi(req.params._id as unknown as TypeId, req.body)
+      const api = await ApiEntity.updateApi(req.params._id as unknown as TypeId, req.body)
 
       if (!api) {
         throw new ErrorRes(500, 'Error updating Api')

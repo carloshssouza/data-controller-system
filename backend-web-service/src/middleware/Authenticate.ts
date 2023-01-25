@@ -14,7 +14,7 @@ class Authenticate {
         throw new ErrorRes(401, 'Token is required')
       }
 
-      const token = new TokenJWT().decode(req.headers.authorization) as IToken
+      const token = TokenJWT.decode(req.headers.authorization) as IToken
 
       if (!token) {
         throw new ErrorRes(401, 'Token not valid')

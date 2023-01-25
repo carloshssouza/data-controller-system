@@ -2,7 +2,7 @@ import { UserCreateData, UserUpdateData } from '../interfaces/user'
 import { TypeId } from '../types/mongoose'
 import User from './schemas/User'
 
-export default class UserRepository {
+class UserRepository {
   public loadUser (email: string) {
     return User.findOne({ email })
   }
@@ -19,3 +19,5 @@ export default class UserRepository {
     return User.findOneAndUpdate({ _id }, data)
   }
 }
+
+export default new UserRepository()

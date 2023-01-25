@@ -1,6 +1,6 @@
 import { IPrivateDataList } from './privateDataList'
 
-export default class Identifier {
+class Identifier {
   /**
    * Method to find personal and sensible data inside the external server response
    * @param responseObject Object from the external server
@@ -30,3 +30,5 @@ export default class Identifier {
     return result
   }
 }
+
+export default new Identifier()

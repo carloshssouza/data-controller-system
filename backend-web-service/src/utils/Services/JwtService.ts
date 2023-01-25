@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export default class JwtService {
+class JwtService {
   generate (data: any) {
     return jwt.sign({ payload: data }, process.env.SECRET_KEY || '', {
       expiresIn: '1h'
@@ -16,3 +16,5 @@ export default class JwtService {
     return decode
   }
 }
+
+export default new JwtService()
