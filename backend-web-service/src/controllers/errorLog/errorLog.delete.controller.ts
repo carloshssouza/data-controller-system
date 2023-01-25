@@ -6,7 +6,7 @@ import { TypeId } from '../../types/mongoose'
 class ErrorLogDeleteController {
   public async deleteErrorLog (req: Request, res: Response): Promise<Response> {
     try {
-      const errorLog = await new ErrorLogEntity().deleteErrorLog(req.params._id as unknown as TypeId)
+      const errorLog = await ErrorLogEntity.deleteErrorLog(req.params._id as unknown as TypeId)
 
       if (!errorLog) {
         throw new ErrorRes(500, 'Error deleting log error')

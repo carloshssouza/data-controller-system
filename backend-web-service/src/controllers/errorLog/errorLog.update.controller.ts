@@ -6,7 +6,7 @@ import { TypeId } from '../../types/mongoose'
 class ErrorLogUpdateController {
   public async updateErrorLog (req: Request, res: Response): Promise<Response> {
     try {
-      const ErrorLog = await new ErrorLogEntity().updateErrorLog(req.params._id as unknown as TypeId, req.body)
+      const ErrorLog = await ErrorLogEntity.updateErrorLog(req.params._id as unknown as TypeId, req.body)
 
       if (!ErrorLog) {
         throw new ErrorRes(500, 'Error updating log error')

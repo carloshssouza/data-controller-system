@@ -12,7 +12,7 @@ class ApiGetController {
    */
   public async getApi (req: Request, res: Response): Promise<Response> {
     try {
-      const api = await new ApiEntity().getApi(req.params._id as unknown as TypeId)
+      const api = await ApiEntity.getApi(req.params._id as unknown as TypeId)
 
       if (!api) {
         throw new ErrorRes(500, 'Error getting api')

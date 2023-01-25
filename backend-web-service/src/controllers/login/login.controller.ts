@@ -5,7 +5,7 @@ import LoginEntity from '../../entities/login/login.entity'
 class LoginController {
   async loginUser (req: Request, res: Response): Promise<Response> {
     try {
-      const token = await new LoginEntity().loginUser(req.body.email, req.body.password)
+      const token = await LoginEntity.loginUser(req.body.email, req.body.password)
 
       if (!token) {
         throw new ErrorRes(400, 'Authentication failed')

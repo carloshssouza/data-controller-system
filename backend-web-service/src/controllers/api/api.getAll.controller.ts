@@ -11,7 +11,7 @@ class ApiGetAllController {
    */
   public async getAllApis (req: Request, res: Response): Promise<Response> {
     try {
-      const apis = await new ApiEntity().getAllApis()
+      const apis = await ApiEntity.getAllApis()
       if (!apis) {
         throw new ErrorRes(500, 'Error getting all Apis')
       }
