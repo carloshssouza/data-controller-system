@@ -1,12 +1,6 @@
 import { IncomingMessage, ServerResponse } from '../types/http'
 
-export default class ErrorRes {
-  private proxyRes: IncomingMessage
-
-  constructor (proxyRes: IncomingMessage) {
-    this.proxyRes = proxyRes
-  }
-
+class ErrorRes {
   /**
    * Method responsible for generate internal server error with custom message
    * @param res Variable provided by the proxy lib in the method proxyOn(http response)
@@ -14,8 +8,8 @@ export default class ErrorRes {
    * @param stack Stack information about the error
    * @returns Returns response 500 with error details
    */
-  public async internalServerError (res: ServerResponse, message: string, stack: any) {
-    return this.proxyRes.on('end', function () {
+  public async internalServerError (proxyRes: IncomingMessage, res: ServerResponse, message: string, stack: any) {
+    return proxyRes.on('end', function () {
       res.statusCode = 500
       res.end(JSON.stringify({
         error: {
@@ -26,8 +20,8 @@ export default class ErrorRes {
     })
   }
 
-  public async proxyLeakedDataErrorResponse (res: ServerResponse, leakedData: any) {
-    return this.proxyRes.on('end', function () {
+  public async proxyLeakedDataErrorResponse (proxyRes: IncomingMessage, res: ServerResponse, leakedData: any) {
+    return proxyRes.on('end', function () {
       res.statusCode = 500
       res.end(JSON.stringify({
         ...leakedData
@@ -35,3 +29,5 @@ export default class ErrorRes {
     })
   }
 }
+
+export default new ErrorRes()

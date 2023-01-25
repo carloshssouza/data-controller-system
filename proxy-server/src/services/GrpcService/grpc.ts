@@ -10,7 +10,7 @@ import {
 import { IErrorLogData } from '../../interfaces/errorLogData.interface'
 import IApiData from '../../interfaces/apiData.interface'
 
-export default class GrpcClient {
+class GrpcClient {
   private packageDef: PackageDefinition
   private grpcObject: GrpcObject
   private controlSystemPackage: ServiceClientConstructor | ProtobufTypeDefinition | GrpcObject | any
@@ -57,3 +57,5 @@ export default class GrpcClient {
     })
   }
 }
+
+export default new GrpcClient()
