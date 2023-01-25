@@ -20,7 +20,7 @@ class LoginEntity {
       throw new ErrorRes(401, 'Unauthorized')
     }
 
-    return new JwtService().generate({ sub: user._id })
+    return JwtService.generate({ sub: user._id })
   }
 }
 
