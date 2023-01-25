@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 
-export default class Encrypter {
+class Encrypter {
   async compare (data: any, hash: string): Promise<boolean> {
     return bcrypt.compare(data, hash)
   }
@@ -9,3 +9,5 @@ export default class Encrypter {
     return bcrypt.hash(data, 8)
   }
 }
+
+export default new Encrypter()
