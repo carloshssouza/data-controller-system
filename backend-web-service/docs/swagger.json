@@ -141,7 +141,7 @@
                 "properties": {
                   "routeName": {
                     "type": "string",
-                    "required": true,
+                    "required": true
                   },
                   "endpointPath": {
                     "type": "string",
