@@ -1,4 +1,4 @@
-import JwtService from 'src/utils/jwt'
+import JwtService from '../../utils/jwt'
 import { IPrivateDataList } from './privateDataList'
 
 class Identifier {

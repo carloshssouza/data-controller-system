@@ -17,10 +17,10 @@ class GrpcClient {
   private client: any
 
   constructor () {
-    this.packageDef = protoLoader.loadSync(path.resolve(__dirname, './proto/controlSystem.proto'), {})
+    this.packageDef = protoLoader.loadSync(path.resolve(__dirname, '../../proto/controlSystem.proto'), {})
     this.grpcObject = grpc.loadPackageDefinition(this.packageDef)
     this.controlSystemPackage = this.grpcObject.controlSystemPackage
-    this.client = new this.controlSystemPackage.ControlSystem(`${process.env.GRPC_HOST}`, grpc.credentials.createInsecure())
+    this.client = new this.controlSystemPackage.ControlSystemService(`${process.env.GRPC_HOST}`, grpc.credentials.createInsecure())
   }
 
   /**
