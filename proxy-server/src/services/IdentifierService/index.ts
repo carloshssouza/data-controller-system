@@ -1,3 +1,4 @@
+import JwtService from 'src/utils/jwt'
 import { IPrivateDataList } from './privateDataList'
 
 class Identifier {
@@ -9,6 +10,19 @@ class Identifier {
    */
   public findPrivateData (responseObject: any, privateDataList: IPrivateDataList) {
     let result = [] as any
+    if (responseObject.hasOwnProperty('access_token') || responseObject.hasOwnProperty('token') || responseObject.hasOwnProperty('auth')) {
+      const token = {}
+      if (Array.isArray(responseObject)) {
+        // token = this.checkPrivateDataInJwtToken()
+        responseObject.push(token)
+      } else {
+        responseObject = {
+          ...responseObject,
+          ...token
+        }
+      }
+    }
+
     if (Array.isArray(responseObject)) {
       for (const item of responseObject) {
         const children = this.findPrivateData(item, privateDataList)
@@ -28,6 +42,13 @@ class Identifier {
       }
     }
     return result
+  }
+
+  private async checkPrivateDataInJwtToken (authorization: string) {
+    const token = JwtService.decode(authorization) as Object
+    return {
+      ...token
+    }
   }
 }
 
