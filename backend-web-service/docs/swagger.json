@@ -77,60 +77,6 @@
       }
     },
     "/user/{_id}": {
-      "get": {
-        "operationId": "getUserId",
-        "tags": ["User"],
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "_id",
-            "type": "string",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Field is required"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "User Not Found"
-          }
-        }
-      },
-      "delete": {
-        "operationId": "deleteUserId",
-        "tags": ["User"],
-        "security": [{ "bearerAuth": [] }],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "_id",
-            "type": "string",
-            "required": true
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User deleted successfully"
-          },
-          "400": {
-            "description": "Field is required"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "User Not Found"
-          }
-        }
-      },
       "put": {
         "operationId": "updateUserId",
         "tags": ["User"],
@@ -179,6 +125,56 @@
           },
           "404": {
             "description": "User Not Found"
+          }
+        }
+      }
+    },
+    "/api-info": {
+      "post": {
+        "operationId": "createUser",
+        "tags": ["Api"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "routeName": {
+                    "type": "string",
+                    "required": true,
+                  },
+                  "endpointPath": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "typeRequest": {
+                    "type": "string",
+                    "required": true
+                  },
+                  "dataReturnRequest": {
+                    "type": "boolean",
+                    "required": true
+                  }
+                },
+                "example": {
+                  "routeName": "Users",
+                  "endpointPath": "/users",
+                  "typeRequest": "get",
+                  "dataReturnAllowed": true
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Api info created successfully"
+          },
+          "400": {
+            "description": "field is required"
+          }, 
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
