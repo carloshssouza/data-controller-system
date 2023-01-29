@@ -17,7 +17,7 @@ class ErrorLogSchemaValidator {
         name: Joi.string().required(),
         type: Joi.string().required()
       }).required(),
-      level: Joi.number().required()
+      level: Joi.string().valid('low', 'medium', 'high').required()
     })
 
     return schema.validate(errorLogData)
@@ -37,7 +37,7 @@ class ErrorLogSchemaValidator {
         name: Joi.string().required(),
         type: Joi.string().required()
       }).optional(),
-      level: Joi.number().optional()
+      level: Joi.string().valid('low', 'medium', 'high').required()
     }).or('title', 'description', 'routeId', 'leakedData')
 
     return schema.validate(errorLogData)

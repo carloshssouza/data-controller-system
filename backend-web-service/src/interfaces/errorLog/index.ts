@@ -6,7 +6,7 @@ interface ErrorLogCreateData {
   description: string
   routeId: TypeId
   leakedData: ILeakedData[]
-  level: number
+  level: string
 }
 
 interface ErrorLogUpdateData {
@@ -14,7 +14,7 @@ interface ErrorLogUpdateData {
   description?: string
   routeId?: TypeId
   leakedData?: ILeakedData[]
-  level?: number
+  level?: string
 }
 
 export {
