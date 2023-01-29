@@ -4,7 +4,7 @@ import { Router } from '../types/express'
 
 const routes = Router()
 
-routes.post('/api-info/:_id', ApiCreateController.createApi)
+routes.post('/api-info', ApiCreateController.createApi)
 routes.get('/api-info/:_id', ApiGetController.getApi)
 routes.get('/api-info', ApiGetAllController.getAllApis)
 routes.put('/api-info/:_id', ApiUpdateController.updateApi)
