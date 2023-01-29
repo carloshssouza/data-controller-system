@@ -38,9 +38,9 @@ export default abstract class Auxiliary {
    * @returns Returns the error log level(low, medium or high)
    */
   private async getErrorLogLevel (privateDataFoundLength: number) {
-    if (privateDataFoundLength >= 1 || privateDataFoundLength <= 2) {
+    if (privateDataFoundLength >= 1 && privateDataFoundLength <= 2) {
       return 'low'
-    } else if (privateDataFoundLength >= 3 || privateDataFoundLength <= 4) {
+    } else if (privateDataFoundLength >= 3 && privateDataFoundLength <= 4) {
       return 'medium'
     } else if (privateDataFoundLength >= 5) {
       return 'high'
