@@ -7,6 +7,7 @@ const privateDataList = {
   personal: [
     'name',
     'last_name',
+    'password',
     'cpf',
     'birth_date',
     'rg',
