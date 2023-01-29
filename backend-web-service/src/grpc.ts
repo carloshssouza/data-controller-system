@@ -50,23 +50,21 @@ class GrpcServer {
 
   private async createErrorLog (call: any, callback: any) {
     try {
-      const ErrorLogData = {
+      const errorLogData = {
         title: call.request.title,
         description: call.request.description,
         routeId: call.request.routeId,
         leakedData: call.request.leakedData,
         level: call.request.level
       }
-      const ErrorLog = await ErrorLogEntity.createErrorLog(ErrorLogData)
-      if (!ErrorLog) {
+      const errorLog = await ErrorLogEntity.createErrorLog(errorLogData)
+      if (!errorLog) {
         throw new Error('Error creating log error')
       }
 
-      io.emit('new-ErrorLog', ErrorLog)
+      io.emit('new-ErrorLog', errorLog)
 
-      callback(null, {
-        message: 'Log error created with successfully'
-      })
+      callback(null, errorLog)
     } catch (error) {
       callback(null, error)
     }
