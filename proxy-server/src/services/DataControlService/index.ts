@@ -8,9 +8,7 @@ import { ILeakedData } from '../../interfaces/errorLogData.interface'
 class DataControlService extends Auxiliary {
   /**
    * Method responsible for run all the functions to control the data response from external server
-   * @param proxyRes Variable provided by the proxy lib
    * @param req Variable provided by the proxy in the method proxyOn(http request)
-   * @param res Variable provided by the proxy in method proxyOn(http response)
    * @param body Response object from the external server intercepted by the proxy
    * @returns Returns the response to the client request
    */
@@ -32,7 +30,6 @@ class DataControlService extends Auxiliary {
         if (grpcErrorLogService.error) {
           return grpcErrorLogService.data
         }
-
         return errorLogCreateResponse
       }
     }

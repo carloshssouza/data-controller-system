@@ -5,13 +5,17 @@ import ErrorLog from './schemas/ErrorLog'
 
 class ErrorLogRepository {
   public async createErrorLog (data: ErrorLogCreateData) {
-    const apiData = await Api.findOne({ _id: data.routeId }).select('routeName endpointPath')
-
-    return ErrorLog.create({
+    const apiData = await Api.findOne({ _id: data.routeId }).select('routeName endpointPath typeRequest')
+    const errorLog = await ErrorLog.create({
       ...data,
       routeName: apiData.routeName,
-      endpointPath: apiData.endpointPath
+      endpointPath: apiData.endpointPath,
+      typeRequest: apiData.typeRequest
     })
+
+    delete errorLog.routeId
+
+    return errorLog
   }
 
   public getErrorLog (_id: TypeId) {
