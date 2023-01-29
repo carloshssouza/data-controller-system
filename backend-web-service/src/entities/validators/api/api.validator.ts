@@ -9,7 +9,9 @@ class ApiSchemaValidator {
    */
   createApiValidation (apiData: ApiCreateData) {
     const schema = Joi.object<ApiCreateData>({
-      route: Joi.string().required(),
+      routeName: Joi.string().required(),
+      endpointPath: Joi.string().required(),
+      typeRequest: Joi.string().required(),
       dataReturnAllowed: Joi.boolean().required()
     })
 
@@ -23,9 +25,11 @@ class ApiSchemaValidator {
    */
   updateApiValidation (apiData: ApiUpdateData) {
     const schema = Joi.object<ApiUpdateData>({
-      route: Joi.string().optional(),
+      routeName: Joi.string().optional(),
+      endpointPath: Joi.string().optional(),
+      typeRequest: Joi.string().optional(),
       dataReturnAllowed: Joi.boolean().optional()
-    }).or('route', 'dataReturnAllowed')
+    }).or('routeName', 'endpointPath', 'typeRequest', 'dataReturnAllowed')
 
     return schema.validate(apiData)
   }

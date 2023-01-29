@@ -1,5 +1,3 @@
-import { IncomingMessage, ServerResponse } from '../../../types/http'
-import ErrorRes from '../../../utils/error'
 import { IErrorLogData, ILeakedData } from '../../../interfaces/errorLogData.interface'
 import IApiData from '../../../interfaces/apiData.interface'
 
@@ -15,8 +13,6 @@ export default abstract class Auxiliary {
       title: 'Leaking data',
       description: await this.getDescriptionErrorLog(privateDataFound),
       routeId: apiResponse._id,
-      endpointPath: apiResponse.endpointPath,
-      routeName: apiResponse.routeName,
       leakedData: privateDataFound,
       level: await this.getErrorLogLevel(privateDataFound.length)
     }
@@ -54,13 +50,22 @@ export default abstract class Auxiliary {
   /**
    * Method responsible for check error from grpc response
    * @param responseFromGrpc Object from grpc server response
-   * @param proxyRes Variable provided by the proxy lib
-   * @param res Variable provided by the proxy lib in method proxyOn
-   * @returns Returns response with error
+   * @returns Returns response with error object
    */
-  protected async checkForError (responseFromGrpc: any, proxyRes: IncomingMessage, res: ServerResponse) {
+  protected async checkForError (responseFromGrpc: any) {
     if (responseFromGrpc && responseFromGrpc.constructor().toString() === 'Error') {
-      return ErrorRes.internalServerError(proxyRes, res, responseFromGrpc.message, responseFromGrpc.stack)
+      const grpcError = {
+        error: true,
+        data: {
+          message: 'Proxy error:' + responseFromGrpc.message,
+          stack: JSON.stringify(responseFromGrpc.stack)
+        }
+      }
+      return grpcError
+    }
+    return {
+      error: false,
+      data: {}
     }
   }
 }

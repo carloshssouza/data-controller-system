@@ -1,7 +1,6 @@
 import { createProxyServer } from 'http-proxy'
 import DataControlService from './services/DataControlService'
 import { IncomingMessage, http } from './types/http'
-import ErrorRes from './utils/error'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -15,14 +14,24 @@ const option = {
 
 proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMessage, res: http.ServerResponse) {
   try {
-    const body: any = []
+    let body: any = []
     proxyRes.on('data', function (chunk: any) {
       body.push(chunk)
     })
-
-    await DataControlService.runController(proxyRes, req, res, body)
+    proxyRes.on('end', async () => {
+      body = Buffer.concat(body).toString()
+      const bodyResponse = await DataControlService.runController(req, JSON.parse(body))
+      if (JSON.stringify(body) === bodyResponse) {
+        res.statusCode = proxyRes.statusCode
+        res.end(body)
+      } else {
+        res.statusCode = 500
+        res.end(JSON.stringify(bodyResponse))
+      }
+    })
   } catch (error) {
-    return await ErrorRes.internalServerError(proxyRes, res, error.message, error.stack)
+    console.log(error)
+    res.end(JSON.stringify(error))
   }
 })
 

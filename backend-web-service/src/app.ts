@@ -6,6 +6,7 @@ import swaggerUI from 'swagger-ui-express'
 import swaggerDocument from '../docs/swagger.json'
 import dotenv from 'dotenv'
 import {
+  ApiRoutes,
   LoginRoutes,
   UserRoutes
 } from './routes'
@@ -33,6 +34,7 @@ class App {
   }
 
   private routes (): void {
+    this.express.use(process.env.PREFIX, ApiRoutes)
     this.express.use(process.env.PREFIX, LoginRoutes)
     this.express.use(process.env.PREFIX, UserRoutes)
   }

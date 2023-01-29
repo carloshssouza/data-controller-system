@@ -43,6 +43,7 @@ class GrpcServer {
       }
       callback(null, apiPermission)
     } catch (error) {
+      console.log(error)
       callback(null, error)
     }
   }
@@ -53,9 +54,7 @@ class GrpcServer {
         title: call.request.title,
         description: call.request.description,
         routeId: call.request.routeId,
-        endpointPath: call.request.endpointPath,
-        routeName: call.request.routeName,
-        leakData: call.request.leakData,
+        leakedData: call.request.leakedData,
         level: call.request.level
       }
       const ErrorLog = await ErrorLogEntity.createErrorLog(ErrorLogData)

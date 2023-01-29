@@ -9,6 +9,9 @@ import {
 } from '../../types/grpc'
 import { IErrorLogData } from '../../interfaces/errorLogData.interface'
 import IApiData from '../../interfaces/apiData.interface'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 class GrpcClient {
   private packageDef: PackageDefinition
@@ -30,14 +33,14 @@ class GrpcClient {
    * @returns Returns the api info or error
    */
   public async getApiPermission (endpointPath: string, requestType: string): Promise<IApiData | any> {
-    this.client.getApiPermission({
-      endpointPath,
-      requestType
-    }, (err: any, response: any) => {
-      if (err) {
-        return err
-      }
-      return response
+    return new Promise((resolve, reject) => {
+      this.client.getApiPermission({ endpointPath, requestType }, (err: any, response: any) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(response)
+        }
+      })
     })
   }
 
@@ -47,13 +50,15 @@ class GrpcClient {
    * @returns Returns the response with message confirmation or error
    */
   public async createErrorLog (errorLogData: IErrorLogData): Promise<string | any> {
-    this.client.createErrorLog({
-      ...errorLogData
-    }, (err: any, response: any) => {
-      if (err) {
-        return err
-      }
-      return response
+    return new Promise((resolve, reject) => {
+      this.client.createErrorLog({
+        ...errorLogData
+      }, (err: any, response: any) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(response)
+      })
     })
   }
 }

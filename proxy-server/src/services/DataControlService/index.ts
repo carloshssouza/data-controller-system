@@ -1,10 +1,8 @@
 import GrpcClient from '../GrpcService/grpc'
-import Response from '../../utils/response'
 import Identifier from '../IdentifierService'
-import { IncomingMessage, ServerResponse } from '../../types/http'
+import { IncomingMessage } from '../../types/http'
 import Auxiliary from './utils/auxiliary'
 import privateDataList from '../IdentifierService/privateDataList'
-import ErrorRes from '../../utils/error'
 import { ILeakedData } from '../../interfaces/errorLogData.interface'
 
 class DataControlService extends Auxiliary {
@@ -16,9 +14,13 @@ class DataControlService extends Auxiliary {
    * @param body Response object from the external server intercepted by the proxy
    * @returns Returns the response to the client request
    */
-  public async runController (proxyRes: IncomingMessage, req: IncomingMessage, res: ServerResponse, body: any) {
+  public async runController (req: IncomingMessage, body: any) {
     const apiResponse = await GrpcClient.getApiPermission(req.url, req.method)
-    await this.checkForError(apiResponse, proxyRes, res)
+
+    const grpcApiService = await this.checkForError(apiResponse)
+    if (grpcApiService.error) {
+      return grpcApiService.data
+    }
 
     if (apiResponse && !apiResponse.dataReturnAllowed) {
       const privateDataFound = await Identifier.findPrivateData(body, privateDataList) as ILeakedData[]
@@ -26,13 +28,16 @@ class DataControlService extends Auxiliary {
         const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse)
 
         const errorLogCreateResponse = await GrpcClient.createErrorLog(errorLogData)
-        await this.checkForError(errorLogCreateResponse, proxyRes, res)
+        const grpcErrorLogService = await this.checkForError(errorLogCreateResponse)
+        if (grpcErrorLogService.error) {
+          return grpcErrorLogService.data
+        }
 
-        return await ErrorRes.proxyLeakedDataErrorResponse(proxyRes, res, errorLogData)
+        return errorLogCreateResponse
       }
     }
 
-    return await Response.responseServer(proxyRes, res, body)
+    return body
   }
 }
 
