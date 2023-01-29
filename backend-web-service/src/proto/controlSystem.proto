@@ -14,25 +14,20 @@ message ApiRequest {
 
 message ApiResponse {
   string _id = 1;
-  string routeName = 2;
-  string endpointPath = 3;
-  bool dataReturnAllowed = 4;
+  bool dataReturnAllowed = 2;
 }
 
 message ErrorLogRequest {
   string title = 1;
   string description = 2;
   string routeId = 3;
-  string endpointPath = 4;
-  string routeName = 5;
-  repeated LeakedData leakedData = 6;
-  string level = 7;
+  repeated LeakedData leakedData = 4;
+  int32 level = 5;
 }
 
 message ErrorLogResponse {
   string message = 1;
 }
-
 
 message LeakedData {
     string name = 1;
