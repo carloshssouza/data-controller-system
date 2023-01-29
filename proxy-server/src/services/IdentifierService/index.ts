@@ -8,40 +8,31 @@ class Identifier {
    * @param privateDataList Array of the private data(personal and sensible)
    * @returns Returns the list of personal and sensible data
    */
-  public findPrivateData (responseObject: any, privateDataList: IPrivateDataList) {
-    let result = [] as any
-    if (responseObject.hasOwnProperty('access_token') || responseObject.hasOwnProperty('token') || responseObject.hasOwnProperty('auth')) {
-      const token = {}
-      if (Array.isArray(responseObject)) {
-        // token = this.checkPrivateDataInJwtToken()
-        responseObject.push(token)
-      } else {
-        responseObject = {
-          ...responseObject,
-          ...token
-        }
-      }
-    }
-
+  public async findPrivateData (responseObject: any, privateDataList: IPrivateDataList) {
+    const result = new Set()
     if (Array.isArray(responseObject)) {
       for (const item of responseObject) {
         const children = this.findPrivateData(item, privateDataList)
-        result = result.concat(children)
+        for (const child of await children) {
+          result.add(JSON.stringify(child))
+        }
       }
     } else {
       for (const key in responseObject) {
         for (const type in privateDataList) {
           if (privateDataList[type].includes(key)) {
-            result.push({ name: key, type })
+            result.add(JSON.stringify({ name: key, type }))
           }
         }
         if (typeof responseObject[key] === 'object') {
           const children = this.findPrivateData(responseObject[key], privateDataList)
-          result = result.concat(children)
+          for (const child of await children) {
+            result.add(JSON.stringify(child))
+          }
         }
       }
     }
-    return result
+    return Array.from(result).map(element => JSON.parse(element as string))
   }
 
   private async checkPrivateDataInJwtToken (authorization: string) {
