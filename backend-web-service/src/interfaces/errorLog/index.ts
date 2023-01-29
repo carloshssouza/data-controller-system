@@ -5,16 +5,16 @@ interface ErrorLogCreateData {
   title: string
   description: string
   routeId: TypeId
-  routeName: string
-  leakData: ILeakedData[]
+  leakedData: ILeakedData[]
+  level: number
 }
 
 interface ErrorLogUpdateData {
   title?: string
   description?: string
   routeId?: TypeId
-  routeName?: string
-  leakData?: ILeakedData[]
+  leakedData?: ILeakedData[]
+  level?: number
 }
 
 export {
