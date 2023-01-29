@@ -3,7 +3,7 @@ import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
 
 class ErrorLogSchemaValidator {
-  createErrorLogValidation (httpBody: ErrorLogCreateData) {
+  createErrorLogValidation (errorLogData: ErrorLogCreateData) {
     const schema = Joi.object<ErrorLogCreateData>({
       title: Joi.string().required(),
       description: Joi.string().required(),
@@ -13,17 +13,17 @@ class ErrorLogSchemaValidator {
         'string.length': 'Invalid id length',
         'any.required': 'Id is required'
       }),
-      routeName: Joi.string().required(),
-      leakData: Joi.array().items({
+      leakedData: Joi.array().items({
         name: Joi.string().required(),
         type: Joi.string().required()
-      }).required()
+      }).required(),
+      level: Joi.number().required()
     })
 
-    return schema.validate(httpBody)
+    return schema.validate(errorLogData)
   }
 
-  updateErrorLogValidation (httpBody: ErrorLogUpdateData) {
+  updateErrorLogValidation (errorLogData: ErrorLogUpdateData) {
     const schema = Joi.object<ErrorLogUpdateData>({
       title: Joi.string().optional(),
       description: Joi.string().optional(),
@@ -33,14 +33,14 @@ class ErrorLogSchemaValidator {
         'string.length': 'Invalid id length',
         'any.required': 'Id is required'
       }),
-      routeName: Joi.string().optional(),
-      leakData: Joi.array().items({
+      leakedData: Joi.array().items({
         name: Joi.string().required(),
         type: Joi.string().required()
-      }).optional()
-    }).or('route', 'dataReturnAllowed')
+      }).optional(),
+      level: Joi.number().optional()
+    }).or('title', 'description', 'routeId', 'leakedData')
 
-    return schema.validate(httpBody)
+    return schema.validate(errorLogData)
   }
 
   getErrorLogValidation (_id: TypeId) {
