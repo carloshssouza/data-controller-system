@@ -17,7 +17,13 @@ interface ErrorLogUpdateData {
   level?: string
 }
 
+interface IFilterLeakedData {
+  personal?: string
+  sensible?: string
+}
+
 export {
   ErrorLogCreateData,
-  ErrorLogUpdateData
+  ErrorLogUpdateData,
+  IFilterLeakedData
 }

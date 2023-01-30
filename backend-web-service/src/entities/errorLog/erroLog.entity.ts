@@ -41,6 +41,17 @@ class ErrorLogEntity {
     }
     return ErrorLogRepository.deleteErrorLog(_id)
   }
+
+  public getErrorLogLeakedData (filter?: string) {
+    if (!filter) {
+      return ErrorLogRepository.getErrorLogLeakedData()
+    }
+    // const validate
+    // if(validate.error) {
+    //   throw new ErrorRes(400, validate.error.message)
+    // }
+    return ErrorLogRepository.getErrorLogLeakedData(filter)
+  }
 }
 
 export default new ErrorLogEntity()
