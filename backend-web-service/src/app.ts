@@ -8,7 +8,8 @@ import dotenv from 'dotenv'
 import {
   ApiRoutes,
   LoginRoutes,
-  UserRoutes
+  UserRoutes,
+  ErrorLogRoutes
 } from './routes'
 dotenv.config()
 
@@ -37,6 +38,7 @@ class App {
     this.express.use(process.env.PREFIX, ApiRoutes)
     this.express.use(process.env.PREFIX, LoginRoutes)
     this.express.use(process.env.PREFIX, UserRoutes)
+    this.express.use(process.env.PREFIX, ErrorLogRoutes)
   }
 }
 

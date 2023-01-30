@@ -33,6 +33,62 @@ class ErrorLogRepository {
   public deleteErrorLog (_id: TypeId) {
     return ErrorLog.findOneAndDelete({ _id })
   }
+
+  public async getErrorLogLeakedData (filter?: string) {
+    if (!filter) {
+      return ErrorLog.aggregate([
+        {
+          $unwind: '$leakedData'
+        },
+        {
+          $group: {
+            _id: '$leakedData.name',
+            count: { $sum: 1 }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            name: '$_id',
+            count: 1
+          }
+        },
+        {
+          $sort: {
+            count: -1
+          }
+        }
+      ])
+    }
+    return ErrorLog.aggregate([
+      {
+        $unwind: '$leakedData'
+      },
+      {
+        $match: {
+          'leakedData.type': filter
+        }
+      },
+      {
+        $group: {
+          _id: '$leakedData.name',
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id',
+          count: 1
+        }
+      },
+      {
+        $sort: {
+          count: -1
+        }
+      }
+    ])
+  }
 }
 
 export default new ErrorLogRepository()
