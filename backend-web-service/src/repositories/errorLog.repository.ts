@@ -89,6 +89,10 @@ class ErrorLogRepository {
       }
     ])
   }
+
+  public getErrorLogDynamicFilter (filter?: object) {
+    return ErrorLog.find({})
+  }
 }
 
 export default new ErrorLogRepository()

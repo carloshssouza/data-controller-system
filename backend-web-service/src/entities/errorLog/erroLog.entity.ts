@@ -52,6 +52,10 @@ class ErrorLogEntity {
     // }
     return ErrorLogRepository.getErrorLogLeakedData(filter)
   }
+
+  public getErrorLogDynamicFilter (filter?: Object) {
+    return ErrorLogRepository.getErrorLogDynamicFilter(filter)
+  }
 }
 
 export default new ErrorLogEntity()
