@@ -10,11 +10,9 @@ class ErrorLogLeakedDataController {
 
   public async getErrorLogLeakedData (req: Request, res: Response): Promise<Response> {
     try {
-      console.log(req.query)
       const { sensible, personal } = req.query
 
       if (!sensible && !personal) {
-        console.log('entrou')
         const errorLog = await this.getLeakedData()
         return res.status(200).json(errorLog)
       }
