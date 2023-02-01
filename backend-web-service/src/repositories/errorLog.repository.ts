@@ -93,6 +93,10 @@ class ErrorLogRepository {
   public getErrorLogDynamicFilter (filter?: object) {
     return ErrorLog.find({})
   }
+
+  public getErrorLogLeakedDataByApi (routeId: TypeId) {
+    return ErrorLog.findOne({ routeId })
+  }
 }
 
 export default new ErrorLogRepository()
