@@ -1,7 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Input from "../../components/Input";
+import { loginAuthUser } from "../../api/services/Login";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from 'react-toastify';
+import api from '../../api/axios'
 
 const Login = () => {
+  const notifySuccess = (message: string) => toast.success(message);
+  const notifyError = (message: string) => toast.error(message);  
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -12,9 +18,19 @@ const Login = () => {
     setLoginData((prevLoginData) => ({ ...prevLoginData, [name]: value }));
   }, [loginData])
 
-  const handleLoginData = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    console.log(loginData)
+  const handleLoginData = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/login`, loginData)
+      console.log(response)
+      if(response.status === 401) {
+        throw new Error("Email or password invalid")
+      } else {
+        notifySuccess("Login success")
+        //navigate dashboard
+      }
+    } catch (error: any) {
+      notifyError(error.message)
+    }
   }
 
   return (
@@ -39,6 +55,7 @@ const Login = () => {
       </div>
 
       <button onClick={(event) => handleLoginData(event)}>Register</button>
+      <ToastContainer/>
     </div>
   );
 };

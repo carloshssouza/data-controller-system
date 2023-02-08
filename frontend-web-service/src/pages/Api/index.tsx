@@ -16,12 +16,7 @@ export default function Api() {
     const response = await getAllApis()
     setApisData(response.data)
   }, [])
-
-  const handleApiById = useCallback(async (id: string) => {
-    const response = await getApiById(id)
-    setApiData(response.data)
-  }, [])
-
+  
   const handleCreateApi = useCallback(async (data: any) => {
     const response = await createApi(data)
     setSuccess(response.data)
