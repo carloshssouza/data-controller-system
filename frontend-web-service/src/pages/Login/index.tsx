@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Input from "../../components/Input";
-import { loginAuthUser } from "../../api/services/Login";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import api from '../../api/axios'
@@ -26,6 +25,7 @@ const Login = () => {
         throw new Error("Email or password invalid")
       } else {
         notifySuccess("Login success")
+        localStorage.set('token', response.data.access_token)
         //navigate dashboard
       }
     } catch (error: any) {
