@@ -4,6 +4,7 @@ import { InputStyle } from './styles'
 
 interface InputProps {
   width?: string
+  height?: string
   placeholder?: string
   type?: string
   name?: string
