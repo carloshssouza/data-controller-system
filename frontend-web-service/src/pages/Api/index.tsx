@@ -1,78 +1,91 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import {
-  getAllApis,
-  getApiById,
-  updateApi,
-  deleteApi,
-  createApi,
-} from '../../api/services/Api'
 import api from '../../api/axios'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
+import Input from '../../components/Input'
 
 export default function Api() {
-  const [apisData, setApisData] = useState([])
-  const [apiData, setApiData] = useState({})
-  const [success, setSuccess] = useState(false)
+  const [listApisData, setListApisData] = useState([])
+  const [apiDataForm, setApiDataForm] = useState({
+    routeName: '',
+    endpointPath: '',
+    typeRequest: '',
+    dataReturnAllowed: false
+  })
+
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);  
 
-  const handleAllApis = async () => {
+  const getAllApis = async () => {
     try {
-      const response = await getAllApis()
+      const config = {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api-info`, config)
       if(response.status !== 200) {
-        throw new Error('Update api failed')
+        throw new Error('Error getting all apis')
       } else{
-        setApisData(response.data)
+        setListApisData(response.data)
       }
     } catch (error: any) {
       notifyError(error.message)
     }
   }
 
-  const handleCreateApi = async (data: any) => {
+  const createApi = async (data: any) => {
     try {
       const config = {
         headers: {
-          'Content-Type': 'application/json',
           'authorization': `Bearer ${localStorage.getItem('token')}`
         }
       }
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/api`, data, config)
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/api-info`, data, config)
       if(response.status !== 200) {
         throw new Error('Update api failed')
       } else{
         notifySuccess("Api created")
-        await handleAllApis()
+        await getAllApis()
       }
     } catch (error: any) {
       notifyError(error.message)
     }
   }
 
-  const handleUpdateApi = useCallback(async (id: string, data: any) => {
+  const updateApi = async (id: string, data: any) => {
     try {
-      const response = await updateApi(id, data)
+      const config = {
+        headers: {
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/${id}`, data)
       if(response.status !== 200) {
         throw new Error('Update api failed')
       } else {
         notifySuccess("Api updated")
-        await handleAllApis()
+        await getAllApis()
       }
     } catch (error: any) {
       notifyError(error.message)
     }
-  }, [])
+  }
 
-  const handleDeleteApi = async (id: string) => {
+  const deleteApi = async (id: string) => {
     try {
-      const response = await axios.delete(`${import.meta.env.VITE_BASE_URL}/api/${id}`)
+      const config = {
+        headers: {
+          'authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api/${id}`, config)
       if(response.status !== 200) {
         throw new Error('Deleted api failed')
       } else {
         notifySuccess("Api deleted")
-        await handleAllApis()
+        await getAllApis()
       }
     } catch (error: any) {
       notifyError(error.message)
@@ -81,13 +94,9 @@ export default function Api() {
 
   return (
     <div>
-      <div>Informações das APIs</div>
+      <div>Adicionar APIs</div>
       <div>
-        <input type="text" />
-        <input type="text" />
-        <input type="text" />
-        <input type="text" />
-        <button onClick={handleCreateApi}>Salvar</button>
+        <button onClick={createApi}>Salvar</button>
       </div>
       <ToastContainer/>
     </div>
