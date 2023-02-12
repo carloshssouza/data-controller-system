@@ -3,13 +3,7 @@ import api from '../../api/axios'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
-import {
-  FormGroup,
-  Form,
-  Input,
-  Label,
-  Button
-} from 'reactstrap'
+import { Button, Checkbox, Form, Input, Select } from 'antd';
 
 import DropdownComponent from '../../components/Dropdown';
 
@@ -102,130 +96,48 @@ export default function Api() {
     }
   }
 
-  useEffect(() => {
-    console.log(selectRequestType)
-  }, [selectRequestType])
-
+  const handleChangeRequestType = useCallback((requestType: string) => {
+    setSelectRequestType(requestType)
+  }, [])
   return (
     <div>
       <div>
-        Adicionar APIs
-        <Form style={{ display: 'flex' }}>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Route Name
-            </Label>
-            <Input
-              id="routeName"
-              name="routeName"
-              placeholder="Route Name"
-              type="text"
-            // onChange={onChangeLogin}
+        <title></title>
+        <Form>
+          <Form.Item
+            name="routeName"
+            rules={[{ required: true, message: 'Route name is required' }]}
+          >
+            <Input placeholder="Route name" />
+          </Form.Item>
+          <Form.Item
+            name="endpointPath"
+            rules={[{ required: true, message: 'Endpoint path is required' }]}
+          >
+            <Input placeholder="Endpoint path" />
+          </Form.Item>
+          <Form.Item
+            name="endpointPath"
+            rules={[{ required: true, message: 'Endpoint path is required' }]}
+          >
+            <Select
+              style={{ width: 150 }}
+              onChange={handleChangeRequestType}
+              placeholder="Request type"
+              options={requestType.map((item: string) => {
+                return { value: item, label: item }
+              })}
+
             />
-          </FormGroup>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Endpoint Path
-            </Label>
-            <Input
-              id="endpointPath"
-              name="endpointPath"
-              placeholder="Endpoint Path"
-              type="text"
-            // onChange={onChangeLogin}
-            />
-          </FormGroup>
-          <FormGroup>
-            <DropdownComponent
-              itemsList={requestType}
-              direction='down'
-              setItem={setSelectRequestType}
-              item={selectRequestType}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Data Return Allowed
-            </Label>
-            <Input
-              id="dataReturnAllowed"
-              name="dataReturnAllowed"
-              placeholder="Data Return Allowed"
-              type="text"
-            // onChange={onChangeLogin}
-            />
-          </FormGroup>
-          <Button color="success">Add</Button>
+          </Form.Item>
+
         </Form>
       </div>
       <div>
-        Apis
-        <Form style={{ display: 'flex' }}>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Route Name
-            </Label>
-            <Input
-              id="routeName"
-              name="routeName"
-              placeholder="Route Name"
-              type="text"
-            // onChange={onChangeLogin}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Endpoint Path
-            </Label>
-            <Input
-              id="endpointPath"
-              name="endpointPath"
-              placeholder="Endpoint Path"
-              type="text"
-            // onChange={onChangeLogin}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Type Request
-            </Label>
-            <Input
-              id="typeRequest"
-              name="typeRequest"
-              placeholder="Type Request"
-              type="text"
-            // onChange={onChangeLogin}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label
-              hidden
-            >
-              Data Return Allowed
-            </Label>
-            <Input
-              id="dataReturnAllowed"
-              name="dataReturnAllowed"
-              placeholder="Data Return Allowed"
-              type="text"
-            // onChange={onChangeLogin}
-            />
-          </FormGroup>
-        </Form>
+        <title></title>
+        <form action="">
+        </form>
       </div>
-
       <ToastContainer />
     </div>
   )
