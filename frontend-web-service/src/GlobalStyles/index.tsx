@@ -6,7 +6,6 @@ export const GlobalStyles = createGlobalStyle`
   body {
     font-family: "Roboto", sans-serif;
     background: #27293D;
-    color: white;
     font-weight: 300;
   }
 `;
