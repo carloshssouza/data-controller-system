@@ -13,7 +13,7 @@ const ErrorLogSchema = new Schema<IErrorLog>({
   routeId: { type: Schema.Types.ObjectId, required: true, ref: 'Api' },
   endpointPath: { type: String, required: true, ref: 'Api' },
   routeName: { type: String, required: true, ref: 'Api' },
-  typeRequest: { type: String, required: true, ref: 'Api' },
+  requestType: { type: String, required: true, ref: 'Api' },
   leakedData: { type: [LeakedDataSchema], required: true },
   level: { type: String, required: true, enum: ['low', 'medium', 'high'] }
 }, {

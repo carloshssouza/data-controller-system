@@ -147,7 +147,7 @@
                     "type": "string",
                     "required": true
                   },
-                  "typeRequest": {
+                  "requestType": {
                     "type": "string",
                     "required": true
                   },
@@ -159,7 +159,7 @@
                 "example": {
                   "routeName": "Users",
                   "endpointPath": "/users",
-                  "typeRequest": "get",
+                  "requestType": "get",
                   "dataReturnAllowed": true
                 }
               }

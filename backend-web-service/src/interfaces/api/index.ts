@@ -1,14 +1,14 @@
 interface ApiCreateData {
     routeName: string
     endpointPath: string
-    typeRequest: string
+    requestType: string
     dataReturnAllowed: boolean
   }
 
 interface ApiUpdateData {
   routeName?: string
   endpointPath?: string
-  typeRequest?: string
+  requestType?: string
   dataReturnAllowed?: boolean
 }
 
