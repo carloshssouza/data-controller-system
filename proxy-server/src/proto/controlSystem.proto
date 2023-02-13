@@ -31,7 +31,7 @@ message ErrorLogResponse {
   string routeId = 3;
   string routeName = 4;
   string endpointPath = 5;
-  string typeRequest = 6;
+  string requestType = 6;
   repeated LeakedData leakedData = 7;
   string level = 8;
 }

@@ -2,24 +2,37 @@ import React, { useState, useEffect, useCallback } from 'react'
 import api from '../../api/axios'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
-import { Button, Checkbox, Form, Input, Select } from 'antd';
+import { Button, Checkbox, Form, Input, Modal, Select, Table, Popconfirm } from 'antd';
 
-import DropdownComponent from '../../components/Dropdown';
+import { ApiAddContainer, ApiListContainer } from './styles';
+
+interface IApiData {
+  routeName: string;
+  endpointPath: string;
+  requestType: string;
+  dataReturnAllowed: boolean;
+}
+
+const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
 export default function Api() {
   const [listApisData, setListApisData] = useState([])
-  const [apiDataForm, setApiDataForm] = useState({
+  const [selectRequestType, setSelectRequestType] = useState(requestType[0])
+  const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState<any>();
+  const [apiUpdateData, setApiUpdateData] = useState({
     routeName: '',
     endpointPath: '',
+    requestType: '',
     dataReturnAllowed: false
   })
-  const [selectRequestType, setSelectRequestType] = useState('')
-
-  const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
+
+  const onChangeUpdateRequestType = (e: any) => {
+    console.log(e.target)
+  }
 
   const getAllApis = async () => {
     try {
@@ -46,6 +59,7 @@ export default function Api() {
           'authorization': `Bearer ${localStorage.getItem('token')}`
         }
       }
+      data.requestType = selectRequestType
       const response = await api.post(`${import.meta.env.VITE_BASE_URL}/api-info`, data, config)
       if (response.status !== 200) {
         throw new Error('Update api failed')
@@ -58,25 +72,27 @@ export default function Api() {
     }
   }
 
-  const updateApi = async (id: string, data: any) => {
-    try {
-      const config = {
-        headers: {
-          'authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      const response = await axios.put(`${import.meta.env.VITE_BASE_URL}/api/${id}`, data)
-      if (response.status !== 200) {
-        throw new Error('Update api failed')
-      } else {
-        notifySuccess("Api updated")
-        await getAllApis()
-      }
-    } catch (error: any) {
-      notifyError(error.message)
-    }
-  }
+  const updateApi = async (data: any) => {
+    console.log(data)
+    // try {
+    //   const config = {
+    //     headers: {
+    //       'authorization': `Bearer ${localStorage.getItem('token')}`
+    //     }
+    //   }
 
+    //   const response = await api.put(`${import.meta.env.VITE_BASE_URL}/api/${selectedRecord._id}`, data, config)
+    //   if (response.status !== 200) {
+    //     throw new Error('Update api failed')
+    //   } else {
+    //     notifySuccess("Api updated")
+    //     await getAllApis()
+    //   }
+    // } catch (error: any) {
+    //   notifyError(error.message)
+    // }
+  }
+  
   const deleteApi = async (id: string) => {
     try {
       const config = {
@@ -96,49 +112,177 @@ export default function Api() {
     }
   }
 
+  const columns = [
+    {
+      title: "Route Name",
+      dataIndex: "routeName",
+      key: "routeName",
+    },
+    {
+      title: "Endpoint Path",
+      dataIndex: "endpointPath",
+      key: "endpointPath",
+    },
+    {
+      title: "Request Type",
+      dataIndex: "requestType",
+      key: "requestType",
+    },
+    {
+      title: "Data Return Allowed",
+      key: "dataReturnAllowed",
+      render: (text: string, record: any) => (
+        <div>{record.dataReturnAllowed ? "Yes" : "No"}</div>
+      )
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (text: string, record: any) => (
+        <>
+          <Button onClick={() => handleUpdate(record)}>Update</Button>
+          <Popconfirm
+            title="Are you sure you want to delete this item?"
+            onConfirm={() => deleteApi(record._id)}
+          >
+            <Button>Delete</Button>
+          </Popconfirm>
+        </>
+      ),
+    },
+  ];
+
+  const handleUpdate = (record: any) => {
+    // Open the update modal and pass the record data
+    setUpdateModalVisible(true);
+    setSelectedRecord(record);
+  };
+
   const handleChangeRequestType = useCallback((requestType: string) => {
     setSelectRequestType(requestType)
   }, [])
+
+  useEffect(() => {
+    if (!listApisData.length) {
+      getAllApis()
+    }
+    console.log(listApisData)
+  }, [])
+
+  useEffect(() => {
+    
+    console.log('api', selectedRecord)
+  }, [selectedRecord])
+
   return (
-    <div>
-      <div>
-        <title></title>
-        <Form>
-          <Form.Item
-            name="routeName"
-            rules={[{ required: true, message: 'Route name is required' }]}
+    <>
+      <ApiAddContainer>
+        <h1>Add new APIs</h1>
+        <div>
+          <Form
+            name="basic"
+            initialValues={{ remember: true }}
+            onFinish={createApi}
+            autoComplete="off"
           >
-            <Input placeholder="Route name" />
-          </Form.Item>
-          <Form.Item
-            name="endpointPath"
-            rules={[{ required: true, message: 'Endpoint path is required' }]}
+            <Form.Item
+              name="routeName"
+              rules={[{ required: true, message: 'Route name is required' }]}
+            >
+              <Input placeholder="Route name" />
+            </Form.Item>
+            <Form.Item
+              name="endpointPath"
+              rules={[{ required: true, message: 'Endpoint path is required' }]}
+            >
+              <Input placeholder="Endpoint path" />
+            </Form.Item>
+            <Form.Item
+              name="requestType"
+              rules={[{ required: true, message: 'Request type is required' }]}
+            >
+              <Select
+                defaultValue={apiUpdateData.requestType}
+                style={{ width: 150 }}
+                onChange={handleChangeRequestType}
+                options={requestType.map((type: string) => {
+                  return {
+                    label: type,
+                    value: type
+                  }
+                })}
+              />
+            </Form.Item>
+            <Form.Item
+              name="dataReturnAllowed"
+              valuePropName="checked"
+              style={{ marginRight: "2rem" }}
+            >
+              <Checkbox style={{color: "white"}}>Return personal and sensible data</Checkbox>
+            </Form.Item>
+            <Button type="primary"  htmlType="submit">Add</Button>
+          </Form>
+        </div>
+      </ApiAddContainer>
+      <ApiListContainer>
+        <h1>List of APIs</h1>
+        <Table columns={columns} dataSource={listApisData} />
+        <Modal
+          title="Update Route"
+          open={updateModalVisible}
+          onCancel={() => setUpdateModalVisible(false)}
+          cancelButtonProps={{style: {display: 'none'}}}
+          okButtonProps={{ style: { display: 'none' } }}
+        >
+           <Form
+            style={{display: 'flex', flexDirection: 'column', alignItems: 'start'}}
+            name="basic"
+            initialValues={{ remember: true }}
+            onFinish={updateApi}
+            autoComplete="off"
           >
-            <Input placeholder="Endpoint path" />
-          </Form.Item>
-          <Form.Item
-            name="endpointPath"
-            rules={[{ required: true, message: 'Endpoint path is required' }]}
-          >
-            <Select
-              style={{ width: 150 }}
-              onChange={handleChangeRequestType}
-              placeholder="Request type"
-              options={requestType.map((item: string) => {
-                return { value: item, label: item }
-              })}
-
-            />
-          </Form.Item>
-
-        </Form>
-      </div>
-      <div>
-        <title></title>
-        <form action="">
-        </form>
-      </div>
+            <Form.Item
+              label="Route Name"
+              name="routeName"
+              rules={[{ required: true, message: 'Route name is required' }]}
+            >
+              <Input defaultValue={selectedRecord?.routeName}/>
+            </Form.Item>
+            <Form.Item
+              label="Endpoint Path"
+              name="endpointPath"
+              rules={[{ required: true, message: 'Endpoint path is required' }]}
+            >
+              <Input defaultValue={selectedRecord?.endpointPath} />
+            </Form.Item>
+            <Form.Item
+              label="Request Type"
+              name="requestType"
+              rules={[{ required: true, message: 'Request type is required' }]}
+            >
+              <Select
+                defaultValue={selectedRecord?.requestType}
+                style={{ width: 150 }}
+                options={requestType.map((type: string) => {
+                  return {
+                    label: type,
+                    value: type
+                  }
+                })}
+              />
+            </Form.Item>
+            <Form.Item
+              name="dataReturnAllowed"
+              style={{ marginRight: "2rem" }}
+              valuePropName='checked'
+            >
+            <Checkbox style={{color: "black"}}>Return personal and sensible data</Checkbox>
+            </Form.Item>
+            <Button type="primary"  htmlType="submit">Confirm</Button>
+          </Form>
+        </Modal>
+      </ApiListContainer>
       <ToastContainer />
-    </div>
+    </>
   )
 }

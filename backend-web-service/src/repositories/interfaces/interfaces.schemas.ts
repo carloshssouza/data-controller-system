@@ -16,7 +16,7 @@ export interface IErrorLog {
     routeId: TypeId
     endpointPath: string;
     routeName: string
-    typeRequest: string
+    requestType: string
     leakedData: ILeakedData[],
     level: string
 }
@@ -24,6 +24,6 @@ export interface IErrorLog {
 export interface IApi {
     routeName: string;
     endpointPath: string;
-    typeRequest: string
+    requestType: string
     dataReturnAllowed: boolean
 }
