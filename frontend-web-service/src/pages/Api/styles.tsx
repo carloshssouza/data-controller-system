@@ -40,10 +40,11 @@ const ApiListContainer = styled.div`
   background: #27293D;
   margin-top: 2rem;
 
-  Table {
-    
+  Button {
+    color: white;
+    border: none;
+    margin: 0 5px 0 0;
   }
-  
 `
 
 export {
