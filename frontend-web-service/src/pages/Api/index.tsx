@@ -168,13 +168,7 @@ export default function Api() {
     if (!listApisData.length) {
       getAllApis()
     }
-    console.log(listApisData)
   }, [])
-
-  useEffect(() => {
-    
-    console.log('api', selectedRecord)
-  }, [selectedRecord])
 
   return (
     <>
