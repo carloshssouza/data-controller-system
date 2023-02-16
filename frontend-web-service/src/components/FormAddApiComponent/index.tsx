@@ -3,12 +3,12 @@ import { Button, Checkbox, Input, Modal, Select, Form } from 'antd'
 
 interface FormAddApiComponent {
   createApi: (data: any) => Promise<void>,
-  apiUpdateData: any,
+  selectRequestType: string,
   handleChangeRequestType: (data: any) => void,
   requestType: string[],
 }
 
-export default function FormAddApiComponent({ createApi, apiUpdateData, handleChangeRequestType, requestType }: FormAddApiComponent) {
+export default function FormAddApiComponent({ createApi, selectRequestType, handleChangeRequestType, requestType }: FormAddApiComponent) {
   return (
     <div>
           <Form
@@ -34,7 +34,7 @@ export default function FormAddApiComponent({ createApi, apiUpdateData, handleCh
               rules={[{ required: true, message: 'Request type is required' }]}
             >
               <Select
-                defaultValue={apiUpdateData.requestType}
+                defaultValue={selectRequestType}
                 style={{ width: 150 }}
                 onChange={handleChangeRequestType}
                 options={requestType.map((type: string) => {
