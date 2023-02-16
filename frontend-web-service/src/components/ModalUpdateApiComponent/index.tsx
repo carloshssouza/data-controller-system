@@ -1,5 +1,5 @@
 import { Button, Checkbox, Input, Modal, Select, Form } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 interface ModalUpdateApiComponentProps {
   updateModalVisible: boolean,
@@ -61,13 +61,6 @@ export default function ModalUpdateApiComponent({
                   }
                 })}
               />
-            </Form.Item>
-            <Form.Item
-              name="dataReturnAllowed"
-              style={{ marginRight: "2rem" }}
-              valuePropName='checked'
-            >
-            <Checkbox style={{color: "black"}}>Return personal and sensible data</Checkbox>
             </Form.Item>
             <Button type="primary"  htmlType="submit">Confirm</Button>
           </Form>
