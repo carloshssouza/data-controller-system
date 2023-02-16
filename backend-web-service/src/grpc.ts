@@ -27,10 +27,6 @@ class GrpcServer {
       console.log(`gRPC server listening on ${port}`)
       this.server.start()
     })
-
-    io.on('connection', (socket: any) => {
-      console.log('Socket connected')
-    })
   }
 
   private async getApiPermission (call: any, callback: any) {
@@ -61,9 +57,7 @@ class GrpcServer {
       if (!errorLog) {
         throw new Error('Error creating log error')
       }
-
-      io.emit('new-ErrorLog', errorLog)
-
+      io.emit('error-log-data', JSON.stringify(errorLog))
       callback(null, errorLog)
     } catch (error) {
       callback(null, error)

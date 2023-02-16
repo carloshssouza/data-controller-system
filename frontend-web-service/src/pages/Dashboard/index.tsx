@@ -1,6 +1,55 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import api from '../../api/axios'
+import { ToastContainer, toast } from 'react-toastify';
+import io from "socket.io-client"
+
 
 export default function Dashboard() {
+  const [listApiData, setListApiData] = useState([])
+  const [errorLog, setErrorLog] = useState([])
+
+  const notifyError = (message: string) => toast.error(message);
+  
+  const getAllApis = async () => {
+    try {
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api-info`)
+      if(response.status !== 200) {
+        throw new Error('Error getting all apis')
+      } else {
+        setListApiData(response.data)
+      }
+    } catch (error: any) {
+      notifyError(error.message)
+    }
+  }
+
+  const getAllErrorLogs = async () => {
+    try {
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-logs`)
+      if(response.status !== 200) {
+        throw new Error('Error getting all error logs')
+      } else {
+        setListApiData(response.data)
+      }
+    } catch (error: any) {
+      notifyError(error.message)
+    }
+  }
+
+  useEffect(() => {
+    const socket = io('http://localhost:8000')
+    socket.on('message', (data) => {
+      console.log(data)
+    });
+  }, [])
+
+  useEffect(() => {
+    const socket = io('http://localhost:8000')
+    socket.on('error-log-data', (data) => {
+      setErrorLog(JSON.parse(data))
+    });
+  }, [])
+
   return (
     <>
       <div>
@@ -30,6 +79,7 @@ export default function Dashboard() {
           <div>Grafico de vazamento, linha do tempo todas as apis</div>
         </div>
       </div>
+      <ToastContainer />
     </>
   )
 }
