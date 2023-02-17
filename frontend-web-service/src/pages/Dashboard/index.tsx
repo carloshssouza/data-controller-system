@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
+import { Button, Form, Input } from 'antd';
+import { ApiContainer } from './styles';
+import { getApiById } from '../../api/services/Api';
 
 
 export default function Dashboard() {
@@ -23,6 +26,23 @@ export default function Dashboard() {
     }
   }
 
+
+  const getApiByName = async (name: string) => {
+    try {
+      const response = await api.get(`${import.meta.env.BASE_URL}/api-info/${name}`)
+      if(response.status !== 200) {
+        throw new Error('Error getting api by id')
+      }
+      else {
+        return response.data
+      }
+      
+    } catch (error: any) {
+      console.error(error);
+      return error.response
+    }
+  }
+
   const getAllErrorLogs = async () => {
     try {
       const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-logs`)
@@ -38,13 +58,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     const socket = io('http://localhost:8000')
-    socket.on('message', (data) => {
-      console.log(data)
-    });
-  }, [])
-
-  useEffect(() => {
-    const socket = io('http://localhost:8000')
     socket.on('error-log-data', (data) => {
       setErrorLog(JSON.parse(data))
     });
@@ -52,21 +65,24 @@ export default function Dashboard() {
 
   return (
     <>
-      <div>
+      <ApiContainer>
         <h1>APIs</h1>
         <div>
+          <Form
+            name="basic"
+            initialValues={{ remember: true }}
+            onFinish={getApiByName}
+          >
+            <Form.Item>
+              <Input placeholder='Search for Api'/>
+              <Button type="primary">Search</Button>
+            </Form.Item>
+          </Form>
           <div>
-            <input type="text" /> //search
-            <button>Search</button>
-          </div>
-          <div>
-            <div>
-              <div>Api1</div> //cards
-              <div>Api2</div>
-            </div>
+            
           </div>
         </div>
-      </div>
+      </ApiContainer>
 
       <div>
         <h1>Error logs</h1>
