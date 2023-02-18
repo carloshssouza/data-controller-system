@@ -2,21 +2,31 @@ import React, { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
-import { Button, Form, Input } from 'antd';
-import { ApiContainer } from './styles';
+import { Button, Card, Form, Input } from 'antd';
+import { ApiContainer, ApiSearchContainer, CardItem, CardValue, DataApi, LabelApi } from './styles';
 import { getApiById } from '../../api/services/Api';
 
+interface IErrorLog {
+  _id: string
+  title: string
+  description: string
+  endpointPath: string
+  routeName: string
+  routeId: string
+  leakedData: string
+  level: string
+}
 
 export default function Dashboard() {
   const [listApiData, setListApiData] = useState([])
-  const [errorLog, setErrorLog] = useState([])
+  const [errorLog, setErrorLog] = useState<IErrorLog[]>([])
 
   const notifyError = (message: string) => toast.error(message);
-  
+
   const getAllApis = async () => {
     try {
       const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api-info`)
-      if(response.status !== 200) {
+      if (response.status !== 200) {
         throw new Error('Error getting all apis')
       } else {
         setListApiData(response.data)
@@ -30,13 +40,13 @@ export default function Dashboard() {
   const getApiByName = async (name: string) => {
     try {
       const response = await api.get(`${import.meta.env.BASE_URL}/api-info/${name}`)
-      if(response.status !== 200) {
+      if (response.status !== 200) {
         throw new Error('Error getting api by id')
       }
       else {
         return response.data
       }
-      
+
     } catch (error: any) {
       console.error(error);
       return error.response
@@ -45,15 +55,26 @@ export default function Dashboard() {
 
   const getAllErrorLogs = async () => {
     try {
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-logs`)
-      if(response.status !== 200) {
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-log`)
+      if (response.status !== 200) {
         throw new Error('Error getting all error logs')
       } else {
-        setListApiData(response.data)
+        setErrorLog(response.data)
       }
     } catch (error: any) {
       notifyError(error.message)
     }
+  }
+
+  const handleQuantityApiErrors = (apiId: string) => {
+    //I have the list of errors, i need to count the quantity of errors by api
+    let apiErrors = 0
+    for(const error of errorLog) {
+      if(error.routeId === apiId) {
+        apiErrors++
+      }
+    }
+    return apiErrors
   }
 
   useEffect(() => {
@@ -63,24 +84,56 @@ export default function Dashboard() {
     });
   }, [])
 
+  useEffect(() => {
+    getAllApis()
+    getAllErrorLogs()
+  }, [])
+
   return (
     <>
       <ApiContainer>
         <h1>APIs</h1>
-        <div>
+        <ApiSearchContainer>
           <Form
             name="basic"
             initialValues={{ remember: true }}
             onFinish={getApiByName}
           >
             <Form.Item>
-              <Input placeholder='Search for Api'/>
+              <Input placeholder='Search for Api' />
               <Button type="primary">Search</Button>
             </Form.Item>
           </Form>
-          <div>
-            
-          </div>
+        </ApiSearchContainer>
+        <div>
+          {listApiData.length ? listApiData.map((api: any) => {
+            return (
+              <CardItem>
+                <div>
+                  <CardValue>
+                    <LabelApi>Route name: </LabelApi>
+                    <DataApi>{api.routeName}</DataApi>
+                  </CardValue>
+                  <CardValue>
+                    <LabelApi>Endpoint path: </LabelApi>
+                    <DataApi>{api.endpointPath}</DataApi>
+                  </CardValue>
+                  <CardValue>
+                    <LabelApi>Request type: </LabelApi>
+                    <DataApi methodColor={api.requestType}>{api.requestType}</DataApi>
+                  </CardValue>
+                  <CardValue>
+                    <LabelApi>Data return allowed: </LabelApi>
+                    <DataApi>{api.dataReturnAllowed ? 'Yes' : 'No'}</DataApi>
+                  </CardValue>
+                  <CardValue>
+                    <LabelApi>Errors: </LabelApi>
+                    <DataApi>{handleQuantityApiErrors(api._id)}</DataApi>
+                  </CardValue>
+                </div>
+              </CardItem>
+            )
+          }) : <h1>no data</h1>}
         </div>
       </ApiContainer>
 
