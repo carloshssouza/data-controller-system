@@ -1,10 +1,18 @@
 import { mongoose } from '../../types/mongoose'
 
 class Database {
-  public connect () {
+  public async connect (url: string): Promise<boolean> {
     mongoose.set('strictQuery', true)
-    const url = process.env.MONGO_URL
-    mongoose.connect(url).then(() => console.log('Connected to Mongodb')).catch((err) => console.log(err))
+
+    return mongoose.connect(url)
+      .then(() => {
+        console.log('Connected to Mongodb')
+        return true
+      })
+      .catch((err) => {
+        console.log(err)
+        return false
+      })
   }
 }
 
