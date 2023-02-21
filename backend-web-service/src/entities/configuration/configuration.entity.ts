@@ -4,8 +4,8 @@ import ErrorRes from '../../utils/Erro/index'
 import ConfigurationValidator from './configuration.validator'
 import configurationRepository from '../../repositories/configuration.repository'
 import Database from '../../repositories/database/config'
-import isAppRunning from 'src/utils/Services/CheckConnectionService'
-import FileService from 'src/utils/Services/FileService'
+import isAppRunning from '../../utils/Services/CheckConnectionService'
+import FileService from '../../utils/Services/FileService'
 
 class ConfigurationEntity {
   public async createConfiguration (data: ConfigurationCreateData) {
@@ -14,7 +14,7 @@ class ConfigurationEntity {
       throw new ErrorRes(400, validate.error.message)
     }
 
-    const connection = await Database.connect(data.mongoUrlHost)
+    const connection = await Database.connect(data.mongoUriHost)
 
     if (connection) {
       return configurationRepository.createConfiguration(data)

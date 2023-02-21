@@ -4,7 +4,7 @@ import { ConfigurationCreateData, ConfigurationUpdateData } from '../../../inter
 class ConfigurationSchemaValidator {
   createConfigurationValidation (httpBody: ConfigurationCreateData) {
     const schema = Joi.object({
-      mongoUrlHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/((\w+):(\w+)@)?([^/?#:]+):(\d+)(\/.+)?$/).required()
+      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/((\w+):(\w+)@)?([^/?#:]+):(\d+)(\/.+)?$/).required()
     })
 
     return schema.validate(httpBody)
@@ -12,9 +12,9 @@ class ConfigurationSchemaValidator {
 
   updateConfigurationValidation (httpBody: ConfigurationUpdateData) {
     const schema = Joi.object({
-      mongoUrlHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/((\w+):(\w+)@)?([^/?#:]+):(\d+)(\/.+)?$/).optional(),
+      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/((\w+):(\w+)@)?([^/?#:]+):(\d+)(\/.+)?$/).optional(),
       applicationHost: Joi.string().uri({ scheme: ['http', 'https'] }).optional()
-    }).or('mongoUrlHost', 'applicationHost')
+    }).or('mongoUriHost', 'applicationHost')
 
     return schema.validate(httpBody)
   }

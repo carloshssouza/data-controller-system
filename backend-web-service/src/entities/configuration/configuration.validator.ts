@@ -4,7 +4,7 @@ import ConfigurationSchemaValidator from '../validators/configuration/configurat
 class ConfigurationValidator {
   /**
    * This function is responsible for validate the create configuration data
-   * @param ConfigurationBody Object with mongoUrlHost
+   * @param ConfigurationBody Object with mongoUriHost
    * @returns Returns the result of the validation(error or schema value)
    */
   async createConfiguration (ConfigurationBody: ConfigurationCreateData) {
@@ -13,7 +13,7 @@ class ConfigurationValidator {
 
   /**
    * This function is responsible for validate the update configuration data
-   * @param ConfigurationBody Object with applicationHost or mongoUrlHost
+   * @param ConfigurationBody Object with applicationHost or mongoUriHost
    * @returns Returns the result of the validation(error or schema value)
    */
   async updateConfiguration (ConfigurationBody: ConfigurationUpdateData) {
