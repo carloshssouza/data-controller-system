@@ -1,4 +1,4 @@
-import { Card } from 'antd';
+import { AutoComplete, Card } from 'antd';
 import { HTMLAttributes } from 'react';
 import { LineChart } from 'recharts';
 import styled, { ThemeProps } from 'styled-components';
@@ -6,7 +6,6 @@ import styled, { ThemeProps } from 'styled-components';
 interface DataApiProps extends HTMLAttributes<HTMLDivElement>, ThemeProps<any> {
   methodColor?: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 }
-
 
 const ApiContainer = styled.div`
   display: flex;

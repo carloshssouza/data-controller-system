@@ -24,6 +24,8 @@ const ApiAddContainer = styled.div`
 
       Button {
         background: #65BA74;
+        border: none;
+        font-weight: bold;
       }
     }
   }

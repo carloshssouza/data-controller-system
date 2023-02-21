@@ -17,6 +17,7 @@ import {
 import { getApiById } from '../../api/services/Api';
 import ErrorLogData from '../Error';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import { Container } from '../../GlobalStyles';
 
 interface IErrorLog {
   _id: string
@@ -155,7 +156,7 @@ export default function Dashboard() {
 
 
   return (
-    <>
+    <Container>
       <ApiContainer>
         <h1>APIs</h1>
         <ApiSearchContainer>
@@ -261,6 +262,6 @@ export default function Dashboard() {
         </GraphContainer>
       </ErrorContainer>
       <ToastContainer />
-    </>
+    </Container>
   )
 }

@@ -1,6 +1,6 @@
-import styled from 'styled-components'
+import styled from "styled-components";
 
-export const LoginContainer = styled.div`
+const RegisterAppContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -11,3 +11,7 @@ export const LoginContainer = styled.div`
     font-weight: bold;
   }
 `
+
+export {
+  RegisterAppContainer
+}
