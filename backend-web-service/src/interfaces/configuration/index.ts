@@ -1,9 +1,9 @@
 interface ConfigurationCreateData {
-  mongoUrlHost: string
+  mongoUriHost: string
 }
 
 interface ConfigurationUpdateData {
-  mongoUrlHost?: string
+  mongoUriHost?: string
   applicationHost?: string
 }
 
