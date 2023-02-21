@@ -30,6 +30,6 @@ export interface IApi {
 }
 
 export interface IConfiguration {
-    mongoUrlHost: string
+    mongoUriHost: string
     applicationHost?: string
 }
