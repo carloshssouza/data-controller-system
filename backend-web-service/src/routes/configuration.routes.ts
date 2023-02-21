@@ -4,7 +4,7 @@ import {
   ConfigurationGetController
 } from '../controllers/configuration'
 import { Router } from '../types/express'
-import Authenticate from 'src/middleware/Authenticate'
+import Authenticate from '../middleware/Authenticate'
 
 const routes = Router()
 
