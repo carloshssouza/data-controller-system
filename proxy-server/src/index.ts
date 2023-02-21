@@ -2,13 +2,18 @@ import { createProxyServer } from 'http-proxy'
 import DataControlService from './services/DataControlService'
 import { IncomingMessage, http } from './types/http'
 import dotenv from 'dotenv'
+import fs from 'fs'
+
+const fileContent = fs.readFileSync('../config.json', 'utf8')
+const config = JSON.parse(fileContent)
+const applicationUrl = config.applicationUrl
 
 dotenv.config()
 
 const PORT = process.env.PROXY_PORT || 8888
 const proxy = createProxyServer()
 const option = {
-  target: process.env.TARGET,
+  target: applicationUrl,
   selfHandleResponse: true
 }
 

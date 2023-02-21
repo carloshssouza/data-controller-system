@@ -5,8 +5,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import { Button, Table, Popconfirm, Checkbox, Form } from 'antd';
 
 import { ApiAddContainer, ApiListContainer } from './styles';
-import ModalUpdateApiComponent from '../../components/ModalUpdateApiComponent';
-import FormAddApiComponent from '../../components/FormAddApiComponent';
+import ModalUpdateApiComponent from './components/ModalUpdateApiComponent';
+import FormAddApiComponent from './components/FormAddApiComponent';
+import { Container } from '../../GlobalStyles';
 
 interface IApiData {
   routeName: string;
@@ -91,9 +92,7 @@ export default function Api() {
           'authorization': `Bearer ${localStorage.getItem('token')}`
         }
       }
-      console.log(id)
       const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/api-info/${id}`, config)
-      console.log(response.data)
       if (response.status !== 200) {
         throw new Error('Deleted api failed')
       } else {
@@ -190,7 +189,7 @@ export default function Api() {
   }, [])
 
   return (
-    <>
+    <Container>
       <ApiAddContainer>
         <h1>Add new APIs</h1>
         <FormAddApiComponent
@@ -220,6 +219,6 @@ export default function Api() {
         }
       </ApiListContainer>
       <ToastContainer />
-    </>
+    </Container>
   )
 }

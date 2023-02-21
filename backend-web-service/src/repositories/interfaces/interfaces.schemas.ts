@@ -4,6 +4,7 @@ export interface IUser {
     name: string;
     email: string;
     password: string;
+    type: string;
 }
 
 export interface ILeakedData {
@@ -26,4 +27,9 @@ export interface IApi {
     endpointPath: string;
     requestType: string
     dataReturnAllowed: boolean
+}
+
+export interface IConfiguration {
+    mongoUriHost: string
+    applicationHost?: string
 }

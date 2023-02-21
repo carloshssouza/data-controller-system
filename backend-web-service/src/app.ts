@@ -1,7 +1,6 @@
 import { Express, express } from './types/express'
 import cors from 'cors'
 import morgan from 'morgan'
-import Database from './repositories/database/config'
 import swaggerUI from 'swagger-ui-express'
 import swaggerDocument from '../docs/swagger.json'
 import dotenv from 'dotenv'
@@ -9,7 +8,8 @@ import {
   ApiRoutes,
   LoginRoutes,
   UserRoutes,
-  ErrorLogRoutes
+  ErrorLogRoutes,
+  ConfigurationRoutes
 } from './routes'
 dotenv.config()
 
@@ -19,7 +19,6 @@ class App {
   public constructor () {
     this.express = express()
     this.middlewares()
-    this.database()
     this.routes()
   }
 
@@ -30,15 +29,12 @@ class App {
     this.express.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
   }
 
-  private database (): void {
-    Database.connect()
-  }
-
   private routes (): void {
-    this.express.use(process.env.PREFIX, ApiRoutes)
-    this.express.use(process.env.PREFIX, LoginRoutes)
-    this.express.use(process.env.PREFIX, UserRoutes)
-    this.express.use(process.env.PREFIX, ErrorLogRoutes)
+    this.express.use(process.env.PREFIX || '/api', ApiRoutes)
+    this.express.use(process.env.PREFIX || '/api', LoginRoutes)
+    this.express.use(process.env.PREFIX || '/api', UserRoutes)
+    this.express.use(process.env.PREFIX || '/api', ErrorLogRoutes)
+    this.express.use(process.env.PREFIX || '/api', ConfigurationRoutes)
   }
 }
 
