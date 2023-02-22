@@ -23,6 +23,9 @@ class Authenticate {
       next()
     } catch (error) {
       console.error(error)
+      if (error.expiredAt) {
+        return res.status(401).json({ message: 'Token expired' })
+      }
       return res.status(error.status).json({ message: error.message })
     }
   }
@@ -42,6 +45,9 @@ class Authenticate {
       next()
     } catch (error) {
       console.error(error)
+      if (error.expiredAt) {
+        return res.status(401).json({ message: 'Token expired' })
+      }
       return res.status(error.status).json({ message: error.message })
     }
   }
