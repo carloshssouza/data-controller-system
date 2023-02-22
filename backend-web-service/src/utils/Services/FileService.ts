@@ -1,25 +1,27 @@
-
-import fs from 'fs'
-import startProxy from './ProxyService'
+import fs from 'fs/promises'
+import path from 'path'
 
 class FileService {
-  public createConfigFile (applicationHost: string) {
+  public async createConfigFile (host: string, pathFile: string): Promise<boolean> {
     try {
-      const configString = JSON.stringify({ applicationHost })
-      const filePath = '../../../../proxy-server/config.json'
-      fs.writeFile(filePath, configString, (err) => {
-        if (err) {
-          console.error(`Error writing config file: ${err.message}`)
-          return
-        }
-        console.log('Config file saved successfully')
-        startProxy()
-
-        return true
-      })
+      const configString = JSON.stringify({ host })
+      await fs.writeFile(path.resolve(__dirname, pathFile), configString)
+      console.log('Config file saved successfully')
+      return true
     } catch (error) {
+      console.error(`Error writing config file: ${error}`)
       return false
     }
+  }
+
+  public async readConfigFile (pathFile: string): Promise<boolean> {
+    const absolutePath = path.resolve(__dirname, pathFile)
+    const fileContent = await fs.readFile(absolutePath, 'utf8')
+    if (!fileContent) {
+      return false
+    }
+    const config = JSON.parse(fileContent)
+    return config.mongoUrlHost
   }
 }
 

@@ -2,18 +2,20 @@ import { createProxyServer } from 'http-proxy'
 import DataControlService from './services/DataControlService'
 import { IncomingMessage, http } from './types/http'
 import dotenv from 'dotenv'
-import fs from 'fs'
+import File from './utils/file'
+const EventEmitter = require('events')
 
-const fileContent = fs.readFileSync('../config.json', 'utf8')
-const config = JSON.parse(fileContent)
-const applicationUrl = config.applicationUrl
+// Increase the maximum number of event listeners for the Bus instance
+EventEmitter.defaultMaxListeners = 20
+
+const target = File.readFile('../../config.json')
 
 dotenv.config()
 
 const PORT = process.env.PROXY_PORT || 8888
 const proxy = createProxyServer()
 const option = {
-  target: applicationUrl,
+  target,
   selfHandleResponse: true
 }
 
@@ -45,4 +47,4 @@ const server = http.createServer((req: any, res: any) => {
 })
 
 server.listen(PORT)
-console.log(`Proxy server listening on ${PORT}`)
+console.log(`Proxy server listening on ${PORT} with target ${target}`)

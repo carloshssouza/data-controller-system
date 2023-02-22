@@ -2,10 +2,19 @@ import axios from 'axios'
 
 const isAppRunning = async (appUrl: string) => {
   try {
-    const response = await axios.get(appUrl)
-    return response.status >= 200 && response.status < 500
+    const response = await axios.get(`${appUrl}/health`)
+    if (response.status === 200 && response.data === 'OK') {
+      return true
+    } else {
+      return false
+    }
   } catch (error) {
-    return false
+    console.log(error)
+    if (error.code === 'ECONNREFUSED') {
+      return false
+    } else if (error.response.status >= 400 && error.response.status <= 500) {
+      return true
+    }
   }
 }
 

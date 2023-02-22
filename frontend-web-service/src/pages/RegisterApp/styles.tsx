@@ -6,6 +6,10 @@ const RegisterAppContainer = styled.div`
   align-items: center;
   height: 100vh;
   text-align: center;
+
+  h1{
+    color: white;
+  }
  
   Button {
     font-weight: bold;

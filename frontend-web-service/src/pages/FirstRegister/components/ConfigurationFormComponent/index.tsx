@@ -3,24 +3,29 @@ import React from 'react'
 import { ConfigurationContainer } from './styles'
 
 interface ConfigurationFormComponentProps {
-  onChangeMongoUri: (event: React.ChangeEvent<HTMLInputElement>) => void
-  onClickCheckMongo: () => void
+  handleCheckMongo: (data: any) => void
   isLoading: boolean
 }
 
-export default function ConfigurationFormComponent({ onChangeMongoUri, onClickCheckMongo, isLoading }: ConfigurationFormComponentProps) {
+export default function ConfigurationFormComponent({ handleCheckMongo, isLoading }: ConfigurationFormComponentProps) {
   return (
     <ConfigurationContainer>
       <h1>Add your configuration</h1>
-      <Form>
+      <Form
+        name="basic"
+        initialValues={{ remember: true }}
+        onFinish={handleCheckMongo}
+        autoComplete="off"
+
+      >
         <Form.Item
           label={<label style={{ color: 'white' }}>Mongodb Host:</label>}
           name="mongoUriHost"
           rules={[{ required: true, message: 'Mongodb host is required' }]}
         >
-          <Input onChange={onChangeMongoUri} disabled={isLoading}/>
+          <Input disabled={isLoading}/>
         </Form.Item>
-        <Button onClick={onClickCheckMongo} disabled={isLoading}>{isLoading ? <Spin /> :  'Confirm'}</Button>
+        <Button disabled={isLoading} htmlType="submit">{isLoading ? <Spin /> :  'Confirm'}</Button>
       </Form>
     </ConfigurationContainer>
   )

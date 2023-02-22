@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { RegisterAppContainer } from './styles'
 import { useNavigate } from 'react-router-dom';
@@ -9,25 +9,35 @@ export default function RegisterApp() {
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleAppHostData = async (data: any) => {
     try {
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/user`, data)
-      if (response.status !== 201) {
+      setIsLoading(true)
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration/app-host`, data, config)
+      if (response.status !== 200) {
         throw new Error(response.data.message)
       } else {
         notifySuccess(response.data.message)
         navigate("/dashboard")
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <RegisterAppContainer>
       <div>
-      <h1>Register your application</h1>
+      <h1>Register your target application host</h1>
         <Form
           name="basic"
           labelCol={{ span: 8 }}
@@ -49,7 +59,7 @@ export default function RegisterApp() {
           </Button>
         </Form>
       </div>     
-      <ToastContainer />
+      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }}/>
     </RegisterAppContainer>
   )
 }
