@@ -1,5 +1,4 @@
 import { ConfigurationCreateData, ConfigurationUpdateData } from '../interfaces/configuration'
-import { TypeId } from '../types/mongoose'
 import Configuration from './schemas/Configuration'
 
 class ConfigurationRepository {
@@ -11,8 +10,13 @@ class ConfigurationRepository {
     return Configuration.find({})
   }
 
-  public updateConfiguration (_id: TypeId, data: ConfigurationUpdateData) {
-    return Configuration.findOneAndUpdate({ _id }, data)
+  public async updateConfiguration (data: ConfigurationUpdateData) {
+    const configuration = await Configuration.find({}) as any
+    if (!configuration) {
+      throw new Error('Configuration not found')
+    } else {
+      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, data)
+    }
   }
 }
 
