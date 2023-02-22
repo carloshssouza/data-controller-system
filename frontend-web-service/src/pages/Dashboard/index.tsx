@@ -2,22 +2,23 @@ import React, { useEffect, useRef, useState } from 'react'
 import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
-import { Button, Card, Form, Input, Tooltip } from 'antd';
-import { 
-  ApiContainer, 
-  ApiSearchContainer, 
-  CardItem, 
-  CardValue, 
-  CommonErrorContainer, 
-  DataApi, ErrorCard, 
-  ErrorContainer, ErrorData, 
-  ErrorLogCard, GraphContainer, 
-  LabelApi,  
+import { Button, Card, Form, Input, Spin, Tooltip } from 'antd';
+import {
+  ApiContainer,
+  ApiSearchContainer,
+  CardItem,
+  CardValue,
+  CommonErrorContainer,
+  DataApi, ErrorCard,
+  ErrorContainer, ErrorData,
+  ErrorLogCard, GraphContainer,
+  LabelApi,
 } from './styles';
 import { getApiById } from '../../api/services/Api';
 import ErrorLogData from '../Error';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { Container } from '../../GlobalStyles';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 interface IErrorLog {
   _id: string
@@ -30,9 +31,10 @@ interface IErrorLog {
   level: string
 }
 
-
-
 export default function Dashboard() {
+  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
+  const [appHostConnection, setAppHostConnection] = useState(false)
   const [listApiData, setListApiData] = useState([])
   const [errorLog, setErrorLog] = useState<IErrorLog[]>([])
   const [data, setData] = useState<any[]>([]);
@@ -47,7 +49,7 @@ export default function Dashboard() {
     { timestamp: '2023-02-17T12:02:00.000Z', value: 15 },
     { timestamp: '2023-02-17T12:03:00.000Z', value: 10 }
   ];
-
+  const notifySuccess = (message: string) => toast.success(message)
   const notifyError = (message: string) => toast.error(message);
 
   const handleResize = () => {
@@ -55,10 +57,36 @@ export default function Dashboard() {
       setChartWidth(chartRef.current.clientWidth);
     }
 
-    if(realTimeContainerRef.current) {
+    if (realTimeContainerRef.current) {
       setRealTimeContainerWidth(realTimeContainerRef.current.clientWidth);
     }
   };
+
+  const checkAppHost = async () => {
+    try {
+      setIsLoading(true)
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/app-host-connection`, config)
+      console.log(response)
+      if (response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        handleResize()
+        getAllApis()
+        getAllErrorLogs()
+        notifySuccess('Dashboard is now available')
+      }
+    } catch (error: any) {
+      notifyError(error.response.data.message)
+      navigate('/register-host')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const getAllApis = async () => {
     try {
@@ -69,7 +97,7 @@ export default function Dashboard() {
         setListApiData(response.data)
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -99,7 +127,7 @@ export default function Dashboard() {
         setErrorLog(response.data)
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -115,153 +143,133 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
+    checkAppHost()
     const socket = io('http://localhost:8000')
+    socket.on('message', (message) => {
+      console.log(message)
+    });
     socket.on('error-log-data', (data) => {
-      setErrorLog(JSON.parse(data))
+      setErrorLog((prevState) => [...prevState, data])
     });
   }, [])
 
-  useEffect(() => {
-    getAllApis()
-    getAllErrorLogs()
-  }, [])
-
- 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      // Your logic to fetch and update the data goes here
-      // Append the new data or the last known value if there is no new data
-      setData(prevData => {
-        const newData = [...prevData];
-        const lastData = prevData[prevData.length - 1];
-        const nextTimestamp = lastData ? new Date(lastData.timestamp).getTime() + 60000 : Date.now();
-        newData.push(newData.length > 0 ? { timestamp: nextTimestamp, value: newData[newData.length - 1].value } : { timestamp: nextTimestamp, value: 0 });
-        return newData;
-      });
-    }, 5000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
-
-  useEffect(() => {
-    handleResize()
-  }, [])
-
-  useEffect(() => {
-    console.log(chartWidth)
-  }, [chartRef])
-  
-
-
   return (
     <Container>
-      <ApiContainer>
-        <h1>APIs</h1>
-        <ApiSearchContainer>
-          <Form
-            name="basic"
-            initialValues={{ remember: true }}
-            onFinish={getApiByName}
-          >
-            <Form.Item>
-              <Input placeholder='Search for Api' />
-              <Button type="primary">Search</Button>
-            </Form.Item>
-          </Form>
-        </ApiSearchContainer>
-        <div>
-          {listApiData.length ? listApiData.map((api: any) => {
-            return (
-              <CardItem>
-                <div>
-                  <CardValue>
-                    <LabelApi>Route name: </LabelApi>
-                    <DataApi>{api.routeName}</DataApi>
-                  </CardValue>
-                  <CardValue>
-                    <LabelApi>Endpoint path: </LabelApi>
-                    <DataApi>{api.endpointPath}</DataApi>
-                  </CardValue>
-                  <CardValue>
-                    <LabelApi>Request type: </LabelApi>
-                    <DataApi methodColor={api.requestType}>{api.requestType}</DataApi>
-                  </CardValue>
-                  <CardValue>
-                    <LabelApi>Data return allowed: </LabelApi>
-                    <DataApi>{api.dataReturnAllowed ? 'Yes' : 'No'}</DataApi>
-                  </CardValue>
-                  <CardValue>
-                    <LabelApi>Errors: </LabelApi>
-                    <DataApi>{handleQuantityApiErrors(api._id)}</DataApi>
-                  </CardValue>
-                </div>
-              </CardItem>
-            )
-          }) : <h1>no data</h1>}
-        </div>
-      </ApiContainer>
+      {
+        isLoading ? (
+          <Container>
+            <Spin size="large" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}/>
+          </Container>
+        ) : (
+          <>
+            <ApiContainer>
+              <h1>APIs</h1>
+              <ApiSearchContainer>
+                <Form
+                  name="basic"
+                  initialValues={{ remember: true }}
+                  onFinish={getApiByName}
+                >
+                  <Form.Item>
+                    <Input placeholder='Search for Api' />
+                    <Button type="primary">Search</Button>
+                  </Form.Item>
+                </Form>
+              </ApiSearchContainer>
+              <div>
+                {listApiData.length ? listApiData.map((api: any) => {
+                  return (
+                    <CardItem>
+                      <div>
+                        <CardValue>
+                          <LabelApi>Route name: </LabelApi>
+                          <DataApi>{api.routeName}</DataApi>
+                        </CardValue>
+                        <CardValue>
+                          <LabelApi>Endpoint path: </LabelApi>
+                          <DataApi>{api.endpointPath}</DataApi>
+                        </CardValue>
+                        <CardValue>
+                          <LabelApi>Request type: </LabelApi>
+                          <DataApi methodColor={api.requestType}>{api.requestType}</DataApi>
+                        </CardValue>
+                        <CardValue>
+                          <LabelApi>Data return allowed: </LabelApi>
+                          <DataApi>{api.dataReturnAllowed ? 'Yes' : 'No'}</DataApi>
+                        </CardValue>
+                        <CardValue>
+                          <LabelApi>Errors: </LabelApi>
+                          <DataApi>{handleQuantityApiErrors(api._id)}</DataApi>
+                        </CardValue>
+                      </div>
+                    </CardItem>
+                  )
+                }) : <h1>no data</h1>}
+              </div>
+            </ApiContainer>
 
-      <ErrorContainer>
-        <h1>Error Logs</h1>
-        <ErrorData>
-          <ErrorCard>
-            <div>0</div>
-            <h4>Total Leak Errors</h4>
-          </ErrorCard>
-          <ErrorCard>
-            <div>Get users</div>
-            <h4>Most leaked api</h4>
-          </ErrorCard>
-          <ErrorCard>
-            <div>Email</div>
-            <h4>Most leaked data</h4>
-          </ErrorCard>
-        </ErrorData>
-        <GraphContainer ref={chartRef} >
-          <CommonErrorContainer  ref={realTimeContainerRef} style={{maxWidth: "100%"}}>
-            <h2>Real Time errors</h2>
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart data={data}>
-                <XAxis dataKey="timestamp" />
-                <YAxis />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                <Tooltip />
-                <Legend />
-             </LineChart>
-            </ResponsiveContainer>
+            <ErrorContainer>
+              <h1>Error Logs</h1>
+              <ErrorData>
+                <ErrorCard>
+                  <div>0</div>
+                  <h4>Total Leak Errors</h4>
+                </ErrorCard>
+                <ErrorCard>
+                  <div>Get users</div>
+                  <h4>Most leaked api</h4>
+                </ErrorCard>
+                <ErrorCard>
+                  <div>Email</div>
+                  <h4>Most leaked data</h4>
+                </ErrorCard>
+              </ErrorData>
+              <GraphContainer ref={chartRef} >
+                <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
+                  <h2>Real Time errors</h2>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={data}>
+                      <XAxis dataKey="timestamp" />
+                      <YAxis />
+                      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                      <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                      <Tooltip />
+                      <Legend />
+                    </LineChart>
+                  </ResponsiveContainer>
 
-            <h3>Logs</h3>
-            <ErrorLogCard>
-              <div>{JSON.stringify(errorLog[0])}</div>
-              <div>{JSON.stringify(errorLog[1])}</div>
-              <div>{JSON.stringify(errorLog[3])}</div>
-              <div>{JSON.stringify(errorLog[0])}</div>
-              <div>{JSON.stringify(errorLog[0])}</div>
-            </ErrorLogCard>
-          </CommonErrorContainer>
-        
-        
-          <CommonErrorContainer>
-            <h2>Api Errors Comparison</h2>
-            
-            <ResponsiveContainer width="100%" height={400}>
-              <LineChart data={data}>
-                <XAxis dataKey="timestamp" />
-                <YAxis />
-                <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                <Tooltip />
-                <Legend />
-             </LineChart>
-            </ResponsiveContainer>
-          </CommonErrorContainer>
-          
-        </GraphContainer>
-      </ErrorContainer>
-      <ToastContainer />
+                  <h3>Logs</h3>
+                  <ErrorLogCard>
+                    <div>{JSON.stringify(errorLog[0])}</div>
+                    <div>{JSON.stringify(errorLog[1])}</div>
+                    <div>{JSON.stringify(errorLog[3])}</div>
+                    <div>{JSON.stringify(errorLog[0])}</div>
+                    <div>{JSON.stringify(errorLog[0])}</div>
+                  </ErrorLogCard>
+                </CommonErrorContainer>
+
+
+                <CommonErrorContainer>
+                  <h2>Api Errors Comparison</h2>
+
+                  <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={data}>
+                      <XAxis dataKey="timestamp" />
+                      <YAxis />
+                      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+                      <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                      <Tooltip />
+                      <Legend />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </CommonErrorContainer>
+
+              </GraphContainer>
+            </ErrorContainer>
+          </>
+        )
+      }
+      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }} />
     </Container>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { Button, Form, Input } from 'antd';
@@ -23,9 +23,32 @@ const Login = () => {
         navigate("/dashboard")
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
+
+  const validateToken = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/validate-token`, config)
+      if (response.status === 401) {
+        throw new Error("Token invalid")
+      } else {
+        notifySuccess("Token valid")
+        navigate("/dashboard")
+      }
+    } catch (error: any) {
+      notifyError(error.response.data.message)
+    }
+  }
+
+  useEffect(() => {
+    validateToken()
+  }, [])
 
   return (
     <Container>
@@ -45,7 +68,7 @@ const Login = () => {
               name="email"
               rules={[{ required: true, message: 'Please input your email!' }]}
             >
-              <Input />
+              <Input type="email"/>
             </Form.Item>
 
             <Form.Item

@@ -6,20 +6,19 @@ import { useNavigate } from "react-router-dom";
 import ConfigurationFormComponent from './components/ConfigurationFormComponent';
 import UserFormComponent from './components/UserFormComponent';
 import { Container } from '../../GlobalStyles';
+import { Spin } from 'antd';
 
 export default function Register() {
-
-  const [mongoUriHost, setMongoUriHost] = useState<string>('')
   const [registerUserAllowed, setRegisterUserAllowed] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
   const navigate = useNavigate()
 
-  const onClickCheckMongo = async () => {
+  const handleCheckMongo = async (data: any) => {
     try {
       setIsLoading(true)
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/mongo-host`, { mongoUriHost })
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/mongo-host`, { mongoUriHost: data.mongoUriHost })
       if (response.status !== 201) {
         throw new Error('Create api failed')
       } else {
@@ -27,15 +26,11 @@ export default function Register() {
         setRegisterUserAllowed(true)
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     } finally {
       setIsLoading(false)
     }
   }
-
-  const onChangeMongoUri = useCallback((e: any) => {
-    setMongoUriHost(e.target.value)
-  }, [])
 
   const handleRegisterUser = async (data: any) => {
     try {
@@ -49,19 +44,46 @@ export default function Register() {
         navigate("/login")
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const checkMongoConnection = async () => {
+    try {
+      setIsLoading(true)
+      const config = {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      }
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/db-connection`, config)
+      if (response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        notifySuccess(response.data.message)
+        navigate('/login')
+      }
+    } catch (error: any) {
+      notifyError(error.response.data.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    checkMongoConnection()
+  }, [])
+
   return (
     <Container>
-      <RegisterContainer>
+      {!isLoading ? (
+        <RegisterContainer>
         <div>
           {
             !registerUserAllowed && (
-              <ConfigurationFormComponent onChangeMongoUri={onChangeMongoUri} onClickCheckMongo={onClickCheckMongo} isLoading={isLoading} />
+              <ConfigurationFormComponent handleCheckMongo={handleCheckMongo} isLoading={isLoading} />
             )
           }
           {
@@ -70,8 +92,14 @@ export default function Register() {
             )
           }
         </div>
-        <ToastContainer />
       </RegisterContainer>
+      ) : (
+        <div style={{display:'flex', justifyContent: "center", alignItems: 'center', height: '100vh'}}>
+          <Spin size="large" />
+        </div>
+        
+      )}
+      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }}/>
     </Container>
 
   )

@@ -41,7 +41,7 @@ export default function Api() {
         setListApisData(response.data)
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -61,7 +61,7 @@ export default function Api() {
         await getAllApis()
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -81,7 +81,7 @@ export default function Api() {
         await getAllApis()
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -100,7 +100,7 @@ export default function Api() {
         await getAllApis()
       }
     } catch (error: any) {
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -115,7 +115,7 @@ export default function Api() {
       }
     } catch (error: any) {
       console.log("error")
-      notifyError(error.message)
+      notifyError(error.response.data.message)
     }
   }
 
@@ -218,7 +218,7 @@ export default function Api() {
           )
         }
       </ApiListContainer>
-      <ToastContainer />
+      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }}/>
     </Container>
   )
 }

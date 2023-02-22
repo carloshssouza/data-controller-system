@@ -36,7 +36,7 @@ export default function UserFormComponent({ handleRegisterUser, isLoading }: Use
         >
           <Input.Password placeholder='Password' />
         </Form.Item>
-        <Button disabled={isLoading}>{isLoading ? <Spin/> : 'Confirm'}</Button>
+        <Button disabled={isLoading} htmlType='submit'>{isLoading ? <Spin/> : 'Confirm'}</Button>
       </Form>
     </UserContainer>
   )
