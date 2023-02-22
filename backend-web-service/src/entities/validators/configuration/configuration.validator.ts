@@ -4,7 +4,7 @@ import { ConfigurationCreateData, ConfigurationUpdateData } from '../../../inter
 class ConfigurationSchemaValidator {
   createConfigurationValidation (httpBody: ConfigurationCreateData) {
     const schema = Joi.object({
-      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/((\w+):(\w+)@)?([^/?#:]+):(\d+)(\/.+)?$/).required()
+      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\//).required()
     })
 
     return schema.validate(httpBody)
@@ -12,7 +12,7 @@ class ConfigurationSchemaValidator {
 
   updateConfigurationValidation (httpBody: ConfigurationUpdateData) {
     const schema = Joi.object({
-      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/((\w+):(\w+)@)?([^/?#:]+):(\d+)(\/.+)?$/).optional(),
+      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/(?:(?:[^:]+:[^@]+)@)?([^/?]+)(?:\/([^?]+))?(?:\?(?:[^=&]+=[^&]+(?:&[^=&]+=[^&]+)*)?)?$/i).optional(),
       applicationHost: Joi.string().uri({ scheme: ['http', 'https'] }).optional()
     }).or('mongoUriHost', 'applicationHost')
 

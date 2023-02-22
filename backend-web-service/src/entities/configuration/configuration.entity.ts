@@ -1,4 +1,3 @@
-import { TypeId } from '../../types/mongoose'
 import { ConfigurationCreateData, ConfigurationUpdateData } from '../../interfaces/configuration'
 import ErrorRes from '../../utils/Erro/index'
 import ConfigurationValidator from './configuration.validator'
@@ -17,26 +16,26 @@ class ConfigurationEntity {
     const connection = await Database.connect(data.mongoUriHost)
 
     if (connection) {
+      FileService.createConfigFile(data.mongoUriHost, '../../../config.json')
       return configurationRepository.createConfiguration(data)
     } else {
       throw new ErrorRes(500, 'Connection failed')
     }
   }
 
-  public async updateConfiguration (_id: TypeId, data: ConfigurationUpdateData) {
+  public async updateConfiguration (data: ConfigurationUpdateData) {
     const validate = await ConfigurationValidator.updateConfiguration(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-
     const appConnected = await isAppRunning(data.applicationHost)
-    if (!appConnected) throw new ErrorRes(500, 'Application is not running')
+    if (!appConnected) throw new ErrorRes(500, 'Application host is not running')
 
-    const fileCreated = FileService.createConfigFile(data.applicationHost)
+    const fileCreated = await FileService.createConfigFile(data.applicationHost, '../../../../proxy-server/config.json')
 
     if (!fileCreated) throw new ErrorRes(500, 'Error creating config file')
 
-    return configurationRepository.updateConfiguration(_id, data)
+    return configurationRepository.updateConfiguration(data)
   }
 
   public getConfiguration () {
