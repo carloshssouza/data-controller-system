@@ -33,3 +33,8 @@ export interface IConfiguration {
     mongoUriHost: string
     applicationHost?: string
 }
+
+export interface IBlackList {
+    token: string
+    expiresAt: Date
+}
