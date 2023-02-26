@@ -1,26 +1,28 @@
 import ErrorRes from '../utils/Erro'
 import { Request, Response, NextFunction } from '../types/express'
-import TokenJWT from '../utils/Services/JwtService'
+import TokenJWT, { IToken } from '../utils/Services/JwtService'
+import BlackListEntity from '../entities/blackList/blackList.entity'
 
-interface IToken {
-  payload: {
-    sub: string,
-  }
-}
 class Authenticate {
-  public authenticateCommon (req: Request, res: Response, next: NextFunction) {
+  public async authenticateCommon (req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.headers.authorization) {
         throw new ErrorRes(401, 'Token is required')
       }
 
-      const token = TokenJWT.decode(req.headers.authorization) as IToken
+      const revokedToken = await BlackListEntity.getRevokedToken(req.headers.authorization)
 
-      if (!token) {
-        throw new ErrorRes(401, 'Token not valid')
+      if (!revokedToken) {
+        const token = TokenJWT.decode(req.headers.authorization) as IToken
+
+        if (!token) {
+          throw new ErrorRes(401, 'Token not valid')
+        }
+
+        next()
+      } else {
+        throw new ErrorRes(401, 'Token revoked')
       }
-
-      next()
     } catch (error) {
       console.error(error)
       if (error.expiredAt) {
@@ -30,19 +32,25 @@ class Authenticate {
     }
   }
 
-  public authenticateAdmin (req: Request, res: Response, next: NextFunction) {
+  public async authenticateAdmin (req: Request, res: Response, next: NextFunction) {
     try {
       if (!req.headers.authorization) {
         throw new ErrorRes(401, 'Token is required')
       }
 
-      const token = TokenJWT.decode(req.headers.authorization) as IToken
+      const revokedToken = await BlackListEntity.getRevokedToken(req.headers.authorization)
 
-      if (!token) {
-        throw new ErrorRes(401, 'Token not valid')
+      if (!revokedToken) {
+        const token = TokenJWT.decode(req.headers.authorization) as IToken
+
+        if (!token) {
+          throw new ErrorRes(401, 'Token not valid')
+        }
+
+        next()
+      } else {
+        throw new ErrorRes(401, 'Token revoked')
       }
-
-      next()
     } catch (error) {
       console.error(error)
       if (error.expiredAt) {

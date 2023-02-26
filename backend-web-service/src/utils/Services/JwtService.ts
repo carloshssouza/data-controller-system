@@ -3,6 +3,14 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+export interface IToken {
+  payload: {
+    sub: string,
+  },
+  iat: number,
+  exp: number,
+}
+
 class JwtService {
   /**
    * Method to encrypt the data
