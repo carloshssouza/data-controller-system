@@ -12,7 +12,8 @@ import {
   LoginRoutes,
   UserRoutes,
   ErrorLogRoutes,
-  ConfigurationRoutes
+  ConfigurationRoutes,
+  BlacklistRoutes
 } from './routes'
 dotenv.config()
 
@@ -39,6 +40,7 @@ class App {
     this.express.use(process.env.PREFIX || '/api', UserRoutes)
     this.express.use(process.env.PREFIX || '/api', ErrorLogRoutes)
     this.express.use(process.env.PREFIX || '/api', ConfigurationRoutes)
+    this.express.use(process.env.PREFIX || '/api', BlacklistRoutes)
   }
 
   private async databaseConnect () {
