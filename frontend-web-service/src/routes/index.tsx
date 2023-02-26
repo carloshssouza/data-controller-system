@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Dashboard, Api, Login, Error } from '../pages'
 import FirstRegister from '../pages/FirstRegister'
 import RegisterApp from '../pages/RegisterApp'
-import ProtectedRoute from '../ProtectedRoute'
+import SuperRoute from './services/SuperRoute'
 
 export default function routes() {
   return (
@@ -12,20 +12,20 @@ export default function routes() {
             <FirstRegister />
         } />
         <Route path="/register-host" element={
-          <ProtectedRoute>
+          <SuperRoute>
             <RegisterApp />
-          </ProtectedRoute>
+          </SuperRoute>
         } />
         <Route path="/login" element={<Login />} />
         <Route path="/api" element={
-          <ProtectedRoute>
+          <SuperRoute>
             <Api />
-          </ProtectedRoute>
+          </SuperRoute>
         } />
         <Route path="/dashboard" element={
-          <ProtectedRoute>
+          <SuperRoute>
             <Dashboard />
-          </ProtectedRoute>
+          </SuperRoute>
         } />
         <Route path="*" element={
           <Error />
