@@ -1,7 +1,18 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { TypeId } from '../../types/mongoose'
 
 dotenv.config()
+
+export interface IToken {
+  sub?: TypeId
+  type?: string
+  iat?: number
+  exp?: number
+  error?: boolean
+  message?: string
+  name?: string
+}
 
 class JwtService {
   /**
@@ -21,9 +32,16 @@ class JwtService {
  */
 
   decode (token: string) {
-    const decode = jwt.verify(token.replace('Bearer ', ''), process.env.SECRET_KEY || '')
-
-    return decode
+    try {
+      const decode = jwt.verify(token.replace('Bearer ', ''), process.env.SECRET_KEY || '')
+      return decode
+    } catch (error) {
+      return {
+        error: true,
+        message: error.message,
+        name: error.name
+      }
+    }
   }
 }
 

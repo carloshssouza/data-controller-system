@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { Button, Form, Input } from 'antd';
@@ -42,12 +42,14 @@ const Login = () => {
         navigate("/dashboard")
       }
     } catch (error: any) {
-      notifyError(error.response.data.message)
+      localStorage.removeItem('token')
     }
   }
 
   useEffect(() => {
-    validateToken()
+    if (localStorage.getItem('token')){
+      validateToken()
+    }
   }, [])
 
   return (

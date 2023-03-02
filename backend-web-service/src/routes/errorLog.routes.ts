@@ -1,3 +1,4 @@
+import Authenticate from '../middleware/Authenticate'
 import {
   ErrorLogGetController,
   ErrorLogGetAllController,
@@ -16,7 +17,7 @@ routes.get('/error-log/:_id', ErrorLogGetController.getErrorLog)
 routes.get('/error-log', ErrorLogGetAllController.getAllErrorLogs)
 routes.put('/error-log/:_id', ErrorLogUpdateController.updateErrorLog)
 routes.delete('/error-log/:_id', ErrorLogDeleteController.deleteErrorLog)
-routes.get('/error-log/filter/leaked-data', ErrorLogLeakedDataController.getErrorLogLeakedData)
+routes.get('/error-log/filter/leaked-data', Authenticate.authenticateCommon, ErrorLogLeakedDataController.getErrorLogLeakedData)
 routes.get('/error-log/filter/leaked-data-by-api', ErrorLogLeakedDataByApiController.getErrorLogLeakedDataByApi)
 routes.post('/error-log/dynamic-filter', ErrorLogDynamicFilterController.getErrorLogDynamicFilter)
 

@@ -23,7 +23,7 @@ class ErrorLogRepository {
   }
 
   public getAllErrorLogs () {
-    return ErrorLog.find({})
+    return ErrorLog.find({}).sort({ createdAt: -1 })
   }
 
   public updateErrorLog (_id: TypeId, data: ErrorLogUpdateData) {
