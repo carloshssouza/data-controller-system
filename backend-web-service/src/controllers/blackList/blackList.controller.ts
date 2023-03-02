@@ -6,7 +6,7 @@ import JwtService, { IToken } from '../../utils/Services/JwtService'
 class BlackListController {
   async createRevokedToken (req: Request, res: Response): Promise<Response> {
     try {
-      const token = JwtService.decode(req.headers.authorization) as IToken
+      const token = JwtService.decode(req.headers.authorization) as unknown as IToken
       if (token) {
         const revokedToken = {
           token: req.headers.authorization,
