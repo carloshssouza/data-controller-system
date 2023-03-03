@@ -5,10 +5,14 @@ import dotenv from 'dotenv'
 import File from './utils/file'
 const EventEmitter = require('events')
 
-// Increase the maximum number of event listeners for the Bus instance
 EventEmitter.defaultMaxListeners = 20
 
 const target = File.readFile('../../config.json')
+
+process.on('SIGINT', () => {
+  console.log('Received SIGINT signal. Stopping server...')
+  process.exit(0)
+})
 
 dotenv.config()
 
