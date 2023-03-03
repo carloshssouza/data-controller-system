@@ -3,6 +3,8 @@ import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
 import { Button, Card, Form, Input, Spin, Tooltip } from 'antd';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip as Tooltip2, Legend } from 'recharts';
+
 import {
   ApiContainer,
   ApiSearchContainer,
@@ -14,11 +16,10 @@ import {
   ErrorLogCard, GraphContainer,
   LabelApi,
 } from './styles';
-import { getApiById } from '../../api/services/Api';
-import ErrorLogData from '../Error';
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { Container } from '../../GlobalStyles';
 import { Navigate, useNavigate } from 'react-router-dom';
+import ApisLineChart from './Charts/ApisLineChart';
+import ApisBarChart from './Charts/ApisBarChart'
 
 interface IErrorLog {
   _id: string
@@ -34,21 +35,13 @@ interface IErrorLog {
 export default function Dashboard() {
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
-  const [appHostConnection, setAppHostConnection] = useState(false)
-  const [listApiData, setListApiData] = useState([])
+  const [listApiData, setListApiData] = useState<any[]>([])
   const [errorLog, setErrorLog] = useState<IErrorLog[]>([])
-  const [data, setData] = useState<any[]>([]);
   const chartRef = useRef<any>(null);
   const realTimeContainerRef = useRef<any>(null);
 
   const [chartWidth, setChartWidth] = useState(0);
   const [realTimeContainerWidth, setRealTimeContainerWidth] = useState(0);
-  const newData = [
-    { timestamp: '2023-02-17T12:00:00.000Z', value: 10 },
-    { timestamp: '2023-02-17T12:01:00.000Z', value: 20 },
-    { timestamp: '2023-02-17T12:02:00.000Z', value: 15 },
-    { timestamp: '2023-02-17T12:03:00.000Z', value: 10 }
-  ];
   const notifySuccess = (message: string) => toast.success(message)
   const notifyError = (message: string) => toast.error(message);
 
@@ -61,32 +54,6 @@ export default function Dashboard() {
       setRealTimeContainerWidth(realTimeContainerRef.current.clientWidth);
     }
   };
-
-  const checkAppHost = async () => {
-    try {
-      setIsLoading(true)
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/app-host-connection`, config)
-      console.log(response)
-      if (response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        handleResize()
-        getAllApis()
-        getAllErrorLogs()
-        notifySuccess('Dashboard is now available')
-      }
-    } catch (error: any) {
-      notifyError(error.response.data.message)
-      navigate('/register-host')
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const getAllApis = async () => {
     try {
@@ -139,18 +106,24 @@ export default function Dashboard() {
         apiErrors++
       }
     }
+
     return apiErrors
   }
 
   useEffect(() => {
-    checkAppHost()
     const socket = io('http://localhost:8000')
+    getAllApis()
+    handleResize()
     socket.on('message', (message) => {
       console.log(message)
     });
     socket.on('error-log-data', (data) => {
       setErrorLog((prevState) => [...prevState, data])
+      getAllErrorLogs()
     });
+    if (errorLog.length === 0) {
+      getAllErrorLogs()
+    }
   }, [])
 
   return (
@@ -158,7 +131,7 @@ export default function Dashboard() {
       {
         isLoading ? (
           <Container>
-            <Spin size="large" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}/>
+            <Spin size="large" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }} />
           </Container>
         ) : (
           <>
@@ -212,58 +185,42 @@ export default function Dashboard() {
               <h1>Error Logs</h1>
               <ErrorData>
                 <ErrorCard>
-                  <div>0</div>
+                  <div>{errorLog.length}</div>
                   <h4>Total Leak Errors</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>Get users</div>
+                  <div>Get users</div> //handleMostLeakedApi
                   <h4>Most leaked api</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>Email</div>
+                  <div>Email</div> //handleMostLeakedDatas
                   <h4>Most leaked data</h4>
+                </ErrorCard>
+                <ErrorCard>
+                  <div>
+                    <div>Alto: 0</div>
+                    <div>Medio: 3</div>
+                    <div>Baixo: 0</div>
+                  </div>
+                  <h4>Quantidade por níveis</h4>
                 </ErrorCard>
               </ErrorData>
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
-                  <h2>Real Time errors</h2>
-                  <ResponsiveContainer width="100%" height={400}>
-                    <LineChart data={data}>
-                      <XAxis dataKey="timestamp" />
-                      <YAxis />
-                      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                      <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                      <Tooltip />
-                      <Legend />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <h2>Apis error lines</h2>
+                  <ApisLineChart errorLog={errorLog} />
 
                   <h3>Logs</h3>
                   <ErrorLogCard>
                     <div>{JSON.stringify(errorLog[0])}</div>
-                    <div>{JSON.stringify(errorLog[1])}</div>
-                    <div>{JSON.stringify(errorLog[3])}</div>
-                    <div>{JSON.stringify(errorLog[0])}</div>
-                    <div>{JSON.stringify(errorLog[0])}</div>
+
                   </ErrorLogCard>
                 </CommonErrorContainer>
-
-
                 <CommonErrorContainer>
                   <h2>Api Errors Comparison</h2>
-
-                  <ResponsiveContainer width="100%" height={400}>
-                    <LineChart data={data}>
-                      <XAxis dataKey="timestamp" />
-                      <YAxis />
-                      <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                      <Line type="monotone" dataKey="value" stroke="#8884d8" />
-                      <Tooltip />
-                      <Legend />
-                    </LineChart>
-                  </ResponsiveContainer>
+                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth}/>
+                  
                 </CommonErrorContainer>
-
               </GraphContainer>
             </ErrorContainer>
           </>
