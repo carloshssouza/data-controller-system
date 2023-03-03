@@ -29,9 +29,14 @@ export interface IApi {
     dataReturnAllowed: boolean
 }
 
+export interface IRestrictData {
+    personal: string[]
+    sensible: string[]
+}
 export interface IConfiguration {
     mongoUriHost: string
     applicationHost?: string
+    restrictDataList?: IRestrictData
 }
 
 export interface IBlackList {
