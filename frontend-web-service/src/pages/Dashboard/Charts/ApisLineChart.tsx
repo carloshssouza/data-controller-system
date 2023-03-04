@@ -42,7 +42,6 @@ export default function ApisLineChart({ errorLog }: ApisLineChartProps) {
       })
       return Object.fromEntries(sortedEntries)
     })
-    console.log("teste", sortedData)
     return {
       lines: uniqueNames,
       data: sortedData
@@ -61,7 +60,6 @@ export default function ApisLineChart({ errorLog }: ApisLineChartProps) {
         <XAxis dataKey="date" />
         <YAxis />
         <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-        {console.log("test2e", dataChart)}
         {
           dataChart.hasOwnProperty('lines') && dataChart?.lines.map((item: any) => {  
             return (
