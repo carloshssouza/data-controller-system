@@ -11,5 +11,6 @@ export default async function isDbConnected() {
     }
   } catch (error: any) {
     console.log(error)
+    return false
   } 
 }

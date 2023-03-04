@@ -3,6 +3,7 @@ import { Dashboard, Api, Login, Error } from '../pages'
 import FirstRegister from '../pages/FirstRegister'
 import RegisterApp from '../pages/RegisterApp'
 import SuperRoute from './services/SuperRoute'
+import Configuration from '../pages/Configuration'
 
 export default function routes() {
   return (
@@ -27,6 +28,12 @@ export default function routes() {
             <Dashboard />
           </SuperRoute>
         } />
+        <Route path="/configuration" element={
+          <SuperRoute>
+            <Configuration />
+          </SuperRoute>
+        } />
+
         <Route path="*" element={
           <Error />
         } />
