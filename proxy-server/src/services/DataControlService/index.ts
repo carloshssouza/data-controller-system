@@ -2,9 +2,9 @@ import GrpcClient from '../GrpcService/grpc'
 import Identifier from '../IdentifierService'
 import { IncomingMessage } from '../../types/http'
 import Auxiliary from './utils/auxiliary'
-import privateDataList from '../IdentifierService/privateDataList'
+import { IPrivateDataList } from '../IdentifierService/privateDataList'
 import { ILeakedData } from '../../interfaces/errorLogData.interface'
-
+import fs from 'fs'
 class DataControlService extends Auxiliary {
   /**
    * Method responsible for run all the functions to control the data response from external server
@@ -21,7 +21,8 @@ class DataControlService extends Auxiliary {
     }
 
     if (apiResponse && !apiResponse.dataReturnAllowed) {
-      const privateDataFound = await Identifier.findPrivateData(body, privateDataList) as ILeakedData[]
+      const restrictDataList = JSON.parse(fs.readFileSync('./src/services/DataControlService/utils/restrictDataList.json', 'utf8')) as IPrivateDataList
+      const privateDataFound = await Identifier.findPrivateData(body, restrictDataList) as ILeakedData[]
       if (privateDataFound.length) {
         const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse)
 

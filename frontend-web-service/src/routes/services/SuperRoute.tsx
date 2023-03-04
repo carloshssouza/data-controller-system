@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Navigate } from 'react-router-dom'
 import isAuthenticated from './auth';
 import isDbConnected from './dbConnection';
+import ConfigurationContext from '../../context/Configuration/ConfigurationContext';
 
 export default function SuperRoute({ children }: any) {
-  const [dbConnected, setDbConnected] = useState<boolean | null>(null);
-  console.log("teste")
+  const [dbConnection, setDbConnection]= useState(localStorage.getItem('dbConnection'))
 
   useEffect(() => {
-    isDbConnected().then((result: any) => setDbConnected(result));
+    if(!localStorage.getItem('dbConnection')) {
+      isDbConnected().then((result: any) => {
+        localStorage.setItem('dbConnection', result)
+        setDbConnection(result)
+      });
+    }
   }, []);
 
-  useEffect(() => {
-    console.log(dbConnected)
-  }, [dbConnected])
-
-  if (dbConnected === null) {
+  if (dbConnection === null) {
     return null; // or you could return a loading indicator
   }
-  if(!dbConnected) {
+  if(!dbConnection) {
     return <Navigate to="/first-register" />;
-  } else if(dbConnected) {
+  } else if(dbConnection) {
     if(isAuthenticated()) {
       return children;
     } else {
