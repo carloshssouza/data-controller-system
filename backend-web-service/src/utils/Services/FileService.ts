@@ -2,9 +2,9 @@ import fs from 'fs/promises'
 import path from 'path'
 
 class FileService {
-  public async createConfigFile (host: string, pathFile: string): Promise<boolean> {
+  public async createConfigFile (data: any, pathFile: string): Promise<boolean> {
     try {
-      const configString = JSON.stringify({ host })
+      const configString = JSON.stringify({ data })
       await fs.writeFile(path.resolve(__dirname, pathFile), configString)
       console.log('Config file saved successfully')
       return true

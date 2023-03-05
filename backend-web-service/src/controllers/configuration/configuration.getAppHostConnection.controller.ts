@@ -11,7 +11,7 @@ class ConfigurationGetAppHostConnectionController {
         throw new ErrorRes(500, 'Error getting Configuration')
       }
 
-      if (!configuration[0].applicationHost) {
+      if (!configuration.applicationHost) {
         throw new ErrorRes(404, 'Application host not found')
       }
 

@@ -13,7 +13,11 @@ class ConfigurationSchemaValidator {
   updateConfigurationValidation (httpBody: ConfigurationUpdateData) {
     const schema = Joi.object({
       mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/(?:(?:[^:]+:[^@]+)@)?([^/?]+)(?:\/([^?]+))?(?:\?(?:[^=&]+=[^&]+(?:&[^=&]+=[^&]+)*)?)?$/i).optional(),
-      applicationHost: Joi.string().uri({ scheme: ['http', 'https'] }).optional()
+      applicationHost: Joi.string().uri({ scheme: ['http', 'https'] }).optional(),
+      restrictDataList: Joi.object({
+        personal: Joi.array().items(Joi.string()).optional(),
+        sensible: Joi.array().items(Joi.string()).optional()
+      }).optional()
     }).or('mongoUriHost', 'applicationHost')
 
     return schema.validate(httpBody)
