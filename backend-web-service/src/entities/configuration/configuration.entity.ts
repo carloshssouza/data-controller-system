@@ -23,7 +23,7 @@ class ConfigurationEntity {
     }
   }
 
-  public async updateConfiguration (data: ConfigurationUpdateData) {
+  public async addApplicationHost (data: ConfigurationUpdateData) {
     const validate = await ConfigurationValidator.updateConfiguration(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
@@ -31,9 +31,31 @@ class ConfigurationEntity {
     const appConnected = await isAppRunning(data.applicationHost)
     if (!appConnected) throw new ErrorRes(500, 'Application host is not running')
 
-    const fileCreated = await FileService.createConfigFile(data.applicationHost, '../../../../proxy-server/config.json')
+    const fileCreated = await FileService.createConfigFile(data.restrictDataList, '../../../../proxy-server/src/services/DataControlService')
 
     if (!fileCreated) throw new ErrorRes(500, 'Error creating config file')
+
+    return configurationRepository.updateConfiguration(data)
+  }
+
+  public async addRestrictDataList (data: ConfigurationUpdateData) {
+    const validate = await ConfigurationValidator.updateConfiguration(data)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+
+    const fileCreated = await FileService.createConfigFile(data.applicationHost, '../../../../proxy-server/restrictDataList.json')
+
+    if (!fileCreated) throw new ErrorRes(500, 'Error creating restrict data list file')
+
+    return configurationRepository.updateConfiguration(data)
+  }
+
+  public async updateConfiguration (data: ConfigurationUpdateData) {
+    const validate = await ConfigurationValidator.updateConfiguration(data)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
 
     return configurationRepository.updateConfiguration(data)
   }

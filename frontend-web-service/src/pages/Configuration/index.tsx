@@ -2,12 +2,39 @@ import React, { useContext, useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import ConfigurationContext from '../../context/Configuration/ConfigurationContext';
-import { Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { Container } from '../../GlobalStyles';
+import { ConfigurationContainer, ConfigurationItem } from './styles';
+
+
+const restrictDataList = {
+  personal: [
+    'name',
+    'email'
+  ],
+  sensible: [
+    'race',
+    'religion'
+  ]
+}
+
+interface IRestrictDataList {
+  personal: string[]
+  sensible: string[]
+}
+
+interface IConfiguration {
+  mongoUriHost?: string
+  applicationHost?: string
+  restrictDataList?: IRestrictDataList
+}
 
 export default function Configuration() {
+  const navigate = useNavigate()
   const notifySuccess = (message: string) => toast.success(message)
   const notifyError = (message: string) => toast.error(message);
-  const {configuration, setConfiguration} = useContext(ConfigurationContext)
+  const [configuration, setConfiguration] = useState<IConfiguration>({})
 
   const getConfiguration = async () => {
     try {
@@ -17,32 +44,49 @@ export default function Configuration() {
         }
       }
 
-      const response = await api.get(`${import.meta.env.BASE_URL}/configuration`, config)
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration`, config)
 
       if(response.status !== 200) {
         throw new Error(response.data.message)
       } else {
-        notifySuccess(response.data.message)
         setConfiguration(response.data)
       }
     } catch (error: any) {
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.message)
     }
   }
 
   useEffect(() => {
-   
     getConfiguration()
   }, [])
 
   return (
-    <div>
-      <div>
+    <Container>
+      <ConfigurationContainer>
         <h1>Configuration</h1>
-        <div>{configuration.mongoUriHost}</div>
-        <div>{configuration.applicationHost}</div>
-      </div>
+        <ConfigurationItem>
+          <h3>Mongo Database Connection</h3>
+          <div>
+            <div>{configuration.mongoUriHost}</div>
+          </div>
+          <Button>Edit</Button>
+        </ConfigurationItem>
+        <div>
+          <h3>Application host target</h3>
+          <div>{configuration.applicationHost}</div>
+        </div>
+        <div>
+          <h3>Restrict Data List</h3>
+          <div>{restrictDataList.personal}</div>
+          <div>{restrictDataList.sensible}</div>
+        </div>
+        <Button>Start proxy server</Button>
+      </ConfigurationContainer>
       <ToastContainer />
-    </div>
+    </Container>
   )
 }

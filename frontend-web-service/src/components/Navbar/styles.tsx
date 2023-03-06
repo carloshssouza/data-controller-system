@@ -1,22 +1,25 @@
-import React from 'react';
-import { Layout, Menu, Button } from 'antd';
-import styled from 'styled-components';
-
+import styled from "styled-components";
+import { Layout, Menu } from "antd";
 const { Header } = Layout;
 
-const LogoutButton = styled(Button)`
-  margin-right: 24px;
+const StyledHeader = styled(Header)`
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  
+  .ant-menu-horizontal {
+    line-height: 60px;
+    border: 0;
+    box-shadow: none;
+    width: 100vw;
+    font-weight: bold;
+    font-size: 18px;
+  }
 `;
 
-export const NavBar = () => {
-  return (
-    <Header>
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['dashboard']}>
-        <Menu.Item key="dashboard">Dashboard</Menu.Item>
-        <Menu.Item key="apis">APIs</Menu.Item>
-      </Menu>
-      <LogoutButton type="primary" danger>Logout</LogoutButton>
-    </Header>
-  );
-}
 
+
+export {
+  StyledHeader,
+}
