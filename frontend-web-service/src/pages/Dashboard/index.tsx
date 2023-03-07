@@ -3,7 +3,6 @@ import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
 import { Button, Card, Form, Input, Spin, Tooltip } from 'antd';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip as Tooltip2, Legend } from 'recharts';
 
 import {
   ApiContainer,
@@ -11,6 +10,7 @@ import {
   CardItem,
   CardValue,
   CommonErrorContainer,
+  DashboardContainer,
   DataApi, ErrorCard,
   ErrorContainer, ErrorData,
   ErrorLogCard, GraphContainer,
@@ -42,7 +42,6 @@ export default function Dashboard() {
 
   const [chartWidth, setChartWidth] = useState(0);
   const [realTimeContainerWidth, setRealTimeContainerWidth] = useState(0);
-  const notifySuccess = (message: string) => toast.success(message)
   const notifyError = (message: string) => toast.error(message);
 
   const handleResize = () => {
@@ -65,6 +64,10 @@ export default function Dashboard() {
       }
     } catch (error: any) {
       notifyError(error.response.data.message)
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
     }
   }
 
@@ -73,7 +76,7 @@ export default function Dashboard() {
     try {
       const response = await api.get(`${import.meta.env.BASE_URL}/api-info/${name}`)
       if (response.status !== 200) {
-        throw new Error('Error getting api by id')
+        throw new Error(response.data.message)
       }
       else {
         return response.data
@@ -81,7 +84,11 @@ export default function Dashboard() {
 
     } catch (error: any) {
       console.error(error);
-      return error.response
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(error.message)
     }
   }
 
@@ -94,6 +101,10 @@ export default function Dashboard() {
         setErrorLog(response.data)
       }
     } catch (error: any) {
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.response.data.message)
     }
   }
@@ -134,7 +145,7 @@ export default function Dashboard() {
             <Spin size="large" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }} />
           </Container>
         ) : (
-          <>
+          <DashboardContainer>
             <ApiContainer>
               <h1>APIs</h1>
               <ApiSearchContainer>
@@ -189,11 +200,11 @@ export default function Dashboard() {
                   <h4>Total Leak Errors</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>Get users</div> //handleMostLeakedApi
+                  <div>Get users</div>
                   <h4>Most leaked api</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>Email</div> //handleMostLeakedDatas
+                  <div>Email</div> 
                   <h4>Most leaked data</h4>
                 </ErrorCard>
                 <ErrorCard>
@@ -213,17 +224,15 @@ export default function Dashboard() {
                   <h3>Logs</h3>
                   <ErrorLogCard>
                     <div>{JSON.stringify(errorLog[0])}</div>
-
                   </ErrorLogCard>
                 </CommonErrorContainer>
                 <CommonErrorContainer>
                   <h2>Api Errors Comparison</h2>
-                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth}/>
-                  
+                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth}/>           
                 </CommonErrorContainer>
               </GraphContainer>
             </ErrorContainer>
-          </>
+          </DashboardContainer>
         )
       }
       <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }} />

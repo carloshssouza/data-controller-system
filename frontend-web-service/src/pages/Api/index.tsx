@@ -3,6 +3,7 @@ import api from '../../api/axios'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { Button, Table, Popconfirm, Checkbox, Form } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 import { ApiAddContainer, ApiListContainer } from './styles';
 import ModalUpdateApiComponent from './components/ModalUpdateApiComponent';
@@ -19,6 +20,8 @@ interface IApiData {
 const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
 export default function Api() {
+
+  const navigate = useNavigate()
   const [listApisData, setListApisData] = useState<IApiData[]>([])
   const [selectRequestType, setSelectRequestType] = useState<string>(requestType[0])
   const [selectedRecord, setSelectedRecord] = useState<any>();
@@ -41,6 +44,10 @@ export default function Api() {
         setListApisData(response.data)
       }
     } catch (error: any) {
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.response.data.message)
     }
   }
@@ -61,6 +68,10 @@ export default function Api() {
         await getAllApis()
       }
     } catch (error: any) {
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.response.data.message)
     }
   }
@@ -81,6 +92,10 @@ export default function Api() {
         await getAllApis()
       }
     } catch (error: any) {
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.response.data.message)
     }
   }
@@ -100,6 +115,10 @@ export default function Api() {
         await getAllApis()
       }
     } catch (error: any) {
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.response.data.message)
     }
   }
@@ -115,6 +134,10 @@ export default function Api() {
       }
     } catch (error: any) {
       console.log("error")
+      if(error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.response.data.message)
     }
   }
@@ -147,7 +170,9 @@ export default function Api() {
             initialValue={record.dataReturnAllowed}
           >
             <Checkbox style={{ color: "black" }} onChange={(event) =>
-                onChangeUpdateDataReturnAllowed(event.target.checked, record._id)}>
+                onChangeUpdateDataReturnAllowed(event.target.checked, record._id)}
+              defaultChecked={false}
+            >
               {record.dataReturnAllowed ? "Yes" : "No"}
             </Checkbox>
           </Form.Item>

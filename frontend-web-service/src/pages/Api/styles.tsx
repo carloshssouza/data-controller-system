@@ -9,7 +9,7 @@ const ApiAddContainer = styled.div`
   width: 100%;
   border-radius: 10px;
   background: #27293D;
-  margin-top: 2rem;
+  margin-top: 70px;
   div {
     display: flex;
     align-items: center;
