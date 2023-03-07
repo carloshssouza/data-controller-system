@@ -4,6 +4,7 @@ import FirstRegister from '../pages/FirstRegister'
 import RegisterApp from '../pages/RegisterApp'
 import SuperRoute from './services/SuperRoute'
 import Configuration from '../pages/Configuration'
+import Navbar from '../components/Navbar'
 
 export default function routes() {
   return (
@@ -17,25 +18,30 @@ export default function routes() {
             <RegisterApp />
           </SuperRoute>
         } />
-        <Route path="/login" element={<Login />} />
         <Route path="/api" element={
           <SuperRoute>
+            <Navbar/>
             <Api />
           </SuperRoute>
         } />
         <Route path="/dashboard" element={
           <SuperRoute>
-            <Dashboard />
+            <Navbar/>
+            <Dashboard/>
           </SuperRoute>
         } />
-        <Route path="/configuration" element={
+        <Route path="/config" element={
           <SuperRoute>
+            <Navbar/>
             <Configuration />
           </SuperRoute>
         } />
-
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={
-          <Error />
+          <>
+            <Navbar/>
+            <Error />
+          </>      
         } />
       </Routes>
     </Router>
