@@ -7,6 +7,10 @@ interface DataApiProps extends HTMLAttributes<HTMLDivElement>, ThemeProps<any> {
   methodColor?: 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 }
 
+const DashboardContainer = styled.div`
+  margin-top: 70px;
+`
+
 const ApiContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -31,7 +35,7 @@ const CardItem = styled(Card)`
   border: none;
   color: white;
   margin-right: 1rem;
-  width: 300;
+  font-size: 16px;
   div {
     display: flex;
     flex-direction: column;
@@ -103,7 +107,7 @@ const ErrorCard = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 50px;
+  min-height: 150px;
   min-width: 150px;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
@@ -163,5 +167,6 @@ export {
   ErrorData,
   GraphContainer,
   ErrorLogCard,
-  CommonErrorContainer
+  CommonErrorContainer,
+  DashboardContainer
 }
