@@ -21,7 +21,7 @@ class JwtService {
    * @returns Returns jwt token
    */
   generate (data: any) {
-    return jwt.sign({ payload: data }, process.env.SECRET_KEY || '', {
+    return jwt.sign(data, process.env.SECRET_KEY || '', {
       expiresIn: '1h'
     })
   }

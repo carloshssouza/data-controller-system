@@ -38,7 +38,7 @@ const Navbar = () => {
 
   const userMenu = (
     <Menu>
-      <Menu.Item key="1">My Account</Menu.Item>
+      <Menu.Item key="1" onClick={() => navigate('/user')}>My Account</Menu.Item>
       <Menu.Item key="2" onClick={logoutUser}>Logout</Menu.Item>
     </Menu>
   );
