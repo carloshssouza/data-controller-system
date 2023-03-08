@@ -5,6 +5,7 @@ import RegisterApp from '../pages/RegisterApp'
 import SuperRoute from './services/SuperRoute'
 import Configuration from '../pages/Configuration'
 import Navbar from '../components/Navbar'
+import User from '../pages/User'
 
 export default function routes() {
   return (
@@ -34,6 +35,12 @@ export default function routes() {
           <SuperRoute>
             <Navbar/>
             <Configuration />
+          </SuperRoute>
+        } />
+        <Route path="/user" element={
+          <SuperRoute>
+            <Navbar/>
+            <User />
           </SuperRoute>
         } />
         <Route path="/login" element={<Login />} />
