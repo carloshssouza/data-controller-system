@@ -7,7 +7,7 @@ const EventEmitter = require('events')
 
 EventEmitter.defaultMaxListeners = 20
 
-const target = File.readFile('../../config.json')
+const target = File.readFile('../../app.host.json')
 
 process.on('SIGINT', () => {
   console.log('Received SIGINT signal. Stopping server...')
