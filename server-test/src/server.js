@@ -31,4 +31,16 @@ app.get('/users', (req, res) => {
   return res.json(users).status(200)
 })
 
+
+app.get('/user/:id', (req, res) => {
+  console.log(req)
+  const user = {
+    id: 1,
+    name: "Carl",
+    email: "carl@email.com"
+  }
+
+  res.json(user).status(200)
+})
+
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
