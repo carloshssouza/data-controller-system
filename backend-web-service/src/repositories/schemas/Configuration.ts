@@ -10,7 +10,7 @@ const RestrictDataListSchema = new Schema<IRestrictData>({
 const ConfigurationSchema = new Schema<IConfiguration>({
   mongoUriHost: { type: String, required: true },
   applicationHost: { type: String, required: false, allowNull: true },
-  restrictDataList: { type: RestrictDataListSchema, required: false, allowNull: true }
+  restrictDataList: { type: RestrictDataListSchema, required: true }
 }, {
   timestamps: true,
   versionKey: false

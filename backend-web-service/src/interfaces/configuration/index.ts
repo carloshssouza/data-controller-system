@@ -1,11 +1,12 @@
 
-interface ConfigurationCreateData {
-  mongoUriHost: string
-}
-
 interface IRestrictDataList {
   personal?: string[]
   sensible?: string[]
+}
+
+interface ConfigurationCreateData {
+  mongoUriHost: string
+  restrictDataList: IRestrictDataList
 }
 interface ConfigurationUpdateData {
   mongoUriHost?: string

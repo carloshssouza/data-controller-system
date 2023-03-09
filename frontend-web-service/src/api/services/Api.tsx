@@ -2,7 +2,7 @@ import api from '../axios'
 
 const createApi = async (data: any) => {
     try {
-      const response = await api.post(`${import.meta.env.BASE_URL}/api-info`, data)
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/api-info`, data)
       if(response.status !== 200) {
         throw new Error('Update api failed')
       } else{

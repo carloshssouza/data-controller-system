@@ -20,7 +20,7 @@ export default function RegisterApp() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       }
-      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration/app-host`, data, config)
+      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration`, data, config)
       if (response.status !== 200) {
         throw new Error(response.data.message)
       } else {

@@ -4,7 +4,11 @@ import { ConfigurationCreateData, ConfigurationUpdateData } from '../../../inter
 class ConfigurationSchemaValidator {
   createConfigurationValidation (httpBody: ConfigurationCreateData) {
     const schema = Joi.object({
-      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\//).required()
+      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\//).required(),
+      restrictDataList: Joi.object({
+        personal: Joi.array().items(Joi.string()).required(),
+        sensible: Joi.array().items(Joi.string()).required()
+      }).required()
     })
 
     return schema.validate(httpBody)

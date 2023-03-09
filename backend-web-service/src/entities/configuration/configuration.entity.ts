@@ -1,13 +1,16 @@
 import { ConfigurationCreateData, ConfigurationUpdateData } from '../../interfaces/configuration'
 import ErrorRes from '../../utils/Erro/index'
 import ConfigurationValidator from './configuration.validator'
-import configurationRepository from '../../repositories/configuration.repository'
+import ConfigurationRepository from '../../repositories/configuration.repository'
 import Database from '../../repositories/database/config'
 import isAppRunning from '../../utils/Services/CheckConnectionService'
 import FileService from '../../utils/Services/FileService'
+import restrictDataList from '../../utils/defaultRestrictDataList'
 
 class ConfigurationEntity {
   public async createConfiguration (data: ConfigurationCreateData) {
+    data.restrictDataList = restrictDataList
+
     const validate = await ConfigurationValidator.createConfiguration(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
@@ -16,10 +19,15 @@ class ConfigurationEntity {
     const connection = await Database.connect(data.mongoUriHost)
 
     if (connection) {
-      FileService.createConfigFile(data.mongoUriHost, '../../../config.json')
-      return configurationRepository.createConfiguration(data)
+      const configuration = await ConfigurationRepository.getConfiguration()
+      if (configuration && configuration.mongoUriHost) {
+        return configuration
+      } else {
+        FileService.createConfigFile(data.mongoUriHost, '../../../db.connection.json')
+        return ConfigurationRepository.createConfiguration(data)
+      }
     } else {
-      throw new ErrorRes(500, 'Connection failed')
+      throw new ErrorRes(500, 'Error connecting to database')
     }
   }
 
@@ -28,14 +36,15 @@ class ConfigurationEntity {
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
+
     const appConnected = await isAppRunning(data.applicationHost)
     if (!appConnected) throw new ErrorRes(500, 'Application host is not running')
 
-    const fileCreated = await FileService.createConfigFile(data.restrictDataList, '../../../../proxy-server/src/services/DataControlService')
+    const fileCreated = await FileService.createConfigFile(data.restrictDataList, '../../../../proxy-server/src/services/DataControlService/app.host.json')
 
     if (!fileCreated) throw new ErrorRes(500, 'Error creating config file')
 
-    return configurationRepository.updateConfiguration(data)
+    return ConfigurationRepository.updateConfiguration(data)
   }
 
   public async addRestrictDataList (data: ConfigurationUpdateData) {
@@ -48,7 +57,7 @@ class ConfigurationEntity {
 
     if (!fileCreated) throw new ErrorRes(500, 'Error creating restrict data list file')
 
-    return configurationRepository.updateConfiguration(data)
+    return ConfigurationRepository.updateConfiguration(data)
   }
 
   public async updateConfiguration (data: ConfigurationUpdateData) {
@@ -57,11 +66,11 @@ class ConfigurationEntity {
       throw new ErrorRes(400, validate.error.message)
     }
 
-    return configurationRepository.updateConfiguration(data)
+    return ConfigurationRepository.updateConfiguration(data)
   }
 
   public getConfiguration () {
-    return configurationRepository.getConfiguration()
+    return ConfigurationRepository.getConfiguration()
   }
 }
 
