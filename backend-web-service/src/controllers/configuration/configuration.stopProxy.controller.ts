@@ -1,10 +1,10 @@
 import ProxyService from '../../utils/Services/ProxyService'
 import { Request, Response } from '../../types/express'
 
-class ConfigurationStartProxyController {
-  public async startProxy (req: Request, res: Response): Promise<Response> {
+class ConfigurationStopProxyController {
+  public async stopProxy (req: Request, res: Response): Promise<Response> {
     try {
-      const message = ProxyService.startProxy()
+      const message = ProxyService.stopProxy()
       return res.status(200).json({ message })
     } catch (error) {
       console.error(error)
@@ -13,4 +13,4 @@ class ConfigurationStartProxyController {
   }
 }
 
-export default new ConfigurationStartProxyController()
+export default new ConfigurationStopProxyController()
