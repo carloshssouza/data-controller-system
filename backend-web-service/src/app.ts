@@ -44,7 +44,7 @@ class App {
   }
 
   private async databaseConnect () {
-    const mongoUrlHost = await FileService.readConfigFile('../../../config.json') as any
+    const mongoUrlHost = await FileService.readConfigFile('../../../db.connection.json') as any
     if (mongoUrlHost) {
       Database.connect(mongoUrlHost)
     }
