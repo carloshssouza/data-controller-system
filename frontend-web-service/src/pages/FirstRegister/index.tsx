@@ -18,7 +18,7 @@ export default function Register() {
   const handleCheckMongo = async (data: any) => {
     try {
       setIsLoading(true)
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/mongo-host`, { mongoUriHost: data.mongoUriHost })
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/mongo-host`, data)
       if (response.status !== 201) {
         throw new Error('Create api failed')
       } else {
