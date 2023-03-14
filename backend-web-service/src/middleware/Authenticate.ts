@@ -19,6 +19,10 @@ class Authenticate {
           throw new ErrorRes(401, token.message)
         }
 
+        if (token.type !== 'admin') {
+          throw new ErrorRes(401, 'User not authorized')
+        }
+
         next()
       } else {
         throw new ErrorRes(401, 'Token revoked')
