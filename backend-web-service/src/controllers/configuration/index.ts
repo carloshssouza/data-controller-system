@@ -5,6 +5,8 @@ import ConfigurationGetDbConnectionController from './configuration.getDbConnect
 import ConfigurationStartProxyController from './configuration.startProxy.controller'
 import ConfigurationAddApplicationHostController from './configuration.addApplicationHost.controller'
 import ConfigurationStopProxyController from './configuration.stopProxy.controller'
+import ConfigurationCheckProxyController from './configuration.checkProxy.controller'
+import ConfigurationCheckApplicationHostController from './configuration.checkApplicationHost.controller'
 
 export {
   ConfigurationCreateController,
@@ -13,5 +15,7 @@ export {
   ConfigurationGetDbConnectionController,
   ConfigurationStartProxyController,
   ConfigurationAddApplicationHostController,
-  ConfigurationStopProxyController
+  ConfigurationStopProxyController,
+  ConfigurationCheckProxyController,
+  ConfigurationCheckApplicationHostController
 }
