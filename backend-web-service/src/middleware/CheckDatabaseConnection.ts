@@ -1,12 +1,17 @@
+import ErrorRes from '../utils/Erro'
 import { Request, Response, NextFunction } from '../types/express'
 import { mongoose } from '../types/mongoose'
 
 class DatabaseConnection {
   public checkDbConnection = (req: Request, res: Response, next: NextFunction) => {
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(500).json({ error: 'Database connection not established', connection: false })
+    try {
+      if (mongoose.connection.readyState !== 1) {
+        throw new ErrorRes(500, 'Database connection error')
+      }
+      next()
+    } catch (error) {
+      return res.status(error.status || 500).json({ connection: false, error: error.message })
     }
-    next()
   }
 }
 
