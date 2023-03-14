@@ -1,14 +1,26 @@
-import { spawn } from 'child_process'
+import { execSync, spawn } from 'child_process'
 import path from 'path'
 
-class ProxyService {
-  public startProxy (): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const proxyProcess = spawn('gnome-terminal', ['-e', 'yarn start:proxy', '--working-directory', path.resolve(__dirname, '../../../../proxy-server')])
+interface ProxyResponse {
+  status: number
+  message: string
+}
 
+class ProxyService {
+  public async startProxy (): Promise<string | any> {
+    console.log('Starting proxy server...')
+    return new Promise((resolve, reject) => {
+      const proxyProcess = spawn('yarn', [
+        'start:proxy'
+      ], {
+        cwd: path.resolve(__dirname, '../../../../proxy-server')
+      })
+
+      console.log(`Proxy process PID: ${proxyProcess.pid}`) // log the PID
       proxyProcess.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`)
-        if (data.includes('Proxy server started')) {
+        if (data.includes('Proxy server listening on 8888')) {
+          console.log('Proxy server started successfully.')
           resolve('Proxy server started successfully.')
         }
       })
@@ -16,49 +28,96 @@ class ProxyService {
       proxyProcess.stderr.on('data', (data) => {
         console.error(`stderr: ${data}`)
         // eslint-disable-next-line prefer-promise-reject-errors
-        reject(`Failed to start proxy server: ${data}`)
+        reject({
+          status: 500,
+          message: `Failed to start proxy server. Error: ${data}`
+        })
       })
 
       proxyProcess.on('close', (code) => {
         console.log(`child process exited with code ${code}`)
         if (code !== 0) {
           // eslint-disable-next-line prefer-promise-reject-errors
-          reject(`Failed to start proxy server. Exit code: ${code}`)
+          reject({
+            status: 500,
+            message: `Failed to start proxy server. Exit code: ${code}`
+          })
         }
       })
     })
   }
 
-  public stopProxy (): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const child = spawn('gnome-terminal', ['-e', 'yarn start:proxy', '--working-directory', path.resolve(__dirname, '../../../../proxy-server')])
+  public async stopProxy (): Promise<ProxyResponse> {
+    const port = 8888
+    let pid: string | undefined
 
-      // Handle the SIGINT signal for the parent process
-      process.on('SIGINT', () => {
-        console.log('Received SIGINT signal. Stopping child process...')
-        child.kill('SIGINT') // Emit the SIGINT signal to the child process
-      })
+    try {
+      const output = execSync(`lsof -t -i :${port}`)
+      pid = output.toString().trim() // convert output to string and remove whitespace
+    } catch (error) {
+      console.error(`Error getting PID for port ${port}:`, error)
+      return {
+        status: 500,
+        message: 'Error stopping proxy server.'
+      }
+    }
 
-      child.stdout.on('data', (data) => {
-        console.log(`child process stdout: ${data}`)
-        if (data.includes('Proxy server stopped')) {
-          resolve('Proxy server stopped successfully.')
+    if (!pid) {
+      console.error(`No process found running on port ${port}.`)
+      return {
+        status: 500,
+        message: 'Proxy server is not running.'
+      }
+    }
+
+    try {
+      execSync(`kill -9 ${pid}`)
+      console.log('Proxy server stopped successfully.')
+      return {
+        status: 200,
+        message: 'Proxy server stopped successfully.'
+      }
+    } catch (error) {
+      console.error('Error stopping proxy server:', error)
+      return {
+        status: 500,
+        message: 'Error stopping proxy server.'
+      }
+    }
+  }
+
+  public async checkProxyServer (): Promise<ProxyResponse | any> {
+    const lsofProcess = spawn('lsof', ['-i', ':8888'])
+
+    lsofProcess.stdout.on('data', (data) => {
+      if (data.toString().includes('LISTEN')) {
+        return {
+          status: 200,
+          message: 'Proxy server is running.'
         }
-      })
-
-      child.stderr.on('data', (data) => {
-        console.error(`child process stderr: ${data}`)
-        // eslint-disable-next-line prefer-promise-reject-errors
-        reject(`Failed to stop proxy server: ${data}`)
-      })
-
-      child.on('close', (code) => {
-        console.log(`child process exited with code ${code}`)
-        if (code !== 0) {
-          // eslint-disable-next-line prefer-promise-reject-errors
-          reject(`Failed to stop proxy server. Exit code: ${code}`)
+      } else {
+        return {
+          status: 500,
+          message: 'Proxy server is not running.'
         }
-      })
+      }
+    })
+    lsofProcess.stderr.on('data', (err) => {
+      console.error(err)
+      return {
+        status: 500,
+        message: 'Failed to check proxy server status.'
+      }
+    })
+
+    lsofProcess.on('close', (code) => {
+      if (code !== 0) {
+        console.error(`child process exited with code ${code}`)
+        return {
+          status: 500,
+          message: `Failed to check proxy server status. Exit code: ${code}`
+        }
+      }
     })
   }
 }

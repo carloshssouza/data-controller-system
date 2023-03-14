@@ -4,7 +4,7 @@ import path from 'path'
 class FileService {
   public async createConfigFile (data: any, pathFile: string): Promise<boolean> {
     try {
-      const configString = JSON.stringify({ data })
+      const configString = JSON.stringify({ mongoUrlHost: data })
       await fs.writeFile(path.resolve(__dirname, pathFile), configString)
       console.log('Config file saved successfully')
       return true
@@ -14,11 +14,11 @@ class FileService {
     }
   }
 
-  public async readConfigFile (pathFile: string): Promise<boolean> {
+  public async readConfigFile (pathFile: string): Promise<string> {
     const absolutePath = path.resolve(__dirname, pathFile)
     const fileContent = await fs.readFile(absolutePath, 'utf8')
     if (!fileContent) {
-      return false
+      throw new Error('Error reading file')
     }
     const config = JSON.parse(fileContent)
     return config.mongoUrlHost
