@@ -2,15 +2,16 @@ import ProxyService from '../../utils/Services/ProxyService'
 import { Request, Response } from '../../types/express'
 import ErrorRes from '../../utils/Erro'
 
-class ConfigurationStopProxyController {
-  public async stopProxy (req: Request, res: Response): Promise<Response> {
+class ConfigurationCheckProxyController {
+  public async checkProxy (req: Request, res: Response): Promise<Response> {
     try {
-      const proxy = await ProxyService.stopProxy()
+      const proxy = await ProxyService.checkProxyServer()
+
       if (proxy.status === 500) {
         throw new ErrorRes(proxy.status, proxy.message)
       }
-      console.log('proxy', proxy)
-      return res.status(200).json({ message: proxy })
+
+      return res.status(200).json({ message: proxy.message })
     } catch (error) {
       console.error(error)
       return res.status(error.status || 500).json({ message: error.message })
@@ -18,4 +19,4 @@ class ConfigurationStopProxyController {
   }
 }
 
-export default new ConfigurationStopProxyController()
+export default new ConfigurationCheckProxyController()
