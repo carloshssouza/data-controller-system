@@ -23,7 +23,8 @@ class ConfigurationEntity {
       if (configuration && configuration.mongoUriHost) {
         return configuration
       } else {
-        FileService.createConfigFile(data.mongoUriHost, '../../../db.connection.json')
+        FileService.createConfigFile(data.mongoUriHost, '../../../../configs/db.connection.json')
+
         return ConfigurationRepository.createConfiguration(data)
       }
     } else {
@@ -39,8 +40,12 @@ class ConfigurationEntity {
 
     const appConnected = await isAppRunning(data.applicationHost)
     if (!appConnected) throw new ErrorRes(500, 'Application host is not running')
+    const configuration = {
+      applicationHost: data.applicationHost,
+      restrictDataList
+    }
 
-    const fileCreated = await FileService.createConfigFile(data.restrictDataList, '../../../../proxy-server/src/services/DataControlService/app.host.json')
+    const fileCreated = await FileService.createConfigFile(configuration, '../../../../configs/proxy.config.json')
 
     if (!fileCreated) throw new ErrorRes(500, 'Error creating config file')
 
@@ -53,7 +58,7 @@ class ConfigurationEntity {
       throw new ErrorRes(400, validate.error.message)
     }
 
-    const fileCreated = await FileService.createConfigFile(data.applicationHost, '../../../../proxy-server/restrictDataList.json')
+    const fileCreated = await FileService.createConfigFile(data.restrictDataList, '../../../../proxy-server/restrictDataList.json')
 
     if (!fileCreated) throw new ErrorRes(500, 'Error creating restrict data list file')
 
@@ -71,6 +76,18 @@ class ConfigurationEntity {
 
   public getConfiguration () {
     return ConfigurationRepository.getConfiguration()
+  }
+
+  public deleteApplicationHost () {
+    return ConfigurationRepository.deleteApplicationHost()
+  }
+
+  public deleteMongoHost () {
+    return ConfigurationRepository.deleteMongoHost()
+  }
+
+  public connectToDatabase () {
+    return ConfigurationRepository.connectToDatabase()
   }
 }
 
