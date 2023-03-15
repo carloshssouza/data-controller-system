@@ -7,6 +7,8 @@ import ConfigurationAddApplicationHostController from './configuration.addApplic
 import ConfigurationStopProxyController from './configuration.stopProxy.controller'
 import ConfigurationCheckProxyController from './configuration.checkProxy.controller'
 import ConfigurationCheckApplicationHostController from './configuration.checkApplicationHost.controller'
+import ConfigurationDeleteApplicationHostController from './configuration.deleteApplicationHost.controller'
+import ConfigurationDeleteMongoHostController from './configuration.deleteMongoHost.controller'
 
 export {
   ConfigurationCreateController,
@@ -17,5 +19,7 @@ export {
   ConfigurationAddApplicationHostController,
   ConfigurationStopProxyController,
   ConfigurationCheckProxyController,
-  ConfigurationCheckApplicationHostController
+  ConfigurationCheckApplicationHostController,
+  ConfigurationDeleteApplicationHostController,
+  ConfigurationDeleteMongoHostController
 }

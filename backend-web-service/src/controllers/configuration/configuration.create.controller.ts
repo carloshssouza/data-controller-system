@@ -5,7 +5,6 @@ import ConfigurationEntity from '../../entities/configuration/configuration.enti
 class ConfigurationCreateController {
   async createConfiguration (req: Request, res: Response): Promise<Response> {
     try {
-      console.log('Creating', req.body)
       const configuration = await ConfigurationEntity.createConfiguration(req.body)
 
       if (!configuration) {
