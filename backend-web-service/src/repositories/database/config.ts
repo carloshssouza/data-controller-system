@@ -14,6 +14,10 @@ class Database {
         return false
       })
   }
+
+  public disconnect () {
+    return mongoose.disconnect()
+  }
 }
 
 export default new Database()
