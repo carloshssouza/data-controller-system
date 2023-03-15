@@ -6,8 +6,6 @@ import swaggerDocument from '../docs/swagger.json'
 import dotenv from 'dotenv'
 import FileService from './utils/Services/FileService'
 import Database from './repositories/database/config'
-import util from 'util'
-import fs from 'fs'
 
 import {
   ApiRoutes,
@@ -47,10 +45,9 @@ class App {
 
   private async databaseConnect () {
     try {
-      // File exists, so read it
-      const mongoUrlHost = await FileService.readConfigFile('../../../db.connection.json')
-      if (mongoUrlHost) {
-        await Database.connect(mongoUrlHost)
+      const mongoUriHost = await FileService.readConfigFile('../../../../configs/db.connection.json')
+      if (mongoUriHost) {
+        await Database.connect(mongoUriHost)
       }
     } catch (error) {
       console.error(`Error checking for or reading file: ${error}`)

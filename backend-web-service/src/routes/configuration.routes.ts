@@ -7,7 +7,9 @@ import {
   ConfigurationAddApplicationHostController,
   ConfigurationStopProxyController,
   ConfigurationCheckProxyController,
-  ConfigurationCheckApplicationHostController
+  ConfigurationCheckApplicationHostController,
+  ConfigurationDeleteApplicationHostController,
+  ConfigurationDeleteMongoHostController
 } from '../controllers/configuration'
 import { Router } from '../types/express'
 import Authenticate from '../middleware/Authenticate'
@@ -24,5 +26,7 @@ routes.get('/configuration/start-proxy', Authenticate.authenticateAdmin, Configu
 routes.get('/configuration/stop-proxy', Authenticate.authenticateAdmin, ConfigurationStopProxyController.stopProxy)
 routes.get('/configuration/check-proxy', Authenticate.authenticateAdmin, ConfigurationCheckProxyController.checkProxy)
 routes.get('/configuration/check-application-host', Authenticate.authenticateAdmin, ConfigurationCheckApplicationHostController.checkApplicationHost)
+routes.delete('/configuration/application-host', Authenticate.authenticateAdmin, ConfigurationDeleteApplicationHostController.deleteApplicationHost)
+routes.delete('/configuration/mongo-host', Authenticate.authenticateAdmin, ConfigurationDeleteMongoHostController.deleteMongoHost)
 
 export default routes

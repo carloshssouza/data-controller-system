@@ -1,6 +1,8 @@
 import isAppRunning from '../../utils/Services/CheckConnectionService'
 import { Request, Response } from '../../types/express'
 import ErrorRes from '../../utils/Erro'
+import FileService from '../../utils/Services/FileService'
+import ConfigurationEntity from '../../entities/configuration/configuration.entity'
 
 class ConfigurationCheckApplicationHostController {
   public async checkApplicationHost (req: Request, res: Response): Promise<Response> {
@@ -12,6 +14,12 @@ class ConfigurationCheckApplicationHostController {
       if (!applicationHost) {
         throw new ErrorRes(500, 'Application host is not running')
       }
+
+      const config = await ConfigurationEntity.getConfiguration()
+      delete config.mongoUriHost
+
+      await FileService.createProxyConfigFile(config, '../../../../configs/proxy.config.json')
+
       return res.status(200).json({ message: 'Application running' })
     } catch (error) {
       console.error(error)
