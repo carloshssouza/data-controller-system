@@ -19,7 +19,7 @@ const Navbar = () => {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       }
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/logout`, config)
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/logout`, {}, config)
       if (response.status !== 200) {
         throw new Error('Logout failed')
       } else {
@@ -57,7 +57,7 @@ const Navbar = () => {
             </Dropdown>
           </Menu.Item>
       </Menu>
-      <ToastContainer />
+      <ToastContainer theme='dark'/>
     </StyledHeader>
   );
 };

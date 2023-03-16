@@ -1,16 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
-import { Button, Form, Input, Modal, Popconfirm, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Container } from '../../GlobalStyles';
-import { ConfigurationContainer, ConfigurationContainerRestrict, ConfigurationItem, ConfigurationItemRestrictData } from './styles';
-
+import { ConfigurationContainer, ConfigurationContainerRestrict} from './styles';
+import ProxyButton from './components/ProxyButton';
+import MongoItem from './components/MongoItem';
+import ApplicationHostItem from './components/ApplicationHostItem';
+import RestrictDataItem from './components/RestrictDataItem';
+ 
 
 const restrictDataList = {
   personal: [
     'name',
-    'email'
+    'email',
+    'address',
+    'phone',
   ],
   sensible: [
     'race',
@@ -29,20 +34,17 @@ interface IConfiguration {
   restrictDataList?: IRestrictDataList
 }
 
-const confirm = (e: React.MouseEvent<HTMLElement>) => {
-  console.log(e);
-  message.success('Click on Yes');
-};
 
 export default function Configuration() {
   const navigate = useNavigate()
   const notifyError = (message: string) => toast.error(message);
   const notifySuccess = (message: string) => toast.success(message)
 
-  const [isModalMongoConnectionVisible, setIsModalMongoConnectionVisible] = useState(false);
-  const [isModalApplicationHostVisible, setIsModalApplicationHostVisible] = useState(false);
-
+  const [isProxyStarted, setIsProxyStarted] = useState(false);
+  const [isApplicationHostStarted, setIsApplicationHostStarted] = useState(false);
   const [configuration, setConfiguration] = useState<IConfiguration>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [isTestLoading, setIsTestLoading] = useState(false)
 
   const getConfiguration = async () => {
     try {
@@ -60,9 +62,14 @@ export default function Configuration() {
         setConfiguration(response.data)
       }
     } catch (error: any) {
+      console.log(error)
       if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
+      }
+      if(error.response.status === 404 || !error.response.data.connection) {
+        localStorage.removeItem('dbConnection')
+        navigate('/')
       }
       notifyError(error.message)
     }
@@ -91,6 +98,31 @@ export default function Configuration() {
     }
   }
 
+  const updateConfiguration = async (data: any) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration`, data, config)
+      if (response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        notifySuccess(response.data.message)
+        setTimeout(() => {
+          logoutUser()
+        }, 3000)
+      }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(error.message)
+    }
+  }
+
   const deleteMongoDatabaseConnection = async () => {
     try {
       const config = {
@@ -98,7 +130,7 @@ export default function Configuration() {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       }
-      const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/configuration/mongo-database-connection`, config)
+      const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/configuration/mongo-host`, config)
       if(response.status !== 200) {
         throw new Error(response.data.message)
       } else {
@@ -108,105 +140,173 @@ export default function Configuration() {
         }, 3000)
       }
     } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.message)
     }
   }
 
-  const handleMongoConnectionButtonClick = () => {
-    setIsModalMongoConnectionVisible(true);
-  };
-  const handleApplicationHostButtonClick = () => {
-    setIsModalMongoConnectionVisible(true);
-  };
+
+  const deleteApplicationHost = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/configuration/application-host`, config)
+      if(response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        notifySuccess(response.data.message)
+        getConfiguration()
+      }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(error.message)
+    }
+  }
+
+  const startProxyServer = async() => {
+    try {
+      setIsLoading(true)
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/start-proxy`, config)
+      console.log('teste', response)
+      if(response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        notifySuccess(response.data.message)
+        setIsProxyStarted(true)
+      }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(error.response.data.message || error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const stopProxyServer = async() => {
+    try {
+      setIsLoading(true)
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/stop-proxy`, config)
+      if(response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        
+        notifySuccess(response.data.message)
+        setIsProxyStarted(false)
+      }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const checkProxyServer = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/check-proxy`, config)
+      if(response.status !== 200) {
+        throw new Error(response.data.message)
+      } else { 
+        notifySuccess(response.data.message)
+        setIsProxyStarted(response.data.isProxyStarted)
+      }
+    } catch (error: any) {
+      notifyError(error.message)
+    } 
+  }
+
+  const checkApplicationHost = async () => {
+    try {
+      setIsTestLoading(true)
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/check-application-host?applicationUrl=${configuration?.applicationHost}`, config)
+      if(response.status !== 200) {
+        throw new Error(response.data.message)
+      }
+       else {
+        notifySuccess(response.data.message)
+        setIsApplicationHostStarted(true)
+       }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(error.response.data.message)
+      setIsApplicationHostStarted(false)
+    } finally {
+      setIsTestLoading(false)
+    }
+  }
 
   useEffect(() => {
     getConfiguration()
   }, [])
 
+
+
   return (
     <Container>
       <ConfigurationContainer>
-        <h1>Configuration</h1>
-        <ConfigurationItem>
-          <h3>Mongo Database Connection:</h3>
-          <div>{configuration.mongoUriHost}</div>
-          <Button type="primary" onClick={() => handleMongoConnectionButtonClick()}>Update</Button>
-          <Popconfirm
-            title="Are you sure you want to delete the mongo database connection? This will logout your user"
-            onConfirm={() => deleteMongoDatabaseConnection()}
-          >
-            <Button style={{ background: "#E5484D", color: 'white' }}>Delete</Button>
-          </Popconfirm>
-          <Modal
-            title="Edit Configuration"
-            open={isModalMongoConnectionVisible}
-            onCancel={() => setIsModalMongoConnectionVisible(false)}
-            footer={null}
-          >
-            <Form>
-              <Form.Item>
-                <Input placeholder="Mongo Database Connection" />
-              </Form.Item>
-            </Form>
-          </Modal>
-        </ConfigurationItem>
-        <ConfigurationItem>
-          <h3>Application host target:</h3>
-          <div>{configuration.applicationHost}</div>
-          <Button type="primary" onClick={() => handleApplicationHostButtonClick()}>Update</Button>
-          
-          <Modal
-            title="Edit Configuration"
-            open={isModalMongoConnectionVisible}
-            onCancel={() => setIsModalApplicationHostVisible(false)}
-            footer={null}
-          >
-            <Form>
-              <Form.Item>
-                <Input placeholder="Mongo Database Connection" />
-              </Form.Item>
-            </Form>
-          </Modal>
-          <Popconfirm
-            title="Are you sure you want to delete the mongo database connection? This will logout your user"
-            onConfirm={() => deleteMongoDatabaseConnection()}
-          >
-            <Button style={{ background: "#E5484D", color: 'white' }}>Delete</Button>
-          </Popconfirm>
-          <Modal
-            title="Edit Configuration"
-            open={isModalApplicationHostVisible}
-            onCancel={() => setIsModalApplicationHostVisible(false)}
-            footer={null}
-          >
-            <Form>
-              <Form.Item>
-                <Input placeholder="Mongo Database Connection" />
-              </Form.Item>
-            </Form>
-          </Modal>
-        </ConfigurationItem>
-
+        <MongoItem
+          configuration={configuration}
+          deleteMongoDatabaseConnection={deleteMongoDatabaseConnection}
+        />
+        <ApplicationHostItem 
+          configuration={configuration} 
+          deleteApplicationHost={deleteApplicationHost} 
+          checkApplicationHost={checkApplicationHost}
+          updateConfiguration={updateConfiguration}
+          isTestLoading={isTestLoading}
+        />
       </ConfigurationContainer>
 
       <ConfigurationContainerRestrict>
-        <ConfigurationItemRestrictData>
-          <h2>Restrict Data List</h2>
-          <div>
-            <div>
-              <h4>Personal</h4>
-              <div>{restrictDataList.personal}</div>
-            </div>
-            <div>
-              <h4>Sensible</h4>
-              <div>{restrictDataList.sensible}</div>
-            </div>
-          </div>
-        </ConfigurationItemRestrictData>
-        <Button>Start proxy server</Button>
+        <RestrictDataItem restrictDataList={restrictDataList}/>
+        <ProxyButton 
+          onClick={!isProxyStarted ? startProxyServer : stopProxyServer} 
+          isActive={isProxyStarted} 
+          isApplicationHostStarted={isApplicationHostStarted}
+          isLoading={isLoading}
+        />
       </ConfigurationContainerRestrict>
-
-      <ToastContainer />
     </Container>
   )
 }
