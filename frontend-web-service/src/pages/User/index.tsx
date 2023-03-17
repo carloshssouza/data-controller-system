@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { Container } from '../../GlobalStyles'
 import { UserContainer } from './styles'
 import { Button } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 interface IUserData {
   name?: string
@@ -14,7 +15,8 @@ interface IUserData {
 export default function User() {
   const [userData, setUserData] = useState<IUserData>({})
   const notifyError = (message: string) => toast.error(message);
-  
+  const navigate = useNavigate()
+
   const getUserData = async() => {
     try {
       const config = {
@@ -29,6 +31,10 @@ export default function User() {
         setUserData(response.data)
       }
     } catch (error: any) {
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
       notifyError(error.message)
     }
   }
