@@ -17,10 +17,11 @@ const UserContainer = styled.div`
       margin-bottom: 1rem;
       Button {
         font-weight: bold;
-        margin-left: 1rem;
-        background: #65BA74;
+        /* margin-left: 1rem; */
+        /* background: #65BA74; */
         border: none;
-        color: white;
+        /* color: white; */
+        margin-bottom: 1rem;
       }
     }
 `

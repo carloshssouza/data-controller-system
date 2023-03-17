@@ -41,7 +41,7 @@ export default function Register() {
         throw new Error('Create user failed')
       } else {
         notifySuccess(response.data.message)
-        navigate("/login")
+        navigate("/register-host")
       }
     } catch (error: any) {
       notifyError(error.response.data.message)
@@ -49,7 +49,7 @@ export default function Register() {
       setIsLoading(false)
     }
   }
-
+  
   const checkMongoConnection = async () => {
     try {
       setIsLoading(true)

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { RegisterAppContainer } from './styles'
 import { useNavigate } from 'react-router-dom';
@@ -14,13 +14,7 @@ export default function RegisterApp() {
   const handleAppHostData = async (data: any) => {
     try {
       setIsLoading(true)
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration`, data, config)
+      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration/application-host`, data)
       if (response.status !== 200) {
         throw new Error(response.data.message)
       } else {
@@ -33,6 +27,37 @@ export default function RegisterApp() {
       setIsLoading(false)
     }
   }
+  
+  const getConfiguration = async () => {
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration`, config)
+
+      if (response.status !== 200) {
+        throw new Error(response.data.message)
+      } else {
+        if(response.data.applicationHost) {
+          navigate('/login')
+        }
+      }
+    } catch (error: any) {
+      console.log(error)
+      if(error.response.status === 404 || !error.response.data.connection) {
+        localStorage.removeItem('dbConnection')
+        navigate('/')
+      }
+      notifyError(error.message)
+    }
+  }
+
+  useEffect(() => {
+    getConfiguration()
+  }, [])
 
   return (
     <RegisterAppContainer>
