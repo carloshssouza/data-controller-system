@@ -1,33 +1,40 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import isAuthenticated from './auth';
-import isDbConnected from './dbConnection';
-import ConfigurationContext from '../../context/Configuration/ConfigurationContext';
+import isAuthenticated from './auth'
+import isDbConnected from './dbConnection'
 
 export default function SuperRoute({ children }: any) {
-  const [dbConnection, setDbConnection]= useState(localStorage.getItem('dbConnection'))
+  const [dbConnectionChecked, setDbConnectionChecked] = useState(!!localStorage.getItem('dbConnection'))
+  const [isAuthenticatedUser, setIsAuthenticatedUser] = useState(isAuthenticated())
 
   useEffect(() => {
-    if(!localStorage.getItem('dbConnection')) {
+    if (!dbConnectionChecked) {
       isDbConnected().then((result: any) => {
         localStorage.setItem('dbConnection', result)
-        setDbConnection(result)
-      });
+        setDbConnectionChecked(true)
+      })
     }
-  }, []);
+  }, [dbConnectionChecked])
 
-  if (dbConnection === null) {
-    return null; // or you could return a loading indicator
-  }
-  if(!dbConnection) {
-    return <Navigate to="/first-register" />;
-  } else if(dbConnection) {
-    if(isAuthenticated()) {
-      return children;
-    } else {
-      return <Navigate to="/login" />;
-    }
+  useEffect(() => {
+    setIsAuthenticatedUser(isAuthenticated())
+  }, [])
+
+  if (!dbConnectionChecked) {
+    // The database connection status is not known yet, so render nothing
+    return null
   }
 
-  return null; // fallback case
+  if (!localStorage.getItem('dbConnection')) {
+    // The database connection failed, so navigate to the home page
+    return <Navigate to="/" />
+  }
+
+  if (!isAuthenticatedUser) {
+    // The user is not authenticated, so navigate to the login page
+    return <Navigate to="/login" />
+  }
+
+  // The database connection and authentication succeeded, so render the children
+  return children
 }

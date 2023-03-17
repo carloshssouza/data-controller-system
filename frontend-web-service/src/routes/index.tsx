@@ -6,6 +6,9 @@ import SuperRoute from './services/SuperRoute'
 import Configuration from '../pages/Configuration'
 import Navbar from '../components/Navbar'
 import User from '../pages/User'
+import RouteDbConnected from './services/RouteDbConnected'
+import NavbarError from '../components/NavbarError'
+import ProtectedRoute from './services/ProtectedRoute'
 
 export default function routes() {
   return (
@@ -15,9 +18,9 @@ export default function routes() {
             <FirstRegister />
         } />
         <Route path="/register-host" element={
-          <SuperRoute>
+          <RouteDbConnected>
             <RegisterApp />
-          </SuperRoute>
+          </RouteDbConnected>
         } />
         <Route path="/api" element={
           <SuperRoute>
@@ -43,10 +46,15 @@ export default function routes() {
             <User />
           </SuperRoute>
         } />
-        <Route path="/login" element={<Login />} />
+
+        <Route path="/login" element={
+          <RouteDbConnected>
+            <Login />
+          </RouteDbConnected>
+        } />
         <Route path="*" element={
           <>
-            <Navbar/>
+            <NavbarError/>
             <Error />
           </>      
         } />
