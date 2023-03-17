@@ -1,7 +1,7 @@
 import React from 'react'
 import { UserContainer } from './styles'
 import { Button, Form, Input, Spin } from 'antd'
-
+import { useNavigate } from 'react-router-dom'
 
 interface UserFormComponentProps {
   handleRegisterUser: (data: any) => void
@@ -9,9 +9,15 @@ interface UserFormComponentProps {
 }
 
 export default function UserFormComponent({ handleRegisterUser, isLoading }: UserFormComponentProps) {
+  const navigate = useNavigate()
+
+  const onClickAlreadyHaveUser = () => {
+    navigate("/register-host")
+  }
+
   return (
     <UserContainer>
-      <h2>Register your first admin user</h2>
+      <h2>Register your admin user</h2>
       <Form
         name="basic"
         initialValues={{ remember: true }}
@@ -36,7 +42,8 @@ export default function UserFormComponent({ handleRegisterUser, isLoading }: Use
         >
           <Input.Password placeholder='Password' />
         </Form.Item>
-        <Button disabled={isLoading} htmlType='submit'>{isLoading ? <Spin/> : 'Confirm'}</Button>
+        <Button style={{background: '#65BA74', color: 'white'}}disabled={isLoading} htmlType='submit'>{isLoading ? <Spin/> : 'Confirm'}</Button>
+        <Button type="default" onClick={onClickAlreadyHaveUser} >Already have a user</Button>
       </Form>
     </UserContainer>
   )
