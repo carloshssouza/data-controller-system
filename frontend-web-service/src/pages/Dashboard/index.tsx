@@ -129,7 +129,8 @@ export default function Dashboard() {
       console.log(message)
     });
     socket.on('error-log-data', (data) => {
-      setErrorLog((prevState) => [...prevState, data])
+      console.log(data)
+      // setErrorLog((prevState) => [...prevState, data])
       getAllErrorLogs()
     });
     if (errorLog.length === 0) {
@@ -200,17 +201,17 @@ export default function Dashboard() {
                   <h4>Total Leak Errors</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>Get users</div>
+                  <div>-</div>
                   <h4>Most leaked api</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>Email</div> 
+                  <div>-</div> 
                   <h4>Most leaked data</h4>
                 </ErrorCard>
                 <ErrorCard>
                   <div>
                     <div>Alto: 0</div>
-                    <div>Medio: 3</div>
+                    <div>Medio: 0</div>
                     <div>Baixo: 0</div>
                   </div>
                   <h4>Quantidade por níveis</h4>
