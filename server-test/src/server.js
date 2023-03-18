@@ -7,6 +7,17 @@ const PORT = 3001
 app.use(express.json())
 app.use(cors())
 
+app.post('/user', (req, res) => { 
+  const { name, email, password } = req.body
+  const user = {
+    id: 1,
+    name,
+    email,
+    password
+  }
+  return res.json(user).status(200)
+})
+
 app.get('/users', (req, res) => {
   const users = [
     {
@@ -32,15 +43,28 @@ app.get('/users', (req, res) => {
 })
 
 
-app.get('/user/:id', (req, res) => {
-  console.log(req)
-  const user = {
-    id: 1,
-    name: "Carl",
-    email: "carl@email.com"
-  }
 
-  res.json(user).status(200)
+app.get('/products', (req, res) => {
+  const products = [
+    {
+      id: 1,
+      name: "Product 1",
+      price: 100
+    },
+    {
+      id: 2,
+      name: "Product 2",
+      price: 200
+    },
+    {
+      id: 3,
+      name: "Product 3",
+      price: 300
+    }
+  ]
+  return res.json(products).status(200)
 })
+
+
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))

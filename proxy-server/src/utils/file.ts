@@ -5,7 +5,7 @@ class File {
   public readFile (pathFile: string) {
     const fileContent = fs.readFileSync(path.resolve(__dirname, pathFile), 'utf8')
     const config = JSON.parse(fileContent)
-    return config.host
+    return config
   }
 }
 

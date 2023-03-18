@@ -3,11 +3,13 @@ import DataControlService from './services/DataControlService'
 import { IncomingMessage, http } from './types/http'
 import dotenv from 'dotenv'
 import File from './utils/file'
+import path from 'path'
 const EventEmitter = require('events')
 
 EventEmitter.defaultMaxListeners = 20
 
-const target = File.readFile('../../app.host.json')
+const configPath = path.resolve(__dirname, '../../configs/proxy.config.json')
+const target = File.readFile(configPath)
 
 process.on('SIGINT', () => {
   console.log('Received SIGINT signal. Stopping server...')
@@ -19,7 +21,7 @@ dotenv.config()
 const PORT = process.env.PROXY_PORT || 8888
 const proxy = createProxyServer()
 const option = {
-  target,
+  target: target.applicationHost,
   selfHandleResponse: true
 }
 
@@ -31,6 +33,7 @@ proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMes
     })
     proxyRes.on('end', async () => {
       body = Buffer.concat(body).toString()
+      console.log('body', body)
       const bodyResponse = await DataControlService.runController(req, JSON.parse(body))
       if (JSON.stringify(body) === bodyResponse) {
         res.statusCode = proxyRes.statusCode
