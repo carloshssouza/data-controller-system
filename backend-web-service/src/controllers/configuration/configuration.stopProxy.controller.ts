@@ -9,7 +9,6 @@ class ConfigurationStopProxyController {
       if (proxy.status === 500) {
         throw new ErrorRes(proxy.status, proxy.message)
       }
-      console.log('proxy', proxy)
       return res.status(200).json({ message: proxy })
     } catch (error) {
       console.error(error)
