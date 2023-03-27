@@ -33,7 +33,6 @@ proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMes
     })
     proxyRes.on('end', async () => {
       body = Buffer.concat(body).toString()
-      console.log('body', body)
       const bodyResponse = await DataControlService.runController(req, JSON.parse(body))
       if (JSON.stringify(body) === bodyResponse) {
         res.statusCode = proxyRes.statusCode
