@@ -182,7 +182,6 @@ export default function Configuration() {
       }
 
       const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/start-proxy`, config)
-      console.log('teste', response)
       if(response.status !== 200) {
         throw new Error(response.data.message)
       } else {
@@ -278,6 +277,7 @@ export default function Configuration() {
 
   useEffect(() => {
     getConfiguration()
+    checkProxyServer()
   }, [])
 
 
@@ -305,6 +305,7 @@ export default function Configuration() {
           isActive={isProxyStarted} 
           isApplicationHostStarted={isApplicationHostStarted}
           isLoading={isLoading}
+          isProxyStarted={isProxyStarted}
         />
       </ConfigurationContainerRestrict>
     </Container>
