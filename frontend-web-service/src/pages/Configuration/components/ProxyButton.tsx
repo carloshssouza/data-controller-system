@@ -7,9 +7,10 @@ interface ProxyButtonProps {
   disabled?: boolean;
   isLoading: boolean;
   isApplicationHostStarted: boolean;
+  isProxyStarted: boolean;
 }
 
-const ProxyButton = ({ onClick, isActive, disabled, isLoading, isApplicationHostStarted }: ProxyButtonProps) => {
+const ProxyButton = ({ onClick, isActive, isLoading, isApplicationHostStarted, isProxyStarted }: ProxyButtonProps) => {
   return (
     <StyledButton 
       type="primary" 
@@ -20,7 +21,7 @@ const ProxyButton = ({ onClick, isActive, disabled, isLoading, isApplicationHost
       isActive={isActive} 
     >
       {
-        isLoading ? <LoadingOutlined /> : (isActive ? 'Stop proxy server' : 'Start proxy server')
+        isLoading ? <LoadingOutlined /> : (isActive && isProxyStarted ? 'Stop proxy server' : 'Start proxy server')
       }
       
     </StyledButton>
