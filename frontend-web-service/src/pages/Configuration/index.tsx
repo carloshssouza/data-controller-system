@@ -10,19 +10,6 @@ import ApplicationHostItem from './components/ApplicationHostItem';
 import RestrictDataItem from './components/RestrictDataItem';
  
 
-const restrictDataList = {
-  personal: [
-    'name',
-    'email',
-    'address',
-    'phone',
-  ],
-  sensible: [
-    'race',
-    'religion'
-  ]
-}
-
 interface IRestrictDataList {
   personal: string[]
   sensible: string[]
@@ -280,8 +267,6 @@ export default function Configuration() {
     checkProxyServer()
   }, [])
 
-
-
   return (
     <Container>
       <ConfigurationContainer>
@@ -299,7 +284,7 @@ export default function Configuration() {
       </ConfigurationContainer>
 
       <ConfigurationContainerRestrict>
-        <RestrictDataItem restrictDataList={restrictDataList}/>
+        <RestrictDataItem restrictDataList={configuration?.restrictDataList}/>
         <ProxyButton 
           onClick={!isProxyStarted ? startProxyServer : stopProxyServer} 
           isActive={isProxyStarted} 

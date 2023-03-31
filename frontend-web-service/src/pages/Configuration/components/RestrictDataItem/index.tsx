@@ -7,7 +7,7 @@ interface IRestrictDataList {
 }
 
 interface RestrictDataItemProps {
-  restrictDataList: IRestrictDataList
+  restrictDataList: IRestrictDataList | undefined
 }
 
 export default function RestrictDataItem({ restrictDataList }: RestrictDataItemProps) {
