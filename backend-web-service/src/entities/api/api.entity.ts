@@ -70,9 +70,9 @@ class ApiEntity {
   /**
    * Method to get a permission from the api info
    * @param route Route name of the api
-   * @returns Return boolean
+   * @returns Return object with _id and dataReturnAllowed
    */
-  public getApiPermission (endpointPath: string, requestType: string) {
+  public async getApiPermission (endpointPath: string, requestType: string) {
     const validate = ApiValidator.getApiPermissionValidation(endpointPath, requestType)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
