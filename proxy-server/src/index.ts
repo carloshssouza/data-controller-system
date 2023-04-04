@@ -32,6 +32,12 @@ proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMes
       body.push(chunk)
     })
     proxyRes.on('end', async () => {
+      if (proxyRes.statusCode === 404) {
+        res.statusCode = 404
+        return res.end(JSON.stringify({
+          message: proxyRes.statusMessage
+        }))
+      }
       body = Buffer.concat(body).toString()
       const bodyResponse = await DataControlService.runController(req, JSON.parse(body))
       if (JSON.stringify(body) === bodyResponse) {
@@ -39,12 +45,12 @@ proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMes
         res.end(body)
       } else {
         res.statusCode = 500
-        res.end(JSON.stringify(bodyResponse))
+        return res.end(JSON.stringify(bodyResponse))
       }
     })
   } catch (error) {
     console.log(error)
-    res.end(JSON.stringify(error))
+    return res.end(JSON.stringify(error))
   }
 })
 
@@ -53,4 +59,4 @@ const server = http.createServer((req: any, res: any) => {
 })
 
 server.listen(PORT)
-console.log(`Proxy server listening on ${PORT} with target ${target}`)
+console.log(`Proxy server listening on ${PORT} with target ${target.applicationHost}`)

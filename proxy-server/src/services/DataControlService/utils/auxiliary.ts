@@ -62,6 +62,15 @@ export default abstract class Auxiliary {
         }
       }
       return grpcError
+    } else if (!responseFromGrpc._id) {
+      const grpcError = {
+        error: true,
+        data: {
+          message: 'Proxy error: API not found',
+          stack: 'Api not found in the database, please add this API to be analyze.'
+        }
+      }
+      return grpcError
     }
     return {
       error: false,
