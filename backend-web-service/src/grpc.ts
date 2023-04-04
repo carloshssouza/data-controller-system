@@ -34,9 +34,6 @@ class GrpcServer {
       const endpointPath = call.request.endpointPath
       const requestType = call.request.requestType
       const apiPermission = await ApiEntity.getApiPermission(endpointPath, requestType)
-      if (!apiPermission) {
-        throw new Error('Error getting api permission')
-      }
       callback(null, apiPermission)
     } catch (error) {
       console.log(error)
