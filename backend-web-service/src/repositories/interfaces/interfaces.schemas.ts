@@ -22,11 +22,17 @@ export interface IErrorLog {
     level: string
 }
 
+export interface IParameters {
+    name: string
+    position: number
+}
+
 export interface IApi {
     routeName: string;
     endpointPath: string;
     requestType: string
     dataReturnAllowed: boolean
+    routeParameters: IParameters[]
 }
 
 export interface IRestrictData {

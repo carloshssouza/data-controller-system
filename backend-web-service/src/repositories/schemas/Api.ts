@@ -1,14 +1,20 @@
 
 import mongoose, { Query } from 'mongoose'
 import { Schema, model } from '../../types/mongoose'
-import { IApi } from '../interfaces/interfaces.schemas'
+import { IApi, IParameters } from '../interfaces/interfaces.schemas'
 import ErrorLog from './ErrorLog'
+
+const RouteParametersSchema = new Schema<IParameters>({
+  name: { type: String, required: true },
+  position: { type: Number, required: true }
+})
 
 const ApiSchema = new Schema<IApi>({
   routeName: { type: String, required: true, unique: true },
   endpointPath: { type: String, required: true },
   requestType: { type: String, required: true, enum: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'] },
-  dataReturnAllowed: { type: Boolean, required: true }
+  dataReturnAllowed: { type: Boolean, required: true },
+  routeParameters: { type: [RouteParametersSchema], required: false, defaultValue: [] }
 }, {
   timestamps: true,
   versionKey: false
