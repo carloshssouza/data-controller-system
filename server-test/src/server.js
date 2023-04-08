@@ -7,8 +7,23 @@ const PORT = 3001
 app.use(express.json())
 app.use(cors())
 
-app.post('/user', (req, res) => { 
+app.get('/user/:id', (req, res) => { 
   const { name, email, password } = req.body
+  console.log("req", req)
+  
+  const user = {
+    id: 1,
+    name,
+    email,
+    password
+  }
+  return res.json(user).status(200)
+})
+
+app.get('/user/:name/admin/:id', (req, res) => { 
+  const { name, email, password } = req.body
+  console.log("req", req)
+  
   const user = {
     id: 1,
     name,
