@@ -15,6 +15,30 @@ class ApiEntity {
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
+
+    if (!data.endpointPath.includes(':') || !data.endpointPath.includes('{')) {
+      return ApiRepository.createApi(data)
+    } else {
+      const routeSplitted = data.endpointPath.split('/')
+      routeSplitted.shift()
+      const parameters = []
+      for (const item of routeSplitted) {
+        if (item.includes(':')) {
+          parameters.push({
+            name: item.split(':')[1],
+            position: routeSplitted.indexOf(item)
+          })
+        } else if (item.includes('{')) {
+          parameters.push({
+            name: item.split('{')[1].split('}')[0],
+            position: routeSplitted.indexOf(item)
+          })
+        }
+      }
+
+      data.routeParameters = parameters
+    }
+
     return ApiRepository.createApi(data)
   }
 
@@ -50,8 +74,29 @@ class ApiEntity {
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
+    if (data.endpointPath && (!data.endpointPath.includes(':') || !data.endpointPath.includes('{'))) {
+      return ApiRepository.updateApi(_id, data)
+    } else {
+      const routeSplitted = data.endpointPath.split('/')
+      routeSplitted.shift()
+      const parameters = []
+      for (const item of routeSplitted) {
+        if (item.includes(':')) {
+          parameters.push({
+            name: item.split(':')[1],
+            position: routeSplitted.indexOf(item)
+          })
+        } else if (item.includes('{')) {
+          parameters.push({
+            name: item.split('{')[1].split('}')[0],
+            position: routeSplitted.indexOf(item)
+          })
+        }
+      }
 
-    return ApiRepository.updateApi(_id, data)
+      data.routeParameters = parameters
+      return ApiRepository.updateApi(_id, data)
+    }
   }
 
   /**
