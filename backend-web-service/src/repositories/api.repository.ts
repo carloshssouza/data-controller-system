@@ -52,20 +52,23 @@ class ApiRepository {
    * @param _id Id of the api to get permission
    * @returns Returns the api data
    */
-  public async getApiPermission (endpointPath: string, requestType: string) {
-    let apiResponse = {
-      _id: null,
-      dataReturnAllowed: null
-    } as any
-    const api = await Api.findOne({ endpointPath, requestType }).select('_id dataReturnAllowed')
+  public async getApiPermission (endpointPath: any, requestType: string) {
+    const firstElementEndpointPath = endpointPath.split('/')[1]
 
-    if (api) {
-      apiResponse = {
-        _id: api._id,
-        dataReturnAllowed: api.dataReturnAllowed
-      }
-    }
-    return apiResponse
+    // let apiResponse = {
+    //   _id: null,
+    //   dataReturnAllowed: null
+    // } as any
+    // const api = await Api.findOne({ endpointPath, requestType }).select('_id dataReturnAllowed')
+
+    // if (api) {
+
+    //   apiResponse = {
+    //     _id: api._id,
+    //     dataReturnAllowed: api.dataReturnAllowed
+    //   }
+    // }
+    // return apiResponse
   }
 }
 
