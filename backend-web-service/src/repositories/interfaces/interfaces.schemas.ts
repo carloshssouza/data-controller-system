@@ -33,6 +33,7 @@ export interface IApi {
     requestType: string
     dataReturnAllowed: boolean
     routeParameters: IParameters[]
+    endpointPathLength: number
 }
 
 export interface IRestrictData {
