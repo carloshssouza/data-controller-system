@@ -1,20 +1,14 @@
 
 import mongoose, { Query } from 'mongoose'
 import { Schema, model } from '../../types/mongoose'
-import { IApi, IParameters } from '../interfaces/interfaces.schemas'
+import { IApi } from '../interfaces/interfaces.schemas'
 import ErrorLog from './ErrorLog'
-
-const RouteParametersSchema = new Schema<IParameters>({
-  name: { type: String, required: true },
-  position: { type: Number, required: true }
-})
 
 const ApiSchema = new Schema<IApi>({
   routeName: { type: String, required: true, unique: true },
   endpointPath: { type: String, required: true },
   requestType: { type: String, required: true, enum: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'] },
   dataReturnAllowed: { type: Boolean, required: true },
-  routeParameters: { type: [RouteParametersSchema], required: false, defaultValue: [] },
   endpointPathLength: { type: Number, required: true }
 }, {
   timestamps: true,
@@ -34,7 +28,6 @@ ApiSchema.pre<Query<IApi | null, IApi>>(/^findOneAndUpdate/, async function (nex
     routeName?: string;
     requestType?: string;
     dataReturnAllowed?: boolean;
-    routerParameters?: IParameters[];
     endpointPathLength: number;
   }
 

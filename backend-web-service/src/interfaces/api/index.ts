@@ -1,11 +1,9 @@
-import { IParameters } from '../../repositories/interfaces/interfaces.schemas'
 
 interface ApiCreateData {
     routeName: string
     endpointPath: string
     requestType: string
     dataReturnAllowed: boolean
-    routeParameters?: IParameters[]
     endpointPathLength: number
   }
 
@@ -14,7 +12,6 @@ interface ApiUpdateData {
   endpointPath?: string
   requestType?: string
   dataReturnAllowed?: boolean
-  routeParameters?: IParameters[]
   endpointPathLength?: number
 }
 
