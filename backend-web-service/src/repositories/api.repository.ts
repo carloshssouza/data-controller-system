@@ -52,23 +52,49 @@ class ApiRepository {
    * @param _id Id of the api to get permission
    * @returns Returns the api data
    */
-  public async getApiPermission (endpointPath: any, requestType: string) {
-    const firstElementEndpointPath = endpointPath.split('/')[1]
+  public async getApiPermission (endpointPath: string, requestType: string) {
+    const endpointPathSplitted = endpointPath.split('/')
+    endpointPathSplitted.shift()
+    const firstItem = endpointPathSplitted[0]
+    const endpointPathLength = endpointPathSplitted.length
 
-    // let apiResponse = {
-    //   _id: null,
-    //   dataReturnAllowed: null
-    // } as any
-    // const api = await Api.findOne({ endpointPath, requestType }).select('_id dataReturnAllowed')
+    if (endpointPathLength === 1) {
+      return Api.find({
+        endpointPath,
+        requestType
+      })
+    }
 
-    // if (api) {
+    const apisFirst = await Api.find({
+      endpointPathLength,
+      requestType
+    })
 
-    //   apiResponse = {
-    //     _id: api._id,
-    //     dataReturnAllowed: api.dataReturnAllowed
-    //   }
-    // }
-    // return apiResponse
+    // eslint-disable-next-line array-callback-return
+    const apis = apisFirst.filter((element: any) => {
+      const elementSplitted = element.endpointPath.split('/')
+      elementSplitted.shift()
+      if (elementSplitted[0] === firstItem) {
+        return element
+      }
+    })
+
+    for (let i = 0; i < apis.length; i++) {
+      const endpointArr = apis[i].endpointPath.split('/')
+      let match = true
+      for (let j = 0; j < endpointArr.length; j++) {
+        if (endpointArr[j].startsWith(':') || endpointArr[j].startsWith('{')) {
+          continue
+        }
+        if (endpointArr[j] !== endpointPathSplitted[j]) {
+          match = false
+          break
+        }
+      }
+      if (match) {
+        return apis[i]
+      }
+    }
   }
 }
 

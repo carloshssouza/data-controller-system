@@ -6,6 +6,7 @@ interface ApiCreateData {
     requestType: string
     dataReturnAllowed: boolean
     routeParameters?: IParameters[]
+    endpointPathLength: number
   }
 
 interface ApiUpdateData {
@@ -14,6 +15,7 @@ interface ApiUpdateData {
   requestType?: string
   dataReturnAllowed?: boolean
   routeParameters?: IParameters[]
+  endpointPathLength?: number
 }
 
 export {
