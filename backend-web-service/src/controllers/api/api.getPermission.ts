@@ -11,11 +11,10 @@ class ApiGetPermissionController {
    */
   public async getApiPermission (req: Request, res: Response): Promise<Response> {
     try {
-      const endpointPathSplitted = req.body.endpointPath.split('/')[1]
+      const endpointPath = req.body.endpointPath
       const requestType = req.body.requestType
-      endpointPathSplitted.shift()
 
-      const api = await ApiRepository.getApiPermission(endpointpath, requestType)
+      const api = await ApiRepository.getApiPermission(endpointPath, requestType)
 
       if (!api) {
         throw new ErrorRes(500, 'Error getting api')

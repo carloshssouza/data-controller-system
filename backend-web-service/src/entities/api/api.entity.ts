@@ -16,11 +16,13 @@ class ApiEntity {
       throw new ErrorRes(400, validate.error.message)
     }
 
+    const routeSplitted = data.endpointPath.split('/')
+    routeSplitted.shift()
+    data.endpointPathLength = routeSplitted.length
+
     if (!data.endpointPath.includes(':') || !data.endpointPath.includes('{')) {
       return ApiRepository.createApi(data)
     } else {
-      const routeSplitted = data.endpointPath.split('/')
-      routeSplitted.shift()
       const parameters = []
       for (const item of routeSplitted) {
         if (item.includes(':')) {

@@ -14,7 +14,8 @@ const ApiSchema = new Schema<IApi>({
   endpointPath: { type: String, required: true },
   requestType: { type: String, required: true, enum: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'] },
   dataReturnAllowed: { type: Boolean, required: true },
-  routeParameters: { type: [RouteParametersSchema], required: false, defaultValue: [] }
+  routeParameters: { type: [RouteParametersSchema], required: false, defaultValue: [] },
+  endpointPathLength: { type: Number, required: true }
 }, {
   timestamps: true,
   versionKey: false
@@ -32,6 +33,9 @@ ApiSchema.pre<Query<IApi | null, IApi>>(/^findOneAndUpdate/, async function (nex
     endpointPath?: string;
     routeName?: string;
     requestType?: string;
+    dataReturnAllowed?: boolean;
+    routerParameters?: IParameters[];
+    endpointPathLength: number;
   }
 
   // If endpointPath, routeName, or requestType fields are updated
