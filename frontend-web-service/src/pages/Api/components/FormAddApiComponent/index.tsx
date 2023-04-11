@@ -1,5 +1,4 @@
-import React from 'react'
-import { Button, Checkbox, Input, Modal, Select, Form } from 'antd'
+import { Button, Checkbox, Input, Select, Form } from 'antd'
 
 interface FormAddApiComponent {
   createApi: (data: any) => Promise<void>,
@@ -29,10 +28,13 @@ export default function FormAddApiComponent({ createApi, selectRequestType, hand
             >
               <Input placeholder="Endpoint path" />
             </Form.Item>
+            
             <Form.Item
               name="requestType"
+              initialValue={selectRequestType}
               rules={[{ required: true, message: 'Request type is required' }]}
             >
+              
               <Select
                 defaultValue={selectRequestType}
                 style={{ width: 150 }}
@@ -48,6 +50,7 @@ export default function FormAddApiComponent({ createApi, selectRequestType, hand
             <Form.Item
               name="dataReturnAllowed"
               valuePropName="checked"
+              initialValue={false}
               style={{ marginRight: "2rem" }}
             >
               <Checkbox style={{color: "white"}}>Return personal and sensible data</Checkbox>
