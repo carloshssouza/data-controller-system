@@ -87,37 +87,40 @@ class ProxyService {
   }
 
   public async checkProxyServer (): Promise<ProxyResponse | any> {
-    const lsofProcess = spawn('lsof', ['-i', ':8888'])
+    return new Promise((resolve, reject) => {
+      const lsofProcess = spawn('lsof', ['-i', ':8888'])
 
-    lsofProcess.stdout.on('data', (data) => {
-      if (data.toString().includes('LISTEN')) {
-        return {
-          status: 200,
-          message: 'Proxy server is running.'
+      lsofProcess.stdout.on('data', (data) => {
+        if (data.toString().includes('LISTEN')) {
+          resolve({
+            status: 200,
+            message: 'Proxy server is running.'
+          })
+        } else {
+          reject({
+            status: 500,
+            message: 'Proxy server is not running.'
+          })
         }
-      } else {
-        return {
-          status: 500,
-          message: 'Proxy server is not running.'
-        }
-      }
-    })
-    lsofProcess.stderr.on('data', (err) => {
-      console.error(err)
-      return {
-        status: 500,
-        message: 'Failed to check proxy server status.'
-      }
-    })
+      })
 
-    lsofProcess.on('close', (code) => {
-      if (code !== 0) {
-        console.error(`child process exited with code ${code}`)
-        return {
+      lsofProcess.stderr.on('data', (err) => {
+        console.error(err)
+        reject({
           status: 500,
-          message: `Failed to check proxy server status. Exit code: ${code}`
+          message: 'Failed to check proxy server status.'
+        })
+      })
+
+      lsofProcess.on('close', (code) => {
+        if (code !== 0) {
+          console.error(`child process exited with code ${code}`)
+          reject({
+            status: 500,
+            message: `Failed to check proxy server status. Exit code: ${code}`
+          })
         }
-      }
+      })
     })
   }
 }
