@@ -172,7 +172,6 @@ export default function Configuration() {
       if(response.status !== 200) {
         throw new Error(response.data.message)
       } else {
-        notifySuccess(response.data.message)
         setIsProxyStarted(true)
       }
     } catch (error: any) {
@@ -199,7 +198,6 @@ export default function Configuration() {
       if(response.status !== 200) {
         throw new Error(response.data.message)
       } else {
-        
         notifySuccess(response.data.message)
         setIsProxyStarted(false)
       }
@@ -226,10 +224,13 @@ export default function Configuration() {
         throw new Error(response.data.message)
       } else { 
         notifySuccess(response.data.message)
-        setIsProxyStarted(response.data.isProxyStarted)
+        setIsProxyStarted(true)
       }
     } catch (error: any) {
-      notifyError(error.message)
+      if (error.response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
     } 
   }
 
@@ -267,6 +268,12 @@ export default function Configuration() {
     checkProxyServer()
   }, [])
 
+  useEffect(() => {
+    if(configuration.applicationHost) {
+      checkApplicationHost()
+    }
+  }, [configuration])
+
   return (
     <Container>
       <ConfigurationContainer>
@@ -287,10 +294,9 @@ export default function Configuration() {
         <RestrictDataItem restrictDataList={configuration?.restrictDataList}/>
         <ProxyButton 
           onClick={!isProxyStarted ? startProxyServer : stopProxyServer} 
-          isActive={isProxyStarted} 
+          isProxyStarted={isProxyStarted} 
           isApplicationHostStarted={isApplicationHostStarted}
           isLoading={isLoading}
-          isProxyStarted={isProxyStarted}
         />
       </ConfigurationContainerRestrict>
     </Container>

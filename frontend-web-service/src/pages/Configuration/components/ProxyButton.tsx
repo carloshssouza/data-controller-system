@@ -3,14 +3,13 @@ import { StyledButton } from './styles';
 
 interface ProxyButtonProps {
   onClick: () => Promise<void>;
-  isActive: boolean;
   disabled?: boolean;
   isLoading: boolean;
   isApplicationHostStarted: boolean;
   isProxyStarted: boolean;
 }
 
-const ProxyButton = ({ onClick, isActive, isLoading, isApplicationHostStarted, isProxyStarted }: ProxyButtonProps) => {
+const ProxyButton = ({ onClick, isLoading, isApplicationHostStarted, isProxyStarted }: ProxyButtonProps) => {
   return (
     <StyledButton 
       type="primary" 
@@ -18,10 +17,10 @@ const ProxyButton = ({ onClick, isActive, isLoading, isApplicationHostStarted, i
       disabled={!isApplicationHostStarted ? true :
         isLoading ? true : false
       }
-      isActive={isActive} 
+      isProxyStarted={isProxyStarted} 
     >
       {
-        isLoading ? <LoadingOutlined /> : (isActive && isProxyStarted ? 'Stop proxy server' : 'Start proxy server')
+        isLoading ? <LoadingOutlined /> : (isProxyStarted ? 'Stop proxy server' : 'Start proxy server')
       }
       
     </StyledButton>
