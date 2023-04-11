@@ -79,6 +79,13 @@ class ApiRepository {
       }
     })
 
+    const api = this.getApiObject(endpointPath, apis)
+    console.log('api', api)
+    return api
+  }
+
+  private getApiObject (request: any, apis: any) {
+    const requestArr = request.split('/')
     for (let i = 0; i < apis.length; i++) {
       const endpointArr = apis[i].endpointPath.split('/')
       let match = true
@@ -86,7 +93,7 @@ class ApiRepository {
         if (endpointArr[j].startsWith(':') || endpointArr[j].startsWith('{')) {
           continue
         }
-        if (endpointArr[j] !== endpointPathSplitted[j]) {
+        if (endpointArr[j] !== requestArr[j]) {
           match = false
           break
         }
@@ -95,6 +102,7 @@ class ApiRepository {
         return apis[i]
       }
     }
+    return {}
   }
 }
 

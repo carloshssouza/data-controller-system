@@ -2,19 +2,19 @@ import styled from "styled-components"
 import { Button } from "antd"
 
 interface IStyledButton {
-  isActive: boolean
+  isProxyStarted: boolean
   disabled: boolean
 }
 
 const StyledButton = styled(Button) <IStyledButton>`
   background: ${(props) => {
-    if (props.isActive && !props.disabled) {
+    if (props.isProxyStarted && !props.disabled) {
       return '#b6b83b !important'
-    } else if(props.isActive && !props.disabled) {
+    } else if(props.isProxyStarted && !props.disabled) {
       return '#4f5023 !important'
-    } else if (!props.isActive && !props.disabled) {
+    } else if (!props.isProxyStarted && !props.disabled) {
       return '#874ccb !important'
-    } else if (!props.isActive && props.disabled) {
+    } else if (!props.isProxyStarted && props.disabled) {
       return '#543d6e !important'
     }
   }

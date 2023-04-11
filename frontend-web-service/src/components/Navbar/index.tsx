@@ -45,7 +45,11 @@ const Navbar = () => {
 
   return (
     <StyledHeader className="header">
-      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['1']}>
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[
+        window.location.pathname === '/dashboard' ? '1' :
+        window.location.pathname === '/api' ? '2' :
+        window.location.pathname === '/config' ? '3' : '1'
+      ]}>
         <Menu.Item key="1"><Link to="/dashboard">Dashboard</Link></Menu.Item>
         <Menu.Item key="2"><Link to="/api">API</Link></Menu.Item>
         <Menu.Item key="3"><Link to="/config">Configuration</Link></Menu.Item>
