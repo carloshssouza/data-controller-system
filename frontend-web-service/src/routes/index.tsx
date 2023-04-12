@@ -7,8 +7,6 @@ import Configuration from '../pages/Configuration'
 import Navbar from '../components/Navbar'
 import User from '../pages/User'
 import RouteDbConnected from './services/RouteDbConnected'
-import NavbarError from '../components/NavbarError'
-import ProtectedRoute from './services/ProtectedRoute'
 
 export default function routes() {
   return (
@@ -54,7 +52,6 @@ export default function routes() {
         } />
         <Route path="*" element={
           <>
-            <NavbarError/>
             <Error />
           </>      
         } />

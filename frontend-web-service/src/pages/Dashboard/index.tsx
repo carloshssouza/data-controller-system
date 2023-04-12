@@ -121,6 +121,57 @@ export default function Dashboard() {
     return apiErrors
   }
 
+  const getApiWithMoreLeakedData = () => {
+    let apiWithMoreLeakedData = {
+      name: '',
+      leakedData: 0
+    }
+
+    for (const api of listApiData) {
+      let leakedData = 0
+      for (const error of errorLog) {
+        if (error.routeId === api._id) {
+          leakedData++
+        }
+      }
+      if (leakedData > apiWithMoreLeakedData.leakedData) {
+        apiWithMoreLeakedData.name = api.routeName
+        apiWithMoreLeakedData.leakedData = leakedData
+      }
+    }
+
+    return (
+      <div>
+        <div>{apiWithMoreLeakedData.name} : {apiWithMoreLeakedData.leakedData}</div>
+      </div>
+    )
+  }
+
+  const getAmountErrorPerLevel = () => {
+    let amountErrorPerLevel = {
+      high: 0,
+      medium: 0,
+      low: 0
+    }
+
+    for(const error of errorLog) {
+      if(error.level === 'high') {
+        amountErrorPerLevel.high++
+      } else if(error.level === 'medium') {
+        amountErrorPerLevel.medium++
+      } else {
+        amountErrorPerLevel.low++
+      }
+    }
+
+    return (
+      <div>
+        <div>High: {amountErrorPerLevel.high}</div>
+        <div>Medium: {amountErrorPerLevel.medium}</div>
+        <div>Low: {amountErrorPerLevel.low}</div>
+      </div>
+    )
+  }
   useEffect(() => {
     const socket = io('http://localhost:8000')
     getAllApis()
@@ -201,20 +252,16 @@ export default function Dashboard() {
                   <h4>Total Leak Errors</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>-</div>
+                  {getApiWithMoreLeakedData()}
                   <h4>Most leaked api</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>-</div> 
+                  <div>-</div>
                   <h4>Most leaked data</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>
-                    <div>Alto: 0</div>
-                    <div>Medio: 0</div>
-                    <div>Baixo: 0</div>
-                  </div>
-                  <h4>Quantidade por níveis</h4>
+                  {getAmountErrorPerLevel()}
+                  <h4>Error per level</h4>
                 </ErrorCard>
               </ErrorData>
               <GraphContainer ref={chartRef} >

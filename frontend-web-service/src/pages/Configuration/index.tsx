@@ -268,12 +268,6 @@ export default function Configuration() {
     checkProxyServer()
   }, [])
 
-  useEffect(() => {
-    if(configuration.applicationHost) {
-      checkApplicationHost()
-    }
-  }, [configuration])
-
   return (
     <Container>
       <ConfigurationContainer>
@@ -298,6 +292,11 @@ export default function Configuration() {
           isApplicationHostStarted={isApplicationHostStarted}
           isLoading={isLoading}
         />
+        {
+          !isApplicationHostStarted && !isLoading && (
+            <div style={{marginBottom: "1rem"}}>You need test the application host connection first</div>
+          )
+        }
       </ConfigurationContainerRestrict>
     </Container>
   )
