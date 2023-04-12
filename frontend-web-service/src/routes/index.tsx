@@ -7,7 +7,6 @@ import Configuration from '../pages/Configuration'
 import Navbar from '../components/Navbar'
 import User from '../pages/User'
 import RouteDbConnected from './services/RouteDbConnected'
-import ProtectedRoute from './services/ProtectedRoute'
 
 export default function routes() {
   return (
