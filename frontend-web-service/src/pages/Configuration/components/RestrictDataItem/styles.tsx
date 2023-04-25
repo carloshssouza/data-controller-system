@@ -25,9 +25,25 @@ const RestrictDataCard = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
-
+  
   div {
     margin-bottom: 0.5rem;
+  }
+`
+
+const UniqueRestrictDataItem = styled.div`
+  border: 1px solid #fffcfc27;
+  width: 100%;
+  display: flex;
+  height: 35px;
+  border-radius: 2px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0 !important;
+  transition: all 0.5s ease-in-out;
+  :hover {
+    background: #567173;
+    cursor: pointer;
   }
 `
 
@@ -35,4 +51,5 @@ export {
   ConfigurationItemRestrictData,
   RestrictDataContainer,
   RestrictDataCard,
+  UniqueRestrictDataItem 
 }
