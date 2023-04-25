@@ -1,5 +1,5 @@
 import React from 'react'
-import { ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer } from './styles'
+import { ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer, UniqueRestrictDataItem  } from './styles'
 
 interface IRestrictDataList {
   personal: string[]
@@ -19,7 +19,7 @@ export default function RestrictDataItem({ restrictDataList }: RestrictDataItemP
           <h3>Personal:</h3>
           {
             restrictDataList?.personal.map((item: string) => {
-              return <div>{item}</div>
+              return <UniqueRestrictDataItem >{item}</UniqueRestrictDataItem >
             })
           }
         </RestrictDataCard>
@@ -27,7 +27,7 @@ export default function RestrictDataItem({ restrictDataList }: RestrictDataItemP
           <h3>Sensible:</h3>
           {
             restrictDataList?.sensible.map((item: string) => {
-              return <div>{item}</div>
+              return <UniqueRestrictDataItem >{item}</UniqueRestrictDataItem >
             })
           }
         </RestrictDataCard>
