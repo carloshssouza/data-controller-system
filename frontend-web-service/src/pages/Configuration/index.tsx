@@ -11,8 +11,8 @@ import RestrictDataItem from './components/RestrictDataItem';
  
 
 interface IRestrictDataList {
-  personal: string[]
-  sensible: string[]
+  personal: []
+  sensible: []
 }
 
 interface IConfiguration {
@@ -285,7 +285,7 @@ export default function Configuration() {
       </ConfigurationContainer>
 
       <ConfigurationContainerRestrict>
-        <RestrictDataItem restrictDataList={configuration?.restrictDataList}/>
+        <RestrictDataItem restrictDataPersonal={configuration?.restrictDataList?.personal || []} restrictDataSensible={configuration?.restrictDataList?.sensible || []}/>
         <ProxyButton 
           onClick={!isProxyStarted ? startProxyServer : stopProxyServer} 
           isProxyStarted={isProxyStarted} 
