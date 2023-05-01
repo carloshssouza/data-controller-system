@@ -58,14 +58,6 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
     } 
   }
 
-  const showPersonalData = () => {
-    setShowFormPersonal(!showFormPersonal)
-  }
-
-  const showSensibleData = () => {
-    setShowFormPersonal(!showFormSensible)
-  }
-
   const handleUpdate = (record: any) => {
     // Open the update modal and pass the record data
     setShowFormPersonal(true);
@@ -106,10 +98,10 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
       key: "actions",
       render: (text: string, record: any) => (
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <EditOutlined style={{color: '#4096FF'}} onClick={() => handleUpdate(record)}/>
+          <EditOutlined style={{color: '#4096FF'}} onClick={() => handleUpdate(record.name)}/>
           <Popconfirm
             title="Are you sure you want to delete this item?"
-            onConfirm={() => deleteRestrictData(record._id)}
+            onConfirm={() => deleteRestrictData(record.name)}
           >
             <DeleteOutlined style={{color: '#FF7875'}}/>
           </Popconfirm>
@@ -125,19 +117,12 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
         <RestrictDataCard>
           <h3>Personal:</h3>
           {
-            // restrictDataList?.personal.map((item: string, index: number) => {
-            //   return <UniqueRestrictDataItem key={index} onClick={showPersonalData}>{item}</UniqueRestrictDataItem >
-            // })
             <Table columns={columns} dataSource={convertData(restrictDataPersonal)} scroll={{ y: 300 }} style={{width: '300px'}}/>
-
           }
         </RestrictDataCard>
         <RestrictDataCard>
           <h3>Sensible:</h3>
           {
-            // restrictDataSensible.map((item: string, key: number) => {
-            //   return <UniqueRestrictDataItem key={key} onClick={showSensibleData}>{item}</UniqueRestrictDataItem >
-            // })
             <Table columns={columns} dataSource={convertData(restrictDataSensible)} scroll={{ y: 300 }} style={{width: '300px'}}/>
           }
         </RestrictDataCard>
