@@ -282,16 +282,17 @@ export default function Configuration() {
           updateConfiguration={updateConfiguration}
           isTestLoading={isTestLoading}
         />
-      </ConfigurationContainer>
-
-      <ConfigurationContainerRestrict>
-        <RestrictDataItem restrictDataPersonal={configuration?.restrictDataList?.personal || []} restrictDataSensible={configuration?.restrictDataList?.sensible || []}/>
         <ProxyButton 
           onClick={!isProxyStarted ? startProxyServer : stopProxyServer} 
           isProxyStarted={isProxyStarted} 
           isApplicationHostStarted={isApplicationHostStarted}
           isLoading={isLoading}
         />
+      </ConfigurationContainer>
+
+      <ConfigurationContainerRestrict>
+        <RestrictDataItem restrictDataPersonal={configuration?.restrictDataList?.personal || []} restrictDataSensible={configuration?.restrictDataList?.sensible || []}/>
+      
         {
           !isApplicationHostStarted && !isLoading && (
             <div style={{marginBottom: "1rem"}}>You need test the application host connection first</div>
