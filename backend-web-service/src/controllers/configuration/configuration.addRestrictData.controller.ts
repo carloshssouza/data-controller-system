@@ -3,10 +3,11 @@ import { Request, Response } from '../../types/express'
 import ConfigurationEntity from '../../entities/configuration/configuration.entity'
 import FileService from '../../utils/Services/FileService'
 
-class ConfigurationUpdateController {
-  async updateConfiguration (req: Request, res: Response): Promise<Response> {
+class ConfigurationAddRestrictDataController {
+  async addRestrictData (req: Request, res: Response): Promise<Response> {
     try {
-      const configuration = await ConfigurationEntity.updateConfiguration(req.body)
+      const dataType = req.query.dataType as unknown as string
+      const configuration = await ConfigurationEntity.addRestrictData(req.body, dataType)
 
       if (!configuration) {
         throw new ErrorRes(400, 'Error updating configuration')
@@ -22,4 +23,4 @@ class ConfigurationUpdateController {
   }
 }
 
-export default new ConfigurationUpdateController()
+export default new ConfigurationAddRestrictDataController()

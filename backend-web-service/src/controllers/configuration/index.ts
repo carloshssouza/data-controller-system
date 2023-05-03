@@ -9,6 +9,9 @@ import ConfigurationCheckProxyController from './configuration.checkProxy.contro
 import ConfigurationCheckApplicationHostController from './configuration.checkApplicationHost.controller'
 import ConfigurationDeleteApplicationHostController from './configuration.deleteApplicationHost.controller'
 import ConfigurationDeleteMongoHostController from './configuration.deleteMongoHost.controller'
+import ConfigurationAddRestrictDataController from './configuration.addRestrictData.controller'
+import ConfigurationDeleteRestrictDataController from './configuration.deleteRestrictData.controller'
+import ConfigurationUpdateRestrictDataController from './configuration.updateRestrictData.controller'
 
 export {
   ConfigurationCreateController,
@@ -21,5 +24,8 @@ export {
   ConfigurationCheckProxyController,
   ConfigurationCheckApplicationHostController,
   ConfigurationDeleteApplicationHostController,
-  ConfigurationDeleteMongoHostController
+  ConfigurationDeleteMongoHostController,
+  ConfigurationAddRestrictDataController,
+  ConfigurationDeleteRestrictDataController,
+  ConfigurationUpdateRestrictDataController
 }
