@@ -200,6 +200,7 @@ export default function Api() {
   const handleUpdate = (record: any) => {
     // Open the update modal and pass the record data
     setUpdateModalVisible(true);
+    console.log("record", record)
     setSelectedRecord(record);
   };
 

@@ -33,20 +33,23 @@ export default function ModalUpdateApiComponent({
             autoComplete="off"
           >
             <Form.Item
+              key={selectedRecord?.routeName}
               label="Route Name"
               name="routeName"
               rules={[{ required: true, message: 'Route name is required' }]}
             >
-              <Input defaultValue={selectedRecord?.routeName}/>
+              <Input defaultValue={selectedRecord?.routeName} key={selectedRecord?.routeName}/>
             </Form.Item>
             <Form.Item
+              key={selectedRecord?.endpointPath}
               label="Endpoint Path"
               name="endpointPath"
               rules={[{ required: true, message: 'Endpoint path is required' }]}
             >
-              <Input defaultValue={selectedRecord?.endpointPath} />
+              <Input defaultValue={selectedRecord?.endpointPath} key={selectedRecord?.endpointPath} />
             </Form.Item>
             <Form.Item
+              key={selectedRecord?.requestType}
               label="Request Type"
               name="requestType"
               rules={[{ required: true, message: 'Request type is required' }]}
@@ -54,6 +57,7 @@ export default function ModalUpdateApiComponent({
               <Select
                 defaultValue={selectedRecord?.requestType}
                 style={{ width: 150 }}
+                key={selectedRecord?.requestType}
                 options={requestType.map((type: string) => {
                   return {
                     label: type,
