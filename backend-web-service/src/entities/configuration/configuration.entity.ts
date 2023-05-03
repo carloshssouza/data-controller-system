@@ -40,15 +40,6 @@ class ConfigurationEntity {
 
     const appConnected = await isAppRunning(data.applicationHost)
     if (!appConnected) throw new ErrorRes(500, 'Application host is not running')
-    const configuration = {
-      applicationHost: data.applicationHost,
-      restrictDataList
-    }
-
-    const applicationHostConfigFileCreated = await FileService.createConfigFile(configuration.applicationHost, '../../../../configs/applicationHost.config.json')
-    const restrictDataListConfigFileCreated = await FileService.createConfigFile(configuration.restrictDataList, '../../../../configs/restrictDataList.config.json')
-
-    if (!applicationHostConfigFileCreated || !restrictDataListConfigFileCreated) throw new ErrorRes(500, 'Error creating config file')
 
     return ConfigurationRepository.updateConfiguration(data)
   }
