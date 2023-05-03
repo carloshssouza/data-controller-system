@@ -45,22 +45,10 @@ class ConfigurationEntity {
       restrictDataList
     }
 
-    const fileCreated = await FileService.createConfigFile(configuration, '../../../../configs/proxy.config.json')
+    const applicationHostConfigFileCreated = await FileService.createConfigFile(configuration.applicationHost, '../../../../configs/applicationHost.config.json')
+    const restrictDataListConfigFileCreated = await FileService.createConfigFile(configuration.restrictDataList, '../../../../configs/restrictDataList.config.json')
 
-    if (!fileCreated) throw new ErrorRes(500, 'Error creating config file')
-
-    return ConfigurationRepository.updateConfiguration(data)
-  }
-
-  public async addRestrictDataList (data: ConfigurationUpdateData) {
-    const validate = await ConfigurationValidator.updateConfiguration(data)
-    if (validate.error) {
-      throw new ErrorRes(400, validate.error.message)
-    }
-
-    const fileCreated = await FileService.createConfigFile(data.restrictDataList, '../../../../proxy-server/restrictDataList.json')
-
-    if (!fileCreated) throw new ErrorRes(500, 'Error creating restrict data list file')
+    if (!applicationHostConfigFileCreated || !restrictDataListConfigFileCreated) throw new ErrorRes(500, 'Error creating config file')
 
     return ConfigurationRepository.updateConfiguration(data)
   }
@@ -88,6 +76,30 @@ class ConfigurationEntity {
 
   public connectToDatabase () {
     return ConfigurationRepository.connectToDatabase()
+  }
+
+  public async addRestrictData (dataName: string, dataType: string) {
+    const validate = await ConfigurationValidator.addRestrictData(dataName, dataType)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+    return ConfigurationRepository.addRestrictData(dataName, dataType)
+  }
+
+  public async deleteRestrictData (dataName: string, dataType: string) {
+    const validate = await ConfigurationValidator.deleteRestrictData(dataName, dataType)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+    return ConfigurationRepository.deleteRestrictData(dataName, dataType)
+  }
+
+  public async updateRestrictData (oldDataName: string, newDataName: string, dataType: string) {
+    const validate = await ConfigurationValidator.updateRestrictData(oldDataName, newDataName, dataType)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+    return ConfigurationRepository.updateRestrictData(oldDataName, newDataName, dataType)
   }
 }
 

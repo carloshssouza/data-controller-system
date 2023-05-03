@@ -20,8 +20,16 @@ class ConfigurationValidator {
     return ConfigurationSchemaValidator.updateConfigurationValidation(ConfigurationBody)
   }
 
-  async addRestrictDataList (ConfigurationBody: ConfigurationUpdateData) {
-    return ConfigurationSchemaValidator.updateConfigurationValidation(ConfigurationBody)
+  async addRestrictData (dataName: string, dataType: string) {
+    return ConfigurationSchemaValidator.addRestrictDataValidation(dataName, dataType)
+  }
+
+  async updateRestrictData (oldDataName: string, newDataName: string, dataType: string) {
+    return ConfigurationSchemaValidator.updateRestrictDataValidation(oldDataName, newDataName, dataType)
+  }
+
+  async deleteRestrictData (dataName: string, dataType: string) {
+    return ConfigurationSchemaValidator.deleteRestrictDataValidation(dataName, dataType)
   }
 }
 
