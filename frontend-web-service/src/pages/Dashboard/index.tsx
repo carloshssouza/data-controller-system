@@ -64,7 +64,7 @@ export default function Dashboard() {
       }
     } catch (error: any) {
       notifyError(error.response.data.message)
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -84,7 +84,7 @@ export default function Dashboard() {
 
     } catch (error: any) {
       console.error(error);
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -101,7 +101,7 @@ export default function Dashboard() {
         setErrorLog(response.data)
       }
     } catch (error: any) {
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -154,10 +154,10 @@ export default function Dashboard() {
       low: 0
     }
 
-    for(const error of errorLog) {
-      if(error.level === 'high') {
+    for (const error of errorLog) {
+      if (error.level === 'high') {
         amountErrorPerLevel.high++
-      } else if(error.level === 'medium') {
+      } else if (error.level === 'medium') {
         amountErrorPerLevel.medium++
       } else {
         amountErrorPerLevel.low++
@@ -181,8 +181,8 @@ export default function Dashboard() {
     });
     socket.on('error-log-data', (data) => {
       console.log(data)
-      // setErrorLog((prevState) => [...prevState, data])
-      getAllErrorLogs()
+      setErrorLog((prevState) => [...prevState, data])
+      // getAllErrorLogs()
     });
     if (errorLog.length === 0) {
       getAllErrorLogs()
@@ -271,12 +271,27 @@ export default function Dashboard() {
 
                   <h3>Logs</h3>
                   <ErrorLogCard>
+                    {
+                      errorLog?.map((error: any) => {
+                        console.log(error)
+                        return (
+                          <div style={{display:'flex'}}>
+                            <div>Route name:{error.routeName}</div>
+                            <div>Route Id:{error.routeId}</div>
+                            <div>Level:{error.level}</div>
+                            <div>Description: {error.description}</div>
+                            <div>Amount leaked data: {error.leakedData.length}</div>
+                            <div>Created at: {error.createdAt}</div>
+                          </div>
+                        )
+                      })
+                    }
                     <div>{JSON.stringify(errorLog[0])}</div>
                   </ErrorLogCard>
                 </CommonErrorContainer>
                 <CommonErrorContainer>
                   <h2>Api Errors Comparison</h2>
-                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth}/>           
+                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} />
                 </CommonErrorContainer>
               </GraphContainer>
             </ErrorContainer>
