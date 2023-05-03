@@ -1,6 +1,7 @@
 import { ConfigurationCreateData, ConfigurationUpdateData } from '../interfaces/configuration'
 import Configuration from './schemas/Configuration'
 import Database from './database/config'
+import ArrayUtils from '../utils/Array/ArrayUtils'
 
 class ConfigurationRepository {
   public createConfiguration (data: ConfigurationCreateData) {
@@ -12,15 +13,6 @@ class ConfigurationRepository {
   }
 
   public async updateConfiguration (data: ConfigurationUpdateData) {
-    const configuration = await Configuration.find({}) as any
-    if (!configuration) {
-      throw new Error('Configuration not found')
-    } else {
-      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, data)
-    }
-  }
-
-  public async addRestrictDataList (data:any) {
     const configuration = await Configuration.find({}) as any
     if (!configuration) {
       throw new Error('Configuration not found')
@@ -59,6 +51,58 @@ class ConfigurationRepository {
     }
 
     return await Database.connect(configuration.mongoUriHost)
+  }
+
+  public async addRestrictData (dataName: string, dataType: string) {
+    const configuration = await Configuration.find({}).select('_id restrictDataList')
+    if (!configuration) {
+      throw new Error('Configuration not exists')
+    } else {
+      const restrictDataList = configuration[0].restrictDataList
+      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensible
+      restrictDataTypeArray.push(dataName)
+      restrictDataList.personal = restrictDataTypeArray
+
+      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
+    }
+  }
+
+  public async updateRestrictData (oldDataName: string, newDataName: string, dataType: string) {
+    const configuration = await Configuration.find({}).select('_id restrictDataList')
+    if (!configuration) {
+      throw new Error('Configuration not exists')
+    } else {
+      const restrictDataList = configuration[0].restrictDataList
+      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensible
+      const index = restrictDataTypeArray.indexOf(oldDataName)
+
+      if (index !== -1) {
+        restrictDataTypeArray[index] = newDataName
+      }
+
+      restrictDataList[dataType === 'personal' ? 'personal' : 'sensible'] = ArrayUtils.updateStringElement(restrictDataTypeArray, oldDataName, newDataName)
+
+      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
+    }
+  }
+
+  public async deleteRestrictData (dataName: string, dataType: string) {
+    const configuration = await Configuration.find({}).select('_id restrictDataList')
+    if (!configuration) {
+      throw new Error('Configuration not exists')
+    } else {
+      const restrictDataList = configuration[0].restrictDataList
+      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensible
+      const index = restrictDataTypeArray.indexOf(dataName)
+
+      if (index !== -1) {
+        restrictDataTypeArray.splice(index, 1)
+      }
+
+      restrictDataList[dataType === 'personal' ? 'personal' : 'sensible'] = restrictDataTypeArray
+
+      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
+    }
   }
 }
 
