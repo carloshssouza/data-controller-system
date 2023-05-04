@@ -12,7 +12,8 @@ import {
   ConfigurationDeleteMongoHostController,
   ConfigurationAddRestrictDataController,
   ConfigurationDeleteRestrictDataController,
-  ConfigurationUpdateRestrictDataController
+  ConfigurationUpdateRestrictDataController,
+  ConfigurationGetRestrictDataController
 } from '../controllers/configuration'
 import { Router } from '../types/express'
 import Authenticate from '../middleware/Authenticate'
@@ -23,6 +24,7 @@ const routes = Router()
 routes.get('/configuration', CheckDatabaseConnection.checkDbConnection, ConfigurationGetController.getConfiguration)
 routes.put('/configuration', Authenticate.authenticateAdmin, ConfigurationUpdateController.updateConfiguration)
 routes.put('/configuration/application-host', CheckDatabaseConnection.checkDbConnection, ConfigurationAddApplicationHostController.addApplicationHost)
+routes.get('/configuration/restrict-data', Authenticate.authenticateAdmin, CheckDatabaseConnection.checkDbConnection, ConfigurationGetRestrictDataController.getRestrictData)
 routes.post('/configuration/restrict-data', Authenticate.authenticateAdmin, CheckDatabaseConnection.checkDbConnection, ConfigurationAddRestrictDataController.addRestrictData)
 routes.patch('/configuration/restrict-data', Authenticate.authenticateAdmin, CheckDatabaseConnection.checkDbConnection, ConfigurationUpdateRestrictDataController.updateRestrictData)
 routes.post('/configuration/mongo-host', ConfigurationCreateController.createConfiguration)
