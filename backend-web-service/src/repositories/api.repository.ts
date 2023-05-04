@@ -80,7 +80,6 @@ class ApiRepository {
     })
 
     const api = this.getApiObject(endpointPath, apis)
-    console.log('api', api)
     return api
   }
 
