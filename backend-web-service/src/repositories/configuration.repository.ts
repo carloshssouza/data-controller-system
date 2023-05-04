@@ -9,7 +9,7 @@ class ConfigurationRepository {
   }
 
   public getConfiguration () {
-    return Configuration.findOne({})
+    return Configuration.findOne({}).select('-restrictDataList')
   }
 
   public async updateConfiguration (data: ConfigurationUpdateData) {
@@ -102,6 +102,17 @@ class ConfigurationRepository {
       restrictDataList[dataType === 'personal' ? 'personal' : 'sensible'] = restrictDataTypeArray
 
       return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
+    }
+  }
+
+  public async getRestrictData (dataType?: string) {
+    if (!dataType) {
+      const config = await Configuration.find({}).select('restrictDataList -_id')
+      return config[0].restrictDataList
+    } else {
+      const config = await Configuration.find({}).select('restrictDataList -_id')
+      const restrictDataListType = dataType === 'personal' ? config[0].restrictDataList.personal : config[0].restrictDataList.sensible
+      return restrictDataListType
     }
   }
 }
