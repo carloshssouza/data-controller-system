@@ -12,6 +12,7 @@ import ConfigurationDeleteMongoHostController from './configuration.deleteMongoH
 import ConfigurationAddRestrictDataController from './configuration.addRestrictData.controller'
 import ConfigurationDeleteRestrictDataController from './configuration.deleteRestrictData.controller'
 import ConfigurationUpdateRestrictDataController from './configuration.updateRestrictData.controller'
+import ConfigurationGetRestrictDataController from './configuration.getRestrictData.controller'
 
 export {
   ConfigurationCreateController,
@@ -27,5 +28,6 @@ export {
   ConfigurationDeleteMongoHostController,
   ConfigurationAddRestrictDataController,
   ConfigurationDeleteRestrictDataController,
-  ConfigurationUpdateRestrictDataController
+  ConfigurationUpdateRestrictDataController,
+  ConfigurationGetRestrictDataController
 }
