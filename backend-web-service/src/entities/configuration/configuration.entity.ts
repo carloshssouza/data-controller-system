@@ -4,7 +4,6 @@ import ConfigurationValidator from './configuration.validator'
 import ConfigurationRepository from '../../repositories/configuration.repository'
 import Database from '../../repositories/database/config'
 import isAppRunning from '../../utils/Services/CheckConnectionService'
-import FileService from '../../utils/Services/FileService'
 import restrictDataList from '../../utils/defaultRestrictDataList'
 
 class ConfigurationEntity {
@@ -23,8 +22,6 @@ class ConfigurationEntity {
       if (configuration && configuration.mongoUriHost) {
         return configuration
       } else {
-        FileService.createConfigFile(data.mongoUriHost, '../../../../configs/db.connection.json')
-
         return ConfigurationRepository.createConfiguration(data)
       }
     } else {
@@ -91,6 +88,10 @@ class ConfigurationEntity {
       throw new ErrorRes(400, validate.error.message)
     }
     return ConfigurationRepository.updateRestrictData(oldDataName, newDataName, dataType)
+  }
+
+  public async getRestrictData (dataType?: string) {
+    return ConfigurationRepository.getRestrictData(dataType)
   }
 }
 
