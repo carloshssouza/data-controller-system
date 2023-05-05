@@ -12,7 +12,11 @@ class ConfigurationUpdateController {
         throw new ErrorRes(400, 'Error updating configuration')
       }
 
-      await FileService.createConfigFile(configuration.restrictDataList, '../../../configs/restrictDataList.json')
+      const restrictDataListConfig = {
+        restrictDataList: configuration.restrictDataList
+      }
+
+      await FileService.createConfigFile(restrictDataListConfig, '../../../configs/restrictDataList.config.json')
 
       return res.status(200).json({ message: 'Configuration updated' })
     } catch (error) {

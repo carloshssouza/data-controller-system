@@ -11,10 +11,15 @@ class ConfigurationCreateController {
       if (!configuration) {
         throw new ErrorRes(400, 'Authentication failed')
       }
-      const data = {
+
+      const mongoData = {
         mongoUriHost: configuration.mongoUriHost
       }
-      await FileService.createConfigFile(data, '../../../../configs/db.connection.json')
+      const restrictDataListConfig = {
+        restrictDataList: configuration.restrictDataList
+      }
+      await FileService.createConfigFile(mongoData, '../../../../configs/db.connection.json')
+      await FileService.createConfigFile(restrictDataListConfig, '../../../../configs/restrictDataList.config.json')
 
       return res.status(201).json({ message: 'Mongo connected' })
     } catch (error) {

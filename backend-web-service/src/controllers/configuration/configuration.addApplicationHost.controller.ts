@@ -16,8 +16,12 @@ class ConfigurationAddApplicationHostController {
         applicationHost: configuration.applicationHost
       }
 
+      const restrictDataListConfig = {
+        restrictDataList: configuration.restrictDataList
+      }
+
       const applicationHostConfigFileCreated = await FileService.createConfigFile(applicationHostConfig, '../../../../configs/applicationHost.config.json')
-      const restrictDataListConfigFileCreated = await FileService.createConfigFile(configuration.restrictDataList, '../../../../configs/restrictDataList.config.json')
+      const restrictDataListConfigFileCreated = await FileService.createConfigFile(restrictDataListConfig, '../../../../configs/restrictDataList.config.json')
 
       if (!applicationHostConfigFileCreated || !restrictDataListConfigFileCreated) throw new ErrorRes(500, 'Error creating config file')
 
