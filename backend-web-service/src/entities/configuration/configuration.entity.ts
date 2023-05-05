@@ -9,7 +9,6 @@ import restrictDataList from '../../utils/defaultRestrictDataList'
 class ConfigurationEntity {
   public async createConfiguration (data: ConfigurationCreateData) {
     data.restrictDataList = restrictDataList
-
     const validate = await ConfigurationValidator.createConfiguration(data)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
@@ -19,6 +18,9 @@ class ConfigurationEntity {
 
     if (connection) {
       const configuration = await ConfigurationRepository.getConfiguration()
+      if (configuration && configuration.mongoUriHost === '') {
+        return ConfigurationRepository.updateConfigurationMongoUri(data.mongoUriHost)
+      }
       if (configuration && configuration.mongoUriHost) {
         return configuration
       } else {
