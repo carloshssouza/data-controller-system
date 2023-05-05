@@ -20,8 +20,9 @@ import { Container } from '../../GlobalStyles';
 import { Navigate, useNavigate } from 'react-router-dom';
 import ApisLineChart from './Charts/ApisLineChart';
 import ApisBarChart from './Charts/ApisBarChart'
+import LogsComponent from './components/LogsComponent';
 
-interface IErrorLog {
+export interface IErrorLog {
   _id: string
   title: string
   description: string
@@ -142,7 +143,10 @@ export default function Dashboard() {
 
     return (
       <div>
-        <div>{apiWithMoreLeakedData.name} : {apiWithMoreLeakedData.leakedData}</div>
+        {
+          apiWithMoreLeakedData.leakedData === 0 ? <div>No data leaked</div> : <div>{apiWithMoreLeakedData.name} : {apiWithMoreLeakedData.leakedData}</div>
+        }
+
       </div>
     )
   }
@@ -166,9 +170,9 @@ export default function Dashboard() {
 
     return (
       <div>
-        <div>High: {amountErrorPerLevel.high}</div>
-        <div>Medium: {amountErrorPerLevel.medium}</div>
-        <div>Low: {amountErrorPerLevel.low}</div>
+        <div style={{ color: 'red' }}>High: {amountErrorPerLevel.high}</div>
+        <div style={{ color: 'orange' }}>Medium: {amountErrorPerLevel.medium}</div>
+        <div style={{ color: 'green' }}>Low: {amountErrorPerLevel.low}</div>
       </div>
     )
   }
@@ -240,7 +244,7 @@ export default function Dashboard() {
                       </div>
                     </CardItem>
                   )
-                }) : <h1>no data</h1>}
+                }) : <h3>APIs not found or not exist</h3>}
               </div>
             </ApiContainer>
 
@@ -267,31 +271,21 @@ export default function Dashboard() {
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
                   <h2>Apis error lines</h2>
-                  <ApisLineChart errorLog={errorLog} />
+                  {
+                    (listApiData && errorLog.length) ? (
+                      <ApisLineChart errorLog={errorLog} />
+                    ) : <div>No data</div>
+                  }
 
                   <h3>Logs</h3>
-                  <ErrorLogCard>
-                    {
-                      errorLog?.map((error: any) => {
-                        console.log(error)
-                        return (
-                          <div style={{display:'flex'}}>
-                            <div>Route name:{error.routeName}</div>
-                            <div>Route Id:{error.routeId}</div>
-                            <div>Level:{error.level}</div>
-                            <div>Description: {error.description}</div>
-                            <div>Amount leaked data: {error.leakedData.length}</div>
-                            <div>Created at: {error.createdAt}</div>
-                          </div>
-                        )
-                      })
-                    }
-                    <div>{JSON.stringify(errorLog[0])}</div>
-                  </ErrorLogCard>
+                  <LogsComponent logs={errorLog} />
+
                 </CommonErrorContainer>
                 <CommonErrorContainer>
                   <h2>Api Errors Comparison</h2>
-                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} />
+                  {
+                    errorLog.length ? <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} /> : <div>No data</div>
+                  }
                 </CommonErrorContainer>
               </GraphContainer>
             </ErrorContainer>
