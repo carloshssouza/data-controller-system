@@ -45,9 +45,10 @@ class App {
 
   private async databaseConnect () {
     try {
-      const mongoUriHost = await FileService.readConfigFile('../../../../configs/db.connection.json')
-      if (mongoUriHost) {
-        await Database.connect(mongoUriHost)
+      const config = await FileService.readConfigFile('../../../../configs/db.connection.json')
+
+      if (config.mongoUriHost) {
+        await Database.connect(config.mongoUriHost)
       }
     } catch (error) {
       console.error(`Error checking for or reading file: ${error}`)

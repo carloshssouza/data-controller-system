@@ -18,7 +18,11 @@ class ConfigurationCheckApplicationHostController {
       const config = await ConfigurationEntity.getConfiguration()
       delete config.mongoUriHost
 
-      await FileService.createProxyConfigFile(config, '../../../../configs/proxy.config.json')
+      const dataFile = {
+        applicationHost: config.applicationHost
+      }
+
+      await FileService.createConfigFile(dataFile, '../../../../configs/applicationHost.config.json')
 
       return res.status(200).json({ message: 'Application running' })
     } catch (error) {

@@ -129,7 +129,7 @@ const ErrorLogCard = styled.div`
   font-family: sans-serif;
   border-radius: 10px;
   background: white;
-  max-height: 150px;
+  max-height: 300px;
   overflow: auto;
   color: black;
   margin: 1rem 0 0 0;

@@ -1,45 +1,36 @@
-import React, { useEffect } from 'react'
-import { ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer, UniqueRestrictDataItem  } from './styles'
-import { Button, Form, Input, Modal, Popconfirm, Table } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer, UniqueRestrictDataItem } from './styles'
+import { Popconfirm, Table } from 'antd'
 import api from '../../../../api/axios'
 import { toast, ToastContainer } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import Icon from '@ant-design/icons/lib/components/Icon'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import ModalUpdate from './components/ModalUpdate'
+import { deleteRestrictData } from '../../../../api/services/Configuration'
 
-interface IRestrictDataList {
-  personal: string[] | []
-  sensible: string[] | []
-}
+
 
 interface RestrictDataItemProps {
-  restrictDataPersonal: []
-  restrictDataSensible: []
+  restrictDataPersonal: {name: string, type: string}[]
+  restrictDataSensible: {name: string, type: string}[]
+  getRestrictData: (dataType?: string) => Promise<void>
 }
 
-export default function RestrictDataItem({ restrictDataPersonal, restrictDataSensible }: RestrictDataItemProps) {
+
+export default function RestrictDataItem({ restrictDataPersonal, restrictDataSensible, getRestrictData }: RestrictDataItemProps) {
   const navigate = useNavigate()
 
-  const [showFormPersonal, setShowFormPersonal] = React.useState<boolean>(false)
-  const [showFormSensible, setShowFormSensible] = React.useState<boolean>(false)
-  const [selectedRecord, setSelectedRecord] = React.useState<any>();
+  const [updateModalVisible, setUpdateModalVisible] = useState(false)
+  const [selectedRecord, setSelectedRecord] = useState<any>({})
+ 
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
-  useEffect(() => {
-    console.log(restrictDataPersonal)
-    console.log(restrictDataSensible)
-  }, [])
+ 
+  
 
-  const convertData = (restrictDataType: []) => {
-    const data = []
-    for (const item of restrictDataType) {
-      data.push({ name: item })
-    }
-    return data
-  }
 
-  const updateRestrictData = async (data: any) => {
+  const addRestrictData = async (record: any) => {
     try {
       const config = {
         headers: {
@@ -47,49 +38,71 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
         }
       }
 
-      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data`, data, config)
-      if (response.status !== 200) {
+      const data = {
+        dataName: record.name
+      }
+
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data?dataType=${selectedRecord?.type}`, data, config)
+      if(response.status !== 200) {
         throw new Error(response.data.message)
       } else {
         notifySuccess(response.data.message)
+        getRestrictData(selectedRecord?.type)
       }
     } catch (error: any) {
       notifyError(error.response.data.message)
-    } 
+    }
   }
-
-  const handleUpdate = (record: any) => {
-    // Open the update modal and pass the record data
-    setShowFormPersonal(true);
-    setSelectedRecord(record);
-  };
-
-  const deleteRestrictData = async(name: string ) => {
+  const updateRestrictData = async (record: any) => {
     try {
       const config = {
         headers: {
-          'authorization': `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       }
-      const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data/${name}`, config)
+
+      const data = {
+        newDataName: record.name,
+        oldDataName: selectedRecord?.name
+      }
+
+      const response = await api.patch(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data?dataType=${selectedRecord?.type}`, data, config)
       if (response.status !== 200) {
         throw new Error(response.data.message)
       } else {
         notifySuccess(response.data.message)
-        // update restrict data
+        getRestrictData(selectedRecord?.type)
       }
     } catch (error: any) {
-      if(error.response.status === 401) {
+      notifyError(error.response.data.message)
+    } finally {
+      setUpdateModalVisible(false)
+    }
+  }
+
+  const handleDeleteRestrictData = async (name: string) => {
+    const response = await deleteRestrictData(name, selectedRecord?.type)
+    if(response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
-      notifyError(error.response.data.message)
+      notifyError(response.message)
+    } else {
+      notifySuccess(response.message)
+      getRestrictData(selectedRecord?.type)
     }
+  }
+
+
+  const onClickUpdate = (record: string) => {
+    setSelectedRecord(record)
+    setUpdateModalVisible(true)
   }
 
   const columns = [
     {
-      title: "Name data",
+      title: "Data name",
       dataIndex: "name",
       key: "name",
     },
@@ -97,13 +110,13 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
       title: "Actions",
       key: "actions",
       render: (text: string, record: any) => (
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <EditOutlined style={{color: '#4096FF'}} onClick={() => handleUpdate(record.name)}/>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <EditOutlined style={{ color: '#4096FF' }} onClick={() => onClickUpdate(record)} />
           <Popconfirm
             title="Are you sure you want to delete this item?"
-            onConfirm={() => deleteRestrictData(record.name)}
+            onConfirm={() => handleDeleteRestrictData(record.name)}
           >
-            <DeleteOutlined style={{color: '#FF7875'}}/>
+            <DeleteOutlined style={{ color: '#FF7875' }} />
           </Popconfirm>
         </div>
       ),
@@ -117,41 +130,37 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
         <RestrictDataCard>
           <h3>Personal:</h3>
           {
-            <Table columns={columns} dataSource={convertData(restrictDataPersonal)} scroll={{ y: 300 }} style={{width: '300px'}}/>
+            <Table
+              key='personal'
+              columns={columns}
+              dataSource={restrictDataPersonal}
+              scroll={{ y: 300 }}
+              style={{ width: '300px' }}
+              rowKey={(record) => record.name}
+            />
           }
         </RestrictDataCard>
         <RestrictDataCard>
           <h3>Sensible:</h3>
           {
-            <Table columns={columns} dataSource={convertData(restrictDataSensible)} scroll={{ y: 300 }} style={{width: '300px'}}/>
+            <Table
+              key="sensible"
+              columns={columns}
+              dataSource={restrictDataSensible}
+              scroll={{ y: 300 }}
+              style={{ width: '300px' }}
+              rowKey={(record) => record.name}
+            />
           }
         </RestrictDataCard>
-        <Modal
-          title="Update Restrict Data"
-          open={showFormPersonal}
-          onCancel={() => setShowFormPersonal(false)}
-          cancelButtonProps={{style: {display: 'none'}}}
-          okButtonProps={{ style: { display: 'none' } }}
-        >
-           <Form
-            style={{display: 'flex', flexDirection: 'column', alignItems: 'start'}}
-            name="basic"
-            initialValues={{ remember: true }}
-            onFinish={updateRestrictData}
-            autoComplete="off"
-          >
-            <Form.Item
-              label="Name data"
-              name="name"
-              rules={[{ required: true, message: 'Name data is required' }]}
-            >
-              <Input defaultValue={selectedRecord?.name}/>
-            </Form.Item>
-            <Button type="primary"  htmlType="submit">Confirm</Button>
-          </Form>
-        </Modal>
+        <ModalUpdate  
+          updateModalVisible={updateModalVisible} 
+          updateRestrictData={updateRestrictData} 
+          setUpdateModalVisible={setUpdateModalVisible} 
+          selectedRecord={selectedRecord}
+        />
       </RestrictDataContainer>
-
+      <ToastContainer />
     </ConfigurationItemRestrictData>
   )
 }

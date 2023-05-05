@@ -1,39 +1,46 @@
-import fs from 'fs/promises'
+import * as fs from 'fs'
 import path from 'path'
 
 class FileService {
   public async createConfigFile (data: any, pathFile: string): Promise<boolean> {
     try {
-      const configString = JSON.stringify({ mongoUriHost: data })
-      await fs.writeFile(path.resolve(__dirname, pathFile), configString)
-      console.log('Config file saved successfully')
-      return true
+      // Check if the config file exists
+      if (fs.existsSync(pathFile)) {
+        const config = JSON.parse(fs.readFileSync(path.resolve(__dirname, pathFile), 'utf8'))
+
+        Object.assign(config, data)
+
+        fs.writeFileSync(path.resolve(__dirname, pathFile), JSON.stringify(data, null, 2))
+      } else {
+        fs.writeFileSync(path.resolve(__dirname, pathFile), JSON.stringify(data, null, 2))
+        console.log('Config file saved successfully')
+        return true
+      }
     } catch (error) {
       console.error(`Error writing config file: ${error}`)
       return false
     }
   }
 
-  public async createProxyConfigFile (data: any, pathFile: string): Promise<boolean> {
-    try {
-      const configString = JSON.stringify(data)
-      await fs.writeFile(path.resolve(__dirname, pathFile), configString)
-      console.log('Config file saved successfully')
-      return true
-    } catch (error) {
-      console.error(`Error writing config file: ${error}`)
-      return false
-    }
-  }
-
-  public async readConfigFile (pathFile: string): Promise<string> {
+  public async readConfigFile (pathFile: string): Promise<any> {
     const absolutePath = path.resolve(__dirname, pathFile)
-    const fileContent = await fs.readFile(absolutePath, 'utf8')
+    const fileContent = fs.readFileSync(absolutePath, 'utf8')
     if (!fileContent) {
       throw new Error('Error reading file')
     }
     const config = JSON.parse(fileContent)
-    return config.mongoUriHost
+    return config
+  }
+
+  public async deleteConfigFile (pathFile: string): Promise<boolean> {
+    try {
+      fs.unlinkSync(path.resolve(__dirname, pathFile))
+      console.log('Config file deleted successfully')
+      return true
+    } catch (error) {
+      console.error(`Error deleting config file: ${error}`)
+      return false
+    }
   }
 }
 

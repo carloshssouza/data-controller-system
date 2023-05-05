@@ -8,7 +8,7 @@ class UserMeController {
   public async getUser (req: Request, res: Response): Promise<Response> {
     try {
       const tokenDecoded = JwtService.decode(req.headers.authorization)
-      console.log(tokenDecoded)
+
       const user = await new UserEntity().getUser(tokenDecoded.sub as unknown as TypeId)
 
       if (!user) {

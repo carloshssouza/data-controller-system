@@ -22,7 +22,7 @@ const StyledButton = styled(Button) <IStyledButton>`
   border: none;
   font-weight: bold;
   color: white;
-  margin: 1rem 0 1rem 0;
+  margin: 1rem 0 1rem 0 !important;
 `
 
 export {

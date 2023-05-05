@@ -26,6 +26,34 @@ class ConfigurationSchemaValidator {
 
     return schema.validate(httpBody)
   }
+
+  addRestrictDataValidation (dataName: string, dataType: string) {
+    const schema = Joi.object({
+      dataName: Joi.string().required(),
+      dataType: Joi.string().required()
+    })
+
+    return schema.validate({ dataName, dataType })
+  }
+
+  updateRestrictDataValidation (oldDataName: string, newDataName: string, dataType: string) {
+    const schema = Joi.object({
+      oldDataName: Joi.string().required(),
+      newDataName: Joi.string().required(),
+      dataType: Joi.string().required()
+    })
+
+    return schema.validate({ oldDataName, newDataName, dataType })
+  }
+
+  deleteRestrictDataValidation (newDataName: string, dataType: string) {
+    const schema = Joi.object({
+      newDataName: Joi.string().required(),
+      dataType: Joi.string().required()
+    })
+
+    return schema.validate({ newDataName, dataType })
+  }
 }
 
 export default new ConfigurationSchemaValidator()

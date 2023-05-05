@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { RegisterAppContainer } from './styles'
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input } from 'antd';
-import api from '../../api/axios';
+import { getConfiguration, updateAppHost } from '../../api/services/Configuration';
 
 export default function RegisterApp() {
   const notifySuccess = (message: string) => toast.success(message);
@@ -12,57 +12,46 @@ export default function RegisterApp() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleAppHostData = async (data: any) => {
-    try {
-      setIsLoading(true)
-      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/configuration/application-host`, data)
-      if (response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        notifySuccess(response.data.message)
-        navigate("/dashboard")
-      }
-    } catch (error: any) {
-      notifyError(error.response.data.message)
-    } finally {
-      setIsLoading(false)
+    setIsLoading(true)
+
+    const response = await updateAppHost(data)
+
+    if (response.error) {
+      notifyError(response.message)
+    } else {
+      notifySuccess(response.message)
+      navigate("/dashboard")
     }
+    setIsLoading(false)
   }
-  
-  const getConfiguration = async () => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
 
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration`, config)
-
-      if (response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        if(response.data.applicationHost) {
-          navigate('/login')
-        }
+  const handleGetConfiguration = async () => {
+    const response = await getConfiguration()
+    if(response.error) {
+      if(response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
       }
-    } catch (error: any) {
-      console.log(error)
-      if(error.response.status === 404 || !error.response.data.connection) {
+      if(response.status === 404 || !response.data?.connection) {
         localStorage.removeItem('dbConnection')
         navigate('/')
       }
-      notifyError(error.message)
+      notifyError(response.data.message)
+    } else {
+      if (response.applicationHost) {
+        navigate('/login')
+      }
     }
   }
 
   useEffect(() => {
-    getConfiguration()
+    handleGetConfiguration()
   }, [])
 
   return (
     <RegisterAppContainer>
       <div>
-      <h1>Register your target application host</h1>
+        <h1>Register your target application host</h1>
         <Form
           name="basic"
           labelCol={{ span: 8 }}
@@ -83,8 +72,8 @@ export default function RegisterApp() {
             Confirm
           </Button>
         </Form>
-      </div>     
-      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }}/>
+      </div>
+      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }} />
     </RegisterAppContainer>
   )
 }

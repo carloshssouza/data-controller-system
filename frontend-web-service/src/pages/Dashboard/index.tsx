@@ -20,8 +20,9 @@ import { Container } from '../../GlobalStyles';
 import { Navigate, useNavigate } from 'react-router-dom';
 import ApisLineChart from './Charts/ApisLineChart';
 import ApisBarChart from './Charts/ApisBarChart'
+import LogsComponent from './components/LogsComponent';
 
-interface IErrorLog {
+export interface IErrorLog {
   _id: string
   title: string
   description: string
@@ -64,7 +65,7 @@ export default function Dashboard() {
       }
     } catch (error: any) {
       notifyError(error.response.data.message)
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -84,7 +85,7 @@ export default function Dashboard() {
 
     } catch (error: any) {
       console.error(error);
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -101,7 +102,7 @@ export default function Dashboard() {
         setErrorLog(response.data)
       }
     } catch (error: any) {
-      if(error.response.status === 401) {
+      if (error.response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -142,7 +143,10 @@ export default function Dashboard() {
 
     return (
       <div>
-        <div>{apiWithMoreLeakedData.name} : {apiWithMoreLeakedData.leakedData}</div>
+        {
+          apiWithMoreLeakedData.leakedData === 0 ? <div>No data leaked</div> : <div>{apiWithMoreLeakedData.name} : {apiWithMoreLeakedData.leakedData}</div>
+        }
+
       </div>
     )
   }
@@ -154,10 +158,10 @@ export default function Dashboard() {
       low: 0
     }
 
-    for(const error of errorLog) {
-      if(error.level === 'high') {
+    for (const error of errorLog) {
+      if (error.level === 'high') {
         amountErrorPerLevel.high++
-      } else if(error.level === 'medium') {
+      } else if (error.level === 'medium') {
         amountErrorPerLevel.medium++
       } else {
         amountErrorPerLevel.low++
@@ -166,9 +170,9 @@ export default function Dashboard() {
 
     return (
       <div>
-        <div>High: {amountErrorPerLevel.high}</div>
-        <div>Medium: {amountErrorPerLevel.medium}</div>
-        <div>Low: {amountErrorPerLevel.low}</div>
+        <div style={{ color: 'red' }}>High: {amountErrorPerLevel.high}</div>
+        <div style={{ color: 'orange' }}>Medium: {amountErrorPerLevel.medium}</div>
+        <div style={{ color: 'green' }}>Low: {amountErrorPerLevel.low}</div>
       </div>
     )
   }
@@ -181,8 +185,8 @@ export default function Dashboard() {
     });
     socket.on('error-log-data', (data) => {
       console.log(data)
-      // setErrorLog((prevState) => [...prevState, data])
-      getAllErrorLogs()
+      setErrorLog((prevState) => [...prevState, data])
+      // getAllErrorLogs()
     });
     if (errorLog.length === 0) {
       getAllErrorLogs()
@@ -240,7 +244,7 @@ export default function Dashboard() {
                       </div>
                     </CardItem>
                   )
-                }) : <h1>no data</h1>}
+                }) : <h3>APIs not found or not exist</h3>}
               </div>
             </ApiContainer>
 
@@ -267,16 +271,21 @@ export default function Dashboard() {
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
                   <h2>Apis error lines</h2>
-                  <ApisLineChart errorLog={errorLog} />
+                  {
+                    (listApiData && errorLog.length) ? (
+                      <ApisLineChart errorLog={errorLog} />
+                    ) : <div>No data</div>
+                  }
 
                   <h3>Logs</h3>
-                  <ErrorLogCard>
-                    <div>{JSON.stringify(errorLog[0])}</div>
-                  </ErrorLogCard>
+                  <LogsComponent logs={errorLog} />
+
                 </CommonErrorContainer>
                 <CommonErrorContainer>
                   <h2>Api Errors Comparison</h2>
-                  <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth}/>           
+                  {
+                    errorLog.length ? <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} /> : <div>No data</div>
+                  }
                 </CommonErrorContainer>
               </GraphContainer>
             </ErrorContainer>

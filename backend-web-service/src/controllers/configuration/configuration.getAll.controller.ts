@@ -5,7 +5,7 @@ import fs from 'fs'
 import path from 'path'
 import mongoose from 'mongoose'
 
-class ConfigurationGetAllController {
+class ConfigurationGetController {
   public async getConfiguration (req: Request, res: Response): Promise<Response> {
     try {
       const configuration = await ConfigurationEntity.getConfiguration()
@@ -24,4 +24,4 @@ class ConfigurationGetAllController {
   }
 }
 
-export default new ConfigurationGetAllController()
+export default new ConfigurationGetController()
