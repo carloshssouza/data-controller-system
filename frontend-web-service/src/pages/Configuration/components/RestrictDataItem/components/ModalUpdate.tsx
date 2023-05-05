@@ -1,12 +1,20 @@
 import { Button, Form, Input, Modal } from 'antd'
-import React from 'react'
 
-export default function ModalUpdate() {
+interface ModalUpdateProps {
+  updateRestrictData: (record: any) => Promise<void>
+  updateModalVisible: boolean
+  setUpdateModalVisible: (value: boolean) => void
+  selectedRecord: any
+}
+
+export default function ModalUpdate({ updateRestrictData, updateModalVisible, setUpdateModalVisible, selectedRecord }: ModalUpdateProps) {
   return (
     <Modal
-      title="Update Restrict Data"
-      open={showFormPersonal}
-      onCancel={() => setShowFormPersonal(false)}
+      title="Update Data Restrict"
+      open={updateModalVisible}
+      onCancel={() => {
+        setUpdateModalVisible(false)
+      }}
       cancelButtonProps={{ style: { display: 'none' } }}
       okButtonProps={{ style: { display: 'none' } }}
     >
@@ -18,14 +26,15 @@ export default function ModalUpdate() {
         autoComplete="off"
       >
         <Form.Item
-          label="Name data"
+          key={selectedRecord?.name}
+          label="Data name"
           name="name"
-          rules={[{ required: true, message: 'Name data is required' }]}
-          initialValue={selectedRecord?.name}
+          rules={[{ required: true, message: 'Data name is required' }]}
         >
-          <Input defaultValue={selectedRecord?.name} />
+          <Input defaultValue={selectedRecord?.name} key={selectedRecord?.name} />
         </Form.Item>
         <Button type="primary" htmlType="submit">Confirm</Button>
+
       </Form>
     </Modal>
   )
