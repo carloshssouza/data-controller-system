@@ -9,6 +9,7 @@ import { ApiAddContainer, ApiListContainer } from './styles';
 import ModalUpdateApiComponent from './components/ModalUpdateApiComponent';
 import FormAddApiComponent from './components/FormAddApiComponent';
 import { Container } from '../../GlobalStyles';
+import { createApi, updateApi, deleteApi, getAllApis, onChangeUpdateDataReturnAllowed } from '../../api/services/Api';
 
 interface IApiData {
   routeName: string;
@@ -30,115 +31,67 @@ export default function Api() {
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
-  const getAllApis = async () => {
-    try {
-      const config = {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api-info`, config)
-      if (response.status !== 200) {
-        throw new Error('Error getting all apis')
-      } else {
-        setListApisData(response.data)
-      }
-    } catch (error: any) {
-      if(error.response.status === 401) {
-        localStorage.removeItem('token')
+  const handleGetAllApis = async () => {
+    const response = await getAllApis()
+    if(response.error) {
+      if(response.status === 401) {
         navigate('/login')
       }
-      notifyError(error.response.data.message)
+      notifyError(response.message)
+    } else {
+      setListApisData(response)
     }
   }
 
-  const createApi = async (data: any) => {
-    try {
-      const config = {
-        headers: {
-          'authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      data.requestType = selectRequestType
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/api-info`, data, config)
-      if (response.status !== 201) {
-        throw new Error('Create api failed')
-      } else {
-        notifySuccess(response.data.message)
-        await getAllApis()
-      }
-    } catch (error: any) {
-      if(error.response.status === 401) {
-        localStorage.removeItem('token')
+  const handleCreateApi = async (data: any) => {
+    const response = await createApi(data, selectRequestType)
+    if (response.error) {
+      if(response.status === 401) {
         navigate('/login')
       }
-      notifyError(error.response.data.message)
+      notifyError(response.message)
+    } else {
+      notifySuccess(response.message)
+      await handleGetAllApis()
     }
   }
 
-  const updateApi = async (data: any) => {
-    try {
-      const config = {
-        headers: {
-          'authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-
-      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/api/${selectedRecord._id}`, data, config)
-      if (response.status !== 200) {
-        throw new Error('Update api failed')
-      } else {
-        notifySuccess("Api updated")
-        await getAllApis()
-      }
-    } catch (error: any) {
-      if(error.response.status === 401) {
-        localStorage.removeItem('token')
+  const handleUpdateApi = async (data: any) => {
+    const response = await updateApi(data, selectedRecord)
+    if(response.error) {
+      if(response.status === 401) {
         navigate('/login')
       }
-      notifyError(error.response.data.message)
+      notifyError(response.message)
+    } else {
+      notifySuccess(response.message)
+      await handleGetAllApis()
     }
   }
 
-  const deleteApi = async (id: string) => {
-    try {
-      const config = {
-        headers: {
-          'authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/api-info/${id}`, config)
-      if (response.status !== 200) {
-        throw new Error('Deleted api failed')
-      } else {
-        notifySuccess(response.data.message)
-        await getAllApis()
-      }
-    } catch (error: any) {
-      if(error.response.status === 401) {
-        localStorage.removeItem('token')
+  const handleDeleteApi = async (id: string) => {
+    const response = await deleteApi(id)
+    if(response.error) {
+      if(response.status === 401) {
         navigate('/login')
       }
-      notifyError(error.response.data.message)
+      notifyError(response.message)
+    } else {
+      notifySuccess(response.message)
+      await handleGetAllApis()
     }
   }
 
-  const onChangeUpdateDataReturnAllowed = async (dataReturnAllowed: boolean, _id: any) => {
-    try {
-      const response = await api.put(`${import.meta.env.VITE_BASE_URL}/api-info/${_id}`, { dataReturnAllowed })
-      if(response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        notifySuccess(response.data.message)
-        getAllApis()
-      }
-    } catch (error: any) {
-      console.log("error")
-      if(error.response.status === 401) {
-        localStorage.removeItem('token')
+  const handleOnChangeUpdateDataReturnAllowed = async (dataReturnAllowed: boolean, _id: any) => {
+    const response = await onChangeUpdateDataReturnAllowed(dataReturnAllowed, _id)
+    if(response.error) {
+      if(response.status === 401) {
         navigate('/login')
       }
-      notifyError(error.response.data.message)
+      notifyError(response.message)
+    } else {
+      notifySuccess(response.message)
+      await handleGetAllApis()
     }
   }
 
@@ -188,7 +141,7 @@ export default function Api() {
           <Button type="primary" onClick={() => handleUpdate(record)}>Update</Button>
           <Popconfirm
             title="Are you sure you want to delete this item?"
-            onConfirm={() => deleteApi(record._id)}
+            onConfirm={() => handleDeleteApi(record._id)}
           >
             <Button style={{ background: "#E5484D" }}>Delete</Button>
           </Popconfirm>
@@ -210,7 +163,7 @@ export default function Api() {
 
   useEffect(() => {
     if (!listApisData.length) {
-      getAllApis()
+      handleGetAllApis()
     }
   }, [])
 
@@ -219,7 +172,7 @@ export default function Api() {
       <ApiAddContainer>
         <h1>Add new APIs</h1>
         <FormAddApiComponent
-          createApi={createApi}
+          createApi={handleCreateApi}
           selectRequestType={selectRequestType}
           handleChangeRequestType={handleChangeRequestType}
           requestType={requestType}
@@ -233,7 +186,7 @@ export default function Api() {
               <ModalUpdateApiComponent
                 updateModalVisible={updateModalVisible}
                 setUpdateModalVisible={setUpdateModalVisible}
-                updateApi={updateApi}
+                updateApi={handleUpdateApi}
                 selectedRecord={selectedRecord}
                 requestType={requestType}
               />
