@@ -31,6 +31,17 @@ class FileService {
     const config = JSON.parse(fileContent)
     return config
   }
+
+  public async deleteConfigFile (pathFile: string): Promise<boolean> {
+    try {
+      fs.unlinkSync(path.resolve(__dirname, pathFile))
+      console.log('Config file deleted successfully')
+      return true
+    } catch (error) {
+      console.error(`Error deleting config file: ${error}`)
+      return false
+    }
+  }
 }
 
 export default new FileService()
