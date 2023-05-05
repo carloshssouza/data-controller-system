@@ -59,10 +59,12 @@ class ApiRepository {
     const endpointPathLength = endpointPathSplitted.length
 
     if (endpointPathLength === 1) {
-      return Api.find({
+      const api = await Api.find({
         endpointPath,
         requestType
-      })
+      }).select('requestType endpointPath endpointPathLength dataReturnAllowed')
+
+      return api[0]
     }
 
     const apisFirst = await Api.find({
@@ -80,6 +82,11 @@ class ApiRepository {
     })
 
     const api = this.getApiObject(endpointPath, apis)
+    if (!api._id) {
+      delete api.createdAt
+      delete api.updatedAt
+      delete api.routeName
+    }
     return api
   }
 
@@ -101,7 +108,12 @@ class ApiRepository {
         return apis[i]
       }
     }
-    return {}
+    return {
+      _id: null,
+      endpointPath: null,
+      requestType: null,
+      endpointPathLength: null
+    }
   }
 }
 
