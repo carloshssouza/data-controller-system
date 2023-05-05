@@ -23,10 +23,6 @@ const StyledButton = styled(Button) <IStyledButton>`
   font-weight: bold;
   color: white;
   margin: 1rem 0 1rem 0 !important;
-  transition: all 0.2s ease-in-out;
-  :hover {
-    background: #8f8f8f !important;
-  }
 `
 
 export {

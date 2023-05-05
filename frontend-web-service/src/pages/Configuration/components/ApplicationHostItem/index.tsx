@@ -25,10 +25,6 @@ export default function ApplicationHostItem({
     setIsModalApplicationHostVisible(true);
   };
 
-  useEffect(() => {
-    console.log(isModalApplicationHostVisible)
-  }, [isModalApplicationHostVisible])
-
   return (
     <ConfigurationItem>
       <h3>Application host target:</h3>
