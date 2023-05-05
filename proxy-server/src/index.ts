@@ -4,11 +4,12 @@ import { IncomingMessage, http } from './types/http'
 import dotenv from 'dotenv'
 import File from './utils/file'
 import path from 'path'
+
 const EventEmitter = require('events')
 
 EventEmitter.defaultMaxListeners = 20
 
-const configPath = path.resolve(__dirname, '../../configs/proxy.config.json')
+const configPath = path.resolve(__dirname, '../../configs/applicationHost.config.json')
 const target = File.readFile(configPath)
 
 process.on('SIGINT', () => {
