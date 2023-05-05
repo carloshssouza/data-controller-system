@@ -52,7 +52,7 @@ export default abstract class Auxiliary {
    * @param responseFromGrpc Object from grpc server response
    * @returns Returns response with error object
    */
-  protected async checkForError (responseFromGrpc: any) {
+  protected async checkForError (responseFromGrpc: any, api: boolean) {
     if (responseFromGrpc && responseFromGrpc.constructor().toString() === 'Error') {
       const grpcError = {
         error: true,
@@ -62,7 +62,7 @@ export default abstract class Auxiliary {
         }
       }
       return grpcError
-    } else if (!responseFromGrpc._id) {
+    } else if (!responseFromGrpc._id && api) {
       const grpcError = {
         error: true,
         data: {

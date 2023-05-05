@@ -15,20 +15,21 @@ class DataControlService extends Auxiliary {
   public async runController (req: IncomingMessage, body: any) {
     const apiResponse = await GrpcClient.getApiPermission(req.url, req.method)
 
-    const grpcApiService = await this.checkForError(apiResponse)
+    const grpcApiService = await this.checkForError(apiResponse, true)
+
     if (grpcApiService.error) {
       return grpcApiService.data
     }
 
     if (apiResponse && !apiResponse.dataReturnAllowed) {
-      const pathConfig = path.resolve(__dirname, '../../../../configs/proxy.config.json')
+      const pathConfig = path.resolve(__dirname, '../../../../configs/restrictDataList.config.json')
       const configuration = JSON.parse(fs.readFileSync(pathConfig, 'utf8')) as any
       const privateDataFound = await Identifier.findPrivateData(body, configuration.restrictDataList) as ILeakedData[]
       if (privateDataFound.length) {
         const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse)
 
         const errorLogCreateResponse = await GrpcClient.createErrorLog(errorLogData)
-        const grpcErrorLogService = await this.checkForError(errorLogCreateResponse)
+        const grpcErrorLogService = await this.checkForError(errorLogCreateResponse, false)
         if (grpcErrorLogService.error) {
           return grpcErrorLogService.data
         }
