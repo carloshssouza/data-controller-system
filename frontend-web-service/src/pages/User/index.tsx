@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import api from '../../api/axios'
+import { useEffect, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Container } from '../../GlobalStyles'
 import { UserContainer } from './styles'
 import { Button } from 'antd'
 import { useNavigate } from 'react-router-dom'
+import { getUser } from '../../api/services/User'
 
 interface IUserData {
   name?: string
@@ -17,30 +17,21 @@ export default function User() {
   const notifyError = (message: string) => toast.error(message);
   const navigate = useNavigate()
 
-  const getUserData = async() => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/user/me`, config)
-      if(response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        setUserData(response.data)
-      }
-    } catch (error: any) {
-      if (error.response.status === 401) {
+  const handleGetUser = async() => {
+    const response = await getUser()
+    if(response.error) {
+      if(response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
-      notifyError(error.message)
+      notifyError(response.message)
+    } else {
+      setUserData(response)
     }
   }
 
   useEffect(() => {
-    getUserData()
+    handleGetUser()
   }, [])
   
 

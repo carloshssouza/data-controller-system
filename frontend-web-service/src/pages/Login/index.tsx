@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { Button, Form, Input } from 'antd';
-import api from '../../api/axios'
 import { useNavigate } from "react-router-dom";
 import { LoginContainer } from "./styles";
 import { Container } from "../../GlobalStyles";
+import { login, validateToken } from "../../api/services/Auth";
 
 const Login = () => {
   const notifySuccess = (message: string) => toast.success(message);
@@ -13,42 +13,30 @@ const Login = () => {
   const navigate = useNavigate()
 
   const handleLoginData = async (loginData: any) => {
-    try {
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/login`, loginData)
-      if (response.status === 401) {
-        throw new Error("Email or password invalid")
-      } else {
-        notifySuccess("Login success")
-        localStorage.setItem('token', response.data.access_token)
-        navigate("/dashboard")
-      }
-    } catch (error: any) {
-      notifyError(error.response.data.message)
+    const response = await login(loginData)
+    if(response.error) {
+      notifyError(response.data.message)
+    } else {
+      notifySuccess("Login success")
+      localStorage.setItem('token', response.access_token)
+      navigate("/dashboard")
     }
   }
 
-  const validateToken = async () => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
+  const handleValidateToken = async () => {
+    const response = await validateToken()
+    if(response.error) {
+      if(response.status === 401) {
+        localStorage.removeItem('token')
       }
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/validate-token`, config)
-      if (response.status === 401) {
-        throw new Error("Token invalid")
-      } else {
-        notifySuccess("Token valid")
-        navigate("/dashboard")
-      }
-    } catch (error: any) {
-      localStorage.removeItem('token')
+    } else {
+      navigate("/dashboard")
     }
   }
 
   useEffect(() => {
     if (localStorage.getItem('token')){
-      validateToken()
+      handleValidateToken()
     }
   }, [])
 
