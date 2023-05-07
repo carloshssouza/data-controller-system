@@ -18,9 +18,9 @@ import {
 } from './styles';
 import { Container } from '../../GlobalStyles';
 import { Navigate, useNavigate } from 'react-router-dom';
-import ApisLineChart from './Charts/ApisLineChart';
 import ApisBarChart from './Charts/ApisBarChart'
 import LogsComponent from './components/LogsComponent';
+import ErrorLogLineChart from './Charts/ErrorLogLineChart';
 
 export interface IErrorLog {
   _id: string
@@ -181,12 +181,9 @@ export default function Dashboard() {
     getAllApis()
     handleResize()
     socket.on('message', (message) => {
-      console.log(message)
     });
     socket.on('error-log-data', (data) => {
-      console.log(data)
-      setErrorLog((prevState) => [...prevState, data])
-      // getAllErrorLogs()
+      setErrorLog((prev) => ([data, ...prev]))
     });
     if (errorLog.length === 0) {
       getAllErrorLogs()
@@ -270,10 +267,10 @@ export default function Dashboard() {
               </ErrorData>
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
-                  <h2>Apis error lines</h2>
+                  <h2>Errors</h2>
                   {
-                    (listApiData && errorLog.length) ? (
-                      <ApisLineChart errorLog={errorLog} />
+                    (errorLog && errorLog.length) ? (
+                      <ErrorLogLineChart errorLog={errorLog} />
                     ) : <div>No data</div>
                   }
 
