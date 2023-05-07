@@ -80,6 +80,21 @@ app.get('/products', (req, res) => {
   return res.json(products).status(200)
 })
 
+app.get('/admin', (req, res) => {
+  const admin = {
+    id: 1,
+    name: "Admin",
+    cpf: '12345000',
+    phone: '123456789',
+    email: 'admin@email.com',
+    password: '1234',
+    race: 'white',
+    religion: 'catholic',
+  }
+
+  return res.json(admin).status(200)
+})
+
 
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
