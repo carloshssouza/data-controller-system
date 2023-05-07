@@ -12,7 +12,7 @@ export default function LogsComponent({ logs }: LogsComponentProps) {
         logs && logs.length && logs?.map((log: any) => {
           return (
             <LogsItem level={log.level}>
-              <div>{log.createdAt}</div>
+              <div>{log.createdAt.split('T')[0]} {log.createdAt.split('T')[1].split('.')[0]}</div>
               <div>Route Name: {log.routeName}</div>
               <div>Route Id: {log.routeId}</div>
               <div>Level: {log.level}</div>
