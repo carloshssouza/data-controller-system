@@ -1,4 +1,4 @@
-import { ErrorLogCreateData, ErrorLogUpdateData } from '../../interfaces/errorLog'
+import { ErrorLogCreateData, ErrorLogFilter, ErrorLogUpdateData } from '../../interfaces/errorLog'
 import { TypeId } from '../../types/mongoose'
 import ErrorLogSchemaValidator from '../validators/erroLog/errorLog.validator'
 
@@ -17,6 +17,10 @@ class ErrorLogValidator {
 
   deleteErrorLogValidation (_id: TypeId) {
     return ErrorLogSchemaValidator.deleteErrorLogValidation(_id)
+  }
+
+  getAllErrorLogValidation (filter: ErrorLogFilter) {
+    return ErrorLogSchemaValidator.getAllErrorLogValidation(filter)
   }
 }
 

@@ -1,4 +1,4 @@
-import { ErrorLogCreateData, ErrorLogUpdateData } from '../../../interfaces/errorLog'
+import { ErrorLogCreateData, ErrorLogFilter, ErrorLogUpdateData } from '../../../interfaces/errorLog'
 import { Joi } from '../../../types/joi'
 import { TypeId } from '../../../types/mongoose'
 
@@ -67,6 +67,29 @@ class ErrorLogSchemaValidator {
     })
 
     return schema.validate({ _id })
+  }
+
+  getAllErrorLogValidation (filter: ErrorLogFilter) {
+    const schema = Joi.object<ErrorLogFilter>({
+      createdAt: Joi.object({
+        $gte: Joi.date().required(),
+        $lte: Joi.date().required()
+      }).required(),
+      routeName: Joi.object({
+        $regex: Joi.string().required(),
+        $options: Joi.string().required()
+      }).optional(),
+      routeId: Joi.string().hex().length(24).optional().messages({
+        'string.base': 'Invalid type',
+        'string.hex': 'Invalid type',
+        'string.length': 'Invalid id length'
+      }).optional(),
+      level: Joi.object({
+        $in: Joi.array().items(Joi.string().valid('low', 'medium', 'high')).required()
+      }).optional()
+    })
+
+    return schema.validate(filter)
   }
 }
 

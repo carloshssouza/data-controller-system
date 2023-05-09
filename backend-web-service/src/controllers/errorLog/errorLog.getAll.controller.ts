@@ -1,11 +1,45 @@
 import ErrorRes from '../../utils/Erro'
 import ErrorLogEntity from '../../entities/errorLog/erroLog.entity'
 import { Request, Response } from '../../types/express'
+import { getDateFilter } from '../../utils/Date/DateUilts'
+import { ErrorLogFilter } from '../../interfaces/errorLog'
+import { TypeId } from '../../types/mongoose'
 
 class ErrorLogGetAllController {
   public async getAllErrorLogs (req: Request, res: Response): Promise<Response> {
     try {
-      const ErrorLogs = await ErrorLogEntity.getAllErrorLogs()
+      const dateTime = req.query.dateTime as string
+      const { startDate, endDate } = getDateFilter(dateTime)
+      const routeId = req.query.routeId as unknown as TypeId
+      const routeName = req.query.routeName as string
+      const level = req.query.level as string
+      const levelSplitted = level ? level.split(',') : null
+
+      const filter: ErrorLogFilter = {
+        createdAt: {
+          $gte: startDate,
+          $lte: endDate
+        }
+      }
+
+      if (routeId) {
+        filter.routeId = routeId
+      }
+
+      if (routeName) {
+        filter.routeName = {
+          $regex: `.*${routeName}.*`,
+          $options: 'i'
+        }
+      }
+
+      if (levelSplitted && Array.isArray(levelSplitted)) {
+        filter.level = {
+          $in: levelSplitted
+        }
+      }
+
+      const ErrorLogs = await ErrorLogEntity.getAllErrorLogs(filter)
       if (!ErrorLogs) {
         throw new ErrorRes(500, 'Error getting all log errors')
       }
