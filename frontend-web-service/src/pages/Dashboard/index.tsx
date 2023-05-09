@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
-import { Button, Card, Form, Input, Spin, Tooltip } from 'antd';
+import { Button, Card, Form, Input, Radio, Spin, Tooltip } from 'antd';
 
 import {
   ApiContainer,
@@ -19,8 +19,11 @@ import {
 import { Container } from '../../GlobalStyles';
 import { Navigate, useNavigate } from 'react-router-dom';
 import ApisBarChart from './Charts/ApisBarChart'
-import LogsComponent from './components/LogsComponent';
+import LogsComponent from './components/LogsComponent/LogsComponent';
 import ErrorLogLineChart from './Charts/ErrorLogLineChart';
+import { FilterOutlined } from '@ant-design/icons';
+import FilterComponent, { IErrorFilter } from './components/FilterComponent/FilterComponent';
+import { getErrorLogs } from '../../api/services/Dashboard';
 
 export interface IErrorLog {
   _id: string
@@ -43,6 +46,14 @@ export default function Dashboard() {
 
   const [chartWidth, setChartWidth] = useState(0);
   const [realTimeContainerWidth, setRealTimeContainerWidth] = useState(0);
+  const [cardFilter, setCardFilter] = useState(false);
+  const [filter, setFilter] = useState<IErrorFilter>({
+    dateTime: '30m',
+    routeName: '',
+    routeId: '',
+    level: []
+  })
+
   const notifyError = (message: string) => toast.error(message);
 
   const handleResize = () => {
@@ -54,6 +65,10 @@ export default function Dashboard() {
       setRealTimeContainerWidth(realTimeContainerRef.current.clientWidth);
     }
   };
+
+  const showCardFilter = () => {
+    setCardFilter(!cardFilter)
+  }
 
   const getAllApis = async () => {
     try {
@@ -95,7 +110,7 @@ export default function Dashboard() {
 
   const getAllErrorLogs = async () => {
     try {
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-log`)
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-log?dateTime=30d`)
       if (response.status !== 200) {
         throw new Error('Error getting all error logs')
       } else {
@@ -152,10 +167,21 @@ export default function Dashboard() {
   }
 
   const getAmountErrorPerLevel = () => {
+    console.log("error", errorLog)
     let amountErrorPerLevel = {
       high: 0,
       medium: 0,
       low: 0
+    }
+
+    if (errorLog.length === 0) {
+      return (
+        <div>
+          <div style={{ color: '#F05D5D' }}>High: 0</div>
+          <div style={{ color: '#FFD81D' }}>Medium: 0</div>
+          <div style={{ color: '#7EED79' }}>Low: 0</div>
+        </div>
+      )
     }
 
     for (const error of errorLog) {
@@ -170,12 +196,33 @@ export default function Dashboard() {
 
     return (
       <div>
-        <div style={{ color: 'red' }}>High: {amountErrorPerLevel.high}</div>
-        <div style={{ color: 'orange' }}>Medium: {amountErrorPerLevel.medium}</div>
-        <div style={{ color: 'green' }}>Low: {amountErrorPerLevel.low}</div>
+        <div style={{ color: '#F05D5D' }}>High: {amountErrorPerLevel.high}</div>
+        <div style={{ color: '#FFD81D' }}>Medium: {amountErrorPerLevel.medium}</div>
+        <div style={{ color: '#7EED79' }}>Low: {amountErrorPerLevel.low}</div>
       </div>
     )
   }
+
+  const handleGetErrorLogs = async () => {
+    const query = `
+      dateTime=${filter.dateTime}
+      ${filter.routeName ? `&routeName=${filter.routeName}` : ''}
+      ${filter.routeId ? `&routeId=${filter.routeId}` : ''}
+      ${filter.level.length ? `&level=${JSON.stringify(filter.level)}` : ''}
+    `
+    const response = await getErrorLogs(query.trim())
+    if (response.error) {
+      if (response.status === 401) {
+        localStorage.removeItem('token')
+        navigate('/login')
+      }
+      notifyError(response.message)
+    } else {
+      setErrorLog(response)
+    }
+    
+  }
+
   useEffect(() => {
     const socket = io('http://localhost:8000')
     getAllApis()
@@ -186,7 +233,7 @@ export default function Dashboard() {
       setErrorLog((prev) => ([data, ...prev]))
     });
     if (errorLog.length === 0) {
-      getAllErrorLogs()
+      handleGetErrorLogs()
     }
   }, [])
 
@@ -267,7 +314,19 @@ export default function Dashboard() {
               </ErrorData>
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
-                  <h2>Errors</h2>
+                  <div>
+                    <h2>Errors</h2>
+                    <Button type="primary" style={{ fontWeight: 'bold' }} onClick={showCardFilter}>
+                      Filters
+                      <FilterOutlined />
+                    </Button>
+                    {
+                      cardFilter && (
+                        <FilterComponent handleGetErrorLogs={handleGetErrorLogs} filter={filter} setFilter={setFilter} />
+                      )
+                    }
+                  </div>
+
                   {
                     (errorLog && errorLog.length) ? (
                       <ErrorLogLineChart errorLog={errorLog} />
