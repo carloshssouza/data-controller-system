@@ -6,13 +6,15 @@ import {
   ErrorLogDeleteController,
   ErrorLogLeakedDataController,
   ErrorLogDynamicFilterController,
-  ErrorLogLeakedDataByApiController
+  ErrorLogLeakedDataByApiController,
+  ErrorLogGetExtraInfosController
 } from '../controllers/errorLog'
 import { Router } from '../types/express'
 // import Authenticate from '../middleware/Authenticate'
 
 const routes = Router()
 
+routes.get('/error-log-extra-infos', ErrorLogGetExtraInfosController.getExtraInfosErrorLogs)
 routes.get('/error-log/:_id', ErrorLogGetController.getErrorLog)
 routes.get('/error-log', ErrorLogGetAllController.getAllErrorLogs)
 routes.put('/error-log/:_id', ErrorLogUpdateController.updateErrorLog)

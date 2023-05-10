@@ -1,6 +1,6 @@
 import ErrorLogRepository from '../../repositories/errorLog.repository'
 import { TypeId } from '../../types/mongoose'
-import { ErrorLogCreateData, ErrorLogUpdateData } from '../../interfaces/errorLog'
+import { ErrorLogCreateData, ErrorLogFilter, ErrorLogUpdateData } from '../../interfaces/errorLog'
 import ErrorLogValidator from './errorLog.validator'
 import ErrorRes from '../../utils/Erro'
 
@@ -21,8 +21,12 @@ class ErrorLogEntity {
     return ErrorLogRepository.getErrorLog(_id)
   }
 
-  public getAllErrorLogs () {
-    return ErrorLogRepository.getAllErrorLogs()
+  public getAllErrorLogs (filter: ErrorLogFilter) {
+    const validate = ErrorLogValidator.getAllErrorLogValidation(filter)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+    return ErrorLogRepository.getAllErrorLogs(filter)
   }
 
   public async updateErrorLog (_id: TypeId, data: ErrorLogUpdateData) {
@@ -59,6 +63,10 @@ class ErrorLogEntity {
 
   public getErrorLogLeakedDataByApi (routeId: TypeId) {
     return ErrorLogRepository.getErrorLogLeakedDataByApi(routeId)
+  }
+
+  public getExtraInfosErrorLogs () {
+    return ErrorLogRepository.getExtraInfosErrorLogs()
   }
 }
 

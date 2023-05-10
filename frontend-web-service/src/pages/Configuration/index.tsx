@@ -3,12 +3,13 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { Container } from '../../GlobalStyles';
 import { ConfigurationContainer, ConfigurationContainerRestrict } from './styles';
-import ProxyButton from './components/ProxyButton';
+import StartProxyButton from './components/StartProxyButton';
 import MongoItem from './components/MongoItem';
 import ApplicationHostItem from './components/ApplicationHostItem';
 import RestrictDataItem from './components/RestrictDataItem';
 import { checkApplicationHost, checkProxyServer, deleteApplicationHost, deleteMongoDatabaseConnection, getConfiguration, getRestrictData, startProxyServer, stopProxyServer, updateConfiguration } from '../../api/services/Configuration';
 import { logout } from '../../api/services/Auth';
+import StopProxyButton from './components/StopProxyButton';
 
 
 interface IRestrictDataList {
@@ -45,7 +46,7 @@ export default function Configuration() {
         localStorage.removeItem('token')
         navigate('/login')
       }
-      if(response.status === 404 || !response.data?.connection) {
+      if (response.status === 404 || !response.data?.connection) {
         localStorage.removeItem('dbConnection')
         navigate('/')
       }
@@ -56,14 +57,14 @@ export default function Configuration() {
 
   const handleGetRestrictData = async (dataType?: string) => {
     const response = await getRestrictData(dataType)
-    if(response.error) {
+    if (response.error) {
       if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
       notifyError(response.message)
     } else {
-      if(dataType) {
+      if (dataType) {
         setRestrictDataList((prevState: IRestrictDataList) => ({
           ...prevState,
           [dataType]: response
@@ -76,7 +77,7 @@ export default function Configuration() {
 
   const handleLogoutUser = async () => {
     const response = await logout()
-    if(response.error) {
+    if (response.error) {
       if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
@@ -90,7 +91,7 @@ export default function Configuration() {
 
   const handleUpdateConfiguration = async (data: any) => {
     const response = await updateConfiguration(data)
-    if(response.error) {
+    if (response.error) {
       if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
@@ -106,8 +107,8 @@ export default function Configuration() {
 
   const handleDeleteMongoDatabaseConnection = async () => {
     const response = await deleteMongoDatabaseConnection()
-    if(response.error) {
-      if(response.status === 401) {
+    if (response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -123,8 +124,8 @@ export default function Configuration() {
 
   const handleDeleteApplicationHost = async () => {
     const response = await deleteApplicationHost()
-    if(response.error) {
-      if(response.status === 401) {
+    if (response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -139,8 +140,8 @@ export default function Configuration() {
   const handleStartProxyServer = async () => {
     setIsLoading(true)
     const response = await startProxyServer()
-    if(response.error) {
-      if(response.status === 401) {
+    if (response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -155,8 +156,8 @@ export default function Configuration() {
   const handleStopProxyServer = async () => {
     setIsLoading(true)
     const response = await stopProxyServer()
-    if(response.error) {
-      if(response.status === 401) {
+    if (response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -165,12 +166,13 @@ export default function Configuration() {
       notifySuccess(response.message)
       setIsProxyStarted(false)
     }
+    setIsLoading(false)
   }
 
   const handleCheckProxyServer = async () => {
     const response = await checkProxyServer()
-    if(response.error) {
-      if(response.status === 401) {
+    if (response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -183,8 +185,8 @@ export default function Configuration() {
   const handleCheckApplicationHost = async () => {
     setIsTestLoading(true)
     const response = await checkApplicationHost(configuration)
-    if(response.error) {
-      if(response.status === 401) {
+    if (response.error) {
+      if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
       }
@@ -227,12 +229,20 @@ export default function Configuration() {
           updateConfiguration={handleUpdateConfiguration}
           isTestLoading={isTestLoading}
         />
-        <ProxyButton
-          onClick={!isProxyStarted ? handleStartProxyServer : handleStopProxyServer}
-          isProxyStarted={isProxyStarted}
-          isApplicationHostStarted={isApplicationHostStarted}
-          isLoading={isLoading}
-        />
+        <div>
+          <StartProxyButton
+            isLoading={isLoading}
+            isProxyStarted={isProxyStarted}
+            isApplicationHostStarted={isApplicationHostStarted}
+            startProxy={handleStartProxyServer}
+          />
+          <StopProxyButton 
+            isLoading={isLoading}
+            isProxyStarted={isProxyStarted}
+            stopProxy={handleStopProxyServer}
+          />
+        </div>
+
         {
           !isApplicationHostStarted && !isLoading && !isProxyStarted && (
             <div style={{ marginBottom: "1rem" }}>You need test the application host connection first</div>

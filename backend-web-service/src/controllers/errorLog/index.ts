@@ -5,6 +5,7 @@ import ErrorLogDeleteController from './errorLog.delete.controller'
 import ErrorLogLeakedDataController from './errorLog.leakedData.controller'
 import ErrorLogDynamicFilterController from './errorLog.dynamicFilter.controller'
 import ErrorLogLeakedDataByApiController from './errorLog.leakedDataByApi.controller'
+import ErrorLogGetExtraInfosController from './errorLog.getExtraInfos.controller'
 
 export {
   ErrorLogGetController,
@@ -13,5 +14,6 @@ export {
   ErrorLogDeleteController,
   ErrorLogLeakedDataController,
   ErrorLogDynamicFilterController,
-  ErrorLogLeakedDataByApiController
+  ErrorLogLeakedDataByApiController,
+  ErrorLogGetExtraInfosController
 }

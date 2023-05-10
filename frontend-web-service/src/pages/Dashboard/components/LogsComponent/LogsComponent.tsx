@@ -1,4 +1,4 @@
-import { IErrorLog } from '..'
+import { IErrorLog } from '../..'
 import { LogsContainer, LogsItem } from './styles'
 
 interface LogsComponentProps {

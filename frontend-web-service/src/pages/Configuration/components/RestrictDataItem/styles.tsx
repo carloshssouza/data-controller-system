@@ -31,6 +31,24 @@ const RestrictDataCard = styled.div`
   }
 `
 
+const CardContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+  div {
+    text-align: center;
+  }
+
+  Button {
+    margin-bottom: 0.5rem;
+    border: none;
+    background: #65BA74;
+    color: #fff;
+    font-weight: bold;
+  }
+`
+
 const UniqueRestrictDataItem = styled.div`
   border: 1px solid #fffcfc27;
   width: 100%;
@@ -51,5 +69,6 @@ export {
   ConfigurationItemRestrictData,
   RestrictDataContainer,
   RestrictDataCard,
-  UniqueRestrictDataItem 
+  UniqueRestrictDataItem,
+  CardContent
 }

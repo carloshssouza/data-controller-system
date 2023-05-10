@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer, UniqueRestrictDataItem } from './styles'
-import { Popconfirm, Table } from 'antd'
+import { CardContent, ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer, UniqueRestrictDataItem } from './styles'
+import { Button, Form, Input, Popconfirm, Table } from 'antd'
 import api from '../../../../api/axios'
 import { toast, ToastContainer } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, LoadingOutlined } from '@ant-design/icons'
 import ModalUpdate from './components/ModalUpdate'
 import { deleteRestrictData } from '../../../../api/services/Configuration'
 
 
 
 interface RestrictDataItemProps {
-  restrictDataPersonal: {name: string, type: string}[]
-  restrictDataSensible: {name: string, type: string}[]
+  restrictDataPersonal: { name: string, type: string }[]
+  restrictDataSensible: { name: string, type: string }[]
   getRestrictData: (dataType?: string) => Promise<void>
 }
 
@@ -22,15 +22,13 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
 
   const [updateModalVisible, setUpdateModalVisible] = useState(false)
   const [selectedRecord, setSelectedRecord] = useState<any>({})
- 
+  const [isLoading, setIsLoading] = useState(false)
+
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
- 
-  
-
-
-  const addRestrictData = async (record: any) => {
+  const addRestrictData = async (record: any, dataType: string) => {
+    console.log("record", record)
     try {
       const config = {
         headers: {
@@ -42,8 +40,8 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
         dataName: record.name
       }
 
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data?dataType=${selectedRecord?.type}`, data, config)
-      if(response.status !== 200) {
+      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data?dataType=${dataType}`, data, config)
+      if (response.status !== 200) {
         throw new Error(response.data.message)
       } else {
         notifySuccess(response.data.message)
@@ -53,6 +51,17 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
       notifyError(error.response.data.message)
     }
   }
+
+  const handleAddPersonalData = (values: any) => {
+    console.log("values", values)
+    const { dataName } = values;
+    addRestrictData(dataName, 'personal');
+  };
+
+  const handleAddSensibleData = (values: any) => {
+    const { dataName } = values;
+    addRestrictData(dataName, 'sensible');
+  };
   const updateRestrictData = async (record: any) => {
     try {
       const config = {
@@ -82,7 +91,7 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
 
   const handleDeleteRestrictData = async (name: string) => {
     const response = await deleteRestrictData(name, selectedRecord?.type)
-    if(response.error) {
+    if (response.error) {
       if (response.status === 401) {
         localStorage.removeItem('token')
         navigate('/login')
@@ -128,35 +137,67 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
       <h2>Restrict Data List</h2>
       <RestrictDataContainer>
         <RestrictDataCard>
-          <h3>Personal:</h3>
+          <h3>Personal Data</h3>
           {
-            <Table
-              key='personal'
-              columns={columns}
-              dataSource={restrictDataPersonal}
-              scroll={{ y: 300 }}
-              style={{ width: '300px' }}
-              rowKey={(record) => record.name}
-            />
+            <CardContent>
+              <Table
+                key='personal'
+                columns={columns}
+                dataSource={restrictDataPersonal}
+                scroll={{ y: 300 }}
+                style={{ width: '300px' }}
+                rowKey={(record) => record.name}
+              />
+              <div style={{background: '#27293D', borderRadius: '5px', padding: '0.5rem'}}>
+                <h3>Add new personal data</h3>
+                <Form
+                  onFinish={handleAddPersonalData}
+                  style={{ marginTop: '20px' }}
+                >
+                  <Form.Item>
+                    <Input placeholder='Data name' />
+                  </Form.Item>
+                  <Button htmlType='submit'>{isLoading ? <LoadingOutlined /> : 'Confirm'}</Button>
+                </Form>
+              </div>
+
+            </CardContent>
+
           }
         </RestrictDataCard>
         <RestrictDataCard>
-          <h3>Sensible:</h3>
+          <h3>Sensible Data</h3>
           {
-            <Table
-              key="sensible"
-              columns={columns}
-              dataSource={restrictDataSensible}
-              scroll={{ y: 300 }}
-              style={{ width: '300px' }}
-              rowKey={(record) => record.name}
-            />
+            <CardContent>
+              <Table
+                key="sensible"
+                columns={columns}
+                dataSource={restrictDataSensible}
+                scroll={{ y: 300 }}
+                style={{ width: '300px' }}
+                rowKey={(record) => record.name}
+              />
+              <div style={{background: '#27293D', borderRadius: '5px', padding: '0.5rem'}}>
+                <h3>Add new sensible data</h3>
+                <Form
+                  onFinish={handleAddSensibleData}
+                  style={{ marginTop: '20px' }}
+                >
+                  <Form.Item>
+                    <Input placeholder='Data name' />
+                  </Form.Item>
+                  <Button htmlType='submit'>{isLoading ? <LoadingOutlined /> : 'Confirm'}</Button>
+                </Form>
+
+              </div>
+            </CardContent>
+
           }
         </RestrictDataCard>
-        <ModalUpdate  
-          updateModalVisible={updateModalVisible} 
-          updateRestrictData={updateRestrictData} 
-          setUpdateModalVisible={setUpdateModalVisible} 
+        <ModalUpdate
+          updateModalVisible={updateModalVisible}
+          updateRestrictData={updateRestrictData}
+          setUpdateModalVisible={setUpdateModalVisible}
           selectedRecord={selectedRecord}
         />
       </RestrictDataContainer>

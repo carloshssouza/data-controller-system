@@ -17,6 +17,21 @@ interface ErrorLogUpdateData {
   level?: string
 }
 
+interface ErrorLogFilter {
+  routeId?: TypeId
+  routeName?: {
+    $regex: string,
+    $options: string
+  }
+  createdAt: {
+    $gte: Date,
+    $lte: Date
+  }
+  level?: {
+    $in: string[]
+  }
+}
+
 interface IFilterLeakedData {
   personal?: string
   sensible?: string
@@ -25,5 +40,6 @@ interface IFilterLeakedData {
 export {
   ErrorLogCreateData,
   ErrorLogUpdateData,
-  IFilterLeakedData
+  IFilterLeakedData,
+  ErrorLogFilter
 }

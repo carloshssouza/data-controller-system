@@ -1,6 +1,7 @@
 import { ApiCreateData, ApiUpdateData } from '../interfaces/api'
 import { TypeId } from '../types/mongoose'
 import Api from './schemas/Api'
+import ErrorLog from './schemas/ErrorLog'
 
 class ApiRepository {
   /**
@@ -22,11 +23,24 @@ class ApiRepository {
   }
 
   /**
-   * Method to get all apis in the database
+   * Method to get all apis in the database returning the amount of errors
    * @returns Returns the api instance object
    */
-  public getAllApis () {
-    return Api.find({})
+  public async getAllApis () {
+    const apis = await Api.find({})
+    const routeIds = apis.map((api: any) => api._id)
+
+    const errors = await ErrorLog.find({ routeId: { $in: routeIds } })
+
+    const apisWithAmountErrors = apis.map((api: any) => {
+      const errorsFiltered = errors.filter((error: any) => error.routeId.toString() === api._id.toString())
+      return {
+        ...api._doc,
+        amountErrors: errorsFiltered.length
+      }
+    })
+
+    return apisWithAmountErrors
   }
 
   /**

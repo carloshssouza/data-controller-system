@@ -19,7 +19,7 @@ const LogsItem = styled.div`
   color: white;
   justify-content: space-between;
   margin: 5px 0 5px 0;
-  border-left: 5px solid ${(props: LogsItemProps) => props.level === 'high' ? 'red' : props.level === 'medium' ? 'orange' : 'green'};
+  border-left: 5px solid ${(props: LogsItemProps) => props.level === 'high' ? '#F05D5D' : props.level === 'medium' ? '#FFD81D' : '#7EED79'};
   padding: 10px;
   border-radius: 3px;
 `
