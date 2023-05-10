@@ -28,6 +28,7 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
   const notifyError = (message: string) => toast.error(message);
 
   const addRestrictData = async (record: any, dataType: string) => {
+    console.log("record", record)
     try {
       const config = {
         headers: {
@@ -52,6 +53,7 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
   }
 
   const handleAddPersonalData = (values: any) => {
+    console.log("values", values)
     const { dataName } = values;
     addRestrictData(dataName, 'personal');
   };
