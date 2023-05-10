@@ -64,6 +64,10 @@ class ErrorLogEntity {
   public getErrorLogLeakedDataByApi (routeId: TypeId) {
     return ErrorLogRepository.getErrorLogLeakedDataByApi(routeId)
   }
+
+  public getExtraInfosErrorLogs () {
+    return ErrorLogRepository.getExtraInfosErrorLogs()
+  }
 }
 
 export default new ErrorLogEntity()
