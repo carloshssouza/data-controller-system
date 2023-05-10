@@ -24,6 +24,7 @@ import ErrorLogLineChart from './Charts/ErrorLogLineChart';
 import { FilterOutlined } from '@ant-design/icons';
 import FilterComponent, { IErrorFilter } from './components/FilterComponent/FilterComponent';
 import { getErrorLogs } from '../../api/services/Dashboard';
+import NotFoundComponent from '../../utils/NotFoundComponent/NotFoundComponent';
 
 export interface IErrorLog {
   _id: string
@@ -41,6 +42,16 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false)
   const [listApiData, setListApiData] = useState<any[]>([])
   const [errorLog, setErrorLog] = useState<IErrorLog[]>([])
+  const [extraInfo, setExtraInfo] =  useState({
+    total: 0,
+    mostLeakedDataName: '-',
+    mostLeakedRouteName: '-',
+    amountPerLevel: {
+      low: 0,
+      medium: 0,
+      high: 0
+    }
+  })
   const chartRef = useRef<any>(null);
   const realTimeContainerRef = useRef<any>(null);
 
@@ -51,7 +62,7 @@ export default function Dashboard() {
     dateTime: '30m',
     routeName: '',
     routeId: '',
-    level: []
+    level: ['low', 'medium', 'high']
   })
 
   const notifyError = (message: string) => toast.error(message);
@@ -68,6 +79,20 @@ export default function Dashboard() {
 
   const showCardFilter = () => {
     setCardFilter(!cardFilter)
+  }
+
+  const getExtraInfos = async () => {
+    try {
+      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-log-extra-infos`)
+      console.log(response.data)
+      if (response.status !== 200) {
+        throw new Error('Error getting extra infos')
+      } else {
+        setExtraInfo(response.data)
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const getAllApis = async () => {
@@ -167,50 +192,19 @@ export default function Dashboard() {
   }
 
   const getAmountErrorPerLevel = () => {
-    console.log("error", errorLog)
-    let amountErrorPerLevel = {
-      high: 0,
-      medium: 0,
-      low: 0
-    }
-
-    if (errorLog.length === 0) {
-      return (
-        <div>
-          <div style={{ color: '#F05D5D' }}>High: 0</div>
-          <div style={{ color: '#FFD81D' }}>Medium: 0</div>
-          <div style={{ color: '#7EED79' }}>Low: 0</div>
-        </div>
-      )
-    }
-
-    for (const error of errorLog) {
-      if (error.level === 'high') {
-        amountErrorPerLevel.high++
-      } else if (error.level === 'medium') {
-        amountErrorPerLevel.medium++
-      } else {
-        amountErrorPerLevel.low++
-      }
-    }
-
+  
     return (
       <div>
-        <div style={{ color: '#F05D5D' }}>High: {amountErrorPerLevel.high}</div>
-        <div style={{ color: '#FFD81D' }}>Medium: {amountErrorPerLevel.medium}</div>
-        <div style={{ color: '#7EED79' }}>Low: {amountErrorPerLevel.low}</div>
+        <div style={{ color: '#F05D5D' }}>High: {extraInfo.amountPerLevel.high}</div>
+        <div style={{ color: '#FFD81D' }}>Medium: {extraInfo.amountPerLevel.medium}</div>
+        <div style={{ color: '#7EED79' }}>Low: {extraInfo.amountPerLevel.low}</div>
       </div>
     )
   }
 
   const handleGetErrorLogs = async () => {
-    const query = `
-      dateTime=${filter.dateTime}
-      ${filter.routeName ? `&routeName=${filter.routeName}` : ''}
-      ${filter.routeId ? `&routeId=${filter.routeId}` : ''}
-      ${filter.level.length ? `&level=${JSON.stringify(filter.level)}` : ''}
-    `
-    const response = await getErrorLogs(query.trim())
+    const query = `dateTime=${filter.dateTime}&level=${filter.level.join(',')}${filter.routeName ? `&routeName=${filter.routeName}` : ''}${filter.routeId ? `&routeId=${filter.routeId}` : ''}`
+    const response = await getErrorLogs(query)
     if (response.error) {
       if (response.status === 401) {
         localStorage.removeItem('token')
@@ -220,7 +214,7 @@ export default function Dashboard() {
     } else {
       setErrorLog(response)
     }
-    
+
   }
 
   useEffect(() => {
@@ -230,11 +224,14 @@ export default function Dashboard() {
     socket.on('message', (message) => {
     });
     socket.on('error-log-data', (data) => {
-      setErrorLog((prev) => ([data, ...prev]))
+      handleGetErrorLogs()
+      getExtraInfos()
     });
     if (errorLog.length === 0) {
       handleGetErrorLogs()
+      getExtraInfos()
     }
+
   }, [])
 
   return (
@@ -280,11 +277,11 @@ export default function Dashboard() {
                         <CardValue>
                           <LabelApi>Data return allowed: </LabelApi>
                           <DataApi>{api.dataReturnAllowed ? 'Yes' : 'No'}</DataApi>
-                        </CardValue>
+                        </CardValue>                                                
                         <CardValue>
                           <LabelApi>Errors: </LabelApi>
-                          <DataApi>{handleQuantityApiErrors(api._id)}</DataApi>
-                        </CardValue>
+                          <DataApi>{errorLog.length ? handleQuantityApiErrors(api._id) : api.amountErrors}</DataApi>
+                        </CardValue>                          
                       </div>
                     </CardItem>
                   )
@@ -296,15 +293,15 @@ export default function Dashboard() {
               <h1>Error Logs</h1>
               <ErrorData>
                 <ErrorCard>
-                  <div>{errorLog.length}</div>
+                  <div>{extraInfo.total}</div>
                   <h4>Total Leak Errors</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  {getApiWithMoreLeakedData()}
+                  {extraInfo.mostLeakedRouteName}
                   <h4>Most leaked api</h4>
                 </ErrorCard>
                 <ErrorCard>
-                  <div>-</div>
+                  <div>{extraInfo.mostLeakedDataName}</div>
                   <h4>Most leaked data</h4>
                 </ErrorCard>
                 <ErrorCard>
@@ -314,9 +311,9 @@ export default function Dashboard() {
               </ErrorData>
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
-                  <div>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
                     <h2>Errors</h2>
-                    <Button type="primary" style={{ fontWeight: 'bold' }} onClick={showCardFilter}>
+                    <Button type="primary" style={{ fontWeight: 'bold', marginLeft: '1rem' }} onClick={showCardFilter}>
                       Filters
                       <FilterOutlined />
                     </Button>
@@ -330,17 +327,18 @@ export default function Dashboard() {
                   {
                     (errorLog && errorLog.length) ? (
                       <ErrorLogLineChart errorLog={errorLog} />
-                    ) : <div>No data</div>
+                    ) : <NotFoundComponent />
                   }
 
                   <h3>Logs</h3>
-                  <LogsComponent logs={errorLog} />
-
+                  {
+                    errorLog.length ? <LogsComponent logs={errorLog} /> : <NotFoundComponent />
+                  }
                 </CommonErrorContainer>
                 <CommonErrorContainer>
                   <h2>Api Errors Comparison</h2>
                   {
-                    errorLog.length ? <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} /> : <div>No data</div>
+                    errorLog.length ? <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} /> : <NotFoundComponent />
                   }
                 </CommonErrorContainer>
               </GraphContainer>

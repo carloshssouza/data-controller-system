@@ -56,9 +56,9 @@ export default function ApisLineChart({ errorLog }: ApisLineChartProps) {
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-       <LineChart width={600} height={400} data={dataChart}>
+       <LineChart width={1000} height={400} data={dataChart}>
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="timestamp" />
+      <XAxis dataKey="timestamp" tick={{fontSize: 1}}/>
       <YAxis />
       <Tooltip />
       <Legend />

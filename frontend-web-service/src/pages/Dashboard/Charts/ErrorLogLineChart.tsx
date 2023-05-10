@@ -51,20 +51,34 @@ export default function ErrorLogLineChart({ errorLog }: ErrorLogLineChartProps) 
     return null;
   };
 
-  return (
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart width={600} height={400} data={convertErrorLogToChartData()} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis
-          dataKey="timestamp"
-          label={<div style={{ marginTop: '100px' }}>Timestamp</div>}
-        />
-      <YAxis tickFormatter={formatYAxisTick}  interval={1}/>
-      <Tooltip content={CustomTooltip}/>
+  const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
-      <Legend />
-      <Line type="monotone" dataKey="amount" name="Leaked Data" stroke="#33aea2" dot={true} isAnimationActive={false} activeDot={{ r: 8 }} />
-    </LineChart>
-    </ResponsiveContainer>
+  return (
+    
+      <ResponsiveContainer width="100%" height={500}>
+        <LineChart
+          width={600}
+          height={400}
+          data={convertErrorLogToChartData()}
+          margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="timestamp"
+            tick={{ fontSize: 14, fill: '#ffffff', transform: 'rotate(0)' }}
+            tickSize={20}
+            tickFormatter={(timestamp) => {
+              const date = new Date(timestamp);
+              return date.getMonth() === 0 ? date.toLocaleDateString() : date.toLocaleDateString(undefined, { month: 'short' });
+            }}
+            interval={3}
+          />
+          <YAxis tickFormatter={formatYAxisTick} interval={0} />
+          <Tooltip content={CustomTooltip} />
+
+          <Legend />
+          <Line type="monotone" dataKey="amount" name="Leaked Data" stroke="#33aea2" dot={true} isAnimationActive={false} activeDot={{ r: 8 }} />
+        </LineChart>
+      </ResponsiveContainer>
   )
 }
