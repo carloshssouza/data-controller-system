@@ -36,7 +36,8 @@ export default function Configuration() {
     personal: [],
     sensible: []
   })
-  const [isLoading, setIsLoading] = useState(false)
+  const [isStartLoading, setIsStartLoading] = useState(false)
+  const [isStopLoading, setIsStopLoading] = useState(false)
   const [isTestLoading, setIsTestLoading] = useState(false)
 
   const handleGetConfiguration = async () => {
@@ -138,7 +139,7 @@ export default function Configuration() {
   }
 
   const handleStartProxyServer = async () => {
-    setIsLoading(true)
+    setIsStartLoading(true)
     const response = await startProxyServer()
     if (response.error) {
       if (response.status === 401) {
@@ -150,11 +151,11 @@ export default function Configuration() {
       notifySuccess(response.message)
       setIsProxyStarted(true)
     }
-    setIsLoading(false)
+    setIsStartLoading(false)
   }
 
   const handleStopProxyServer = async () => {
-    setIsLoading(true)
+    setIsStopLoading(true)
     const response = await stopProxyServer()
     if (response.error) {
       if (response.status === 401) {
@@ -166,7 +167,7 @@ export default function Configuration() {
       notifySuccess(response.message)
       setIsProxyStarted(false)
     }
-    setIsLoading(false)
+    setIsStopLoading(false)
   }
 
   const handleCheckProxyServer = async () => {
@@ -231,20 +232,20 @@ export default function Configuration() {
         />
         <div>
           <StartProxyButton
-            isLoading={isLoading}
+            isLoading={isStartLoading}
             isProxyStarted={isProxyStarted}
             isApplicationHostStarted={isApplicationHostStarted}
             startProxy={handleStartProxyServer}
           />
           <StopProxyButton 
-            isLoading={isLoading}
+            isLoading={isStopLoading}
             isProxyStarted={isProxyStarted}
             stopProxy={handleStopProxyServer}
           />
         </div>
 
         {
-          !isApplicationHostStarted && !isLoading && !isProxyStarted && (
+          !isApplicationHostStarted && !isStopLoading && !isStartLoading && !isProxyStarted && (
             <div style={{ marginBottom: "1rem" }}>You need test the application host connection first</div>
           )
         }
