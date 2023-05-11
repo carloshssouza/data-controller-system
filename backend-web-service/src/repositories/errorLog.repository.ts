@@ -22,8 +22,9 @@ class ErrorLogRepository {
     return ErrorLog.findOne({ _id })
   }
 
-  public getAllErrorLogs (filter: any) {
-    return ErrorLog.find(filter).sort({ createdAt: -1 })
+  public async getAllErrorLogs (filter: any) {
+    const errors = await ErrorLog.find(filter).sort({ createdAt: 1 })
+    return errors
   }
 
   public updateErrorLog (_id: TypeId, data: ErrorLogUpdateData) {
