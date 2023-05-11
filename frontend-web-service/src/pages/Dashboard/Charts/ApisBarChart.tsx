@@ -46,25 +46,22 @@ export default function ApisBarChart({ errorLog, handleQuantityApiErrors, chartW
   }, [errorLog])
 
   return (
-    <ResponsiveContainer width="100%" aspect={4.0/1.0}>
-       <BarChart width={400} height={400} data={dataChart}  barSize={50}>
+    <ResponsiveContainer width="100%" aspect={4.0 / 1.0}>
+      <BarChart width={400} height={400} data={dataChart} barSize={50}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" 
+        <XAxis dataKey="name"
           tick={<Tick />}
           interval={0}
         />
-        <YAxis interval={0}/>
-        <Tooltip cursor={false}  />
+        <YAxis interval={0} />
+        <Tooltip cursor={false} />
         <Legend />
-
         {
-           dataChart.length > 0 && dataChart.map((api: any) => (
-            <Bar key={api.name} dataKey={api.name}  fill={generateColor()} />
+          dataChart.length > 0 && dataChart.map((api: any) => (
+            <Bar key={api.name} dataKey={api.name} fill={generateColor()} />
           ))
         }
       </BarChart>
     </ResponsiveContainer>
-
-     
   )
 }
