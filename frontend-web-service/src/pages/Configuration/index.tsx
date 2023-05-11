@@ -10,6 +10,7 @@ import RestrictDataItem from './components/RestrictDataItem';
 import { checkApplicationHost, checkProxyServer, deleteApplicationHost, deleteMongoDatabaseConnection, getConfiguration, getRestrictData, startProxyServer, stopProxyServer, updateConfiguration } from '../../api/services/Configuration';
 import { logout } from '../../api/services/Auth';
 import StopProxyButton from './components/StopProxyButton';
+import { Response } from '../../api/axios';
 
 
 interface IRestrictDataList {
@@ -41,49 +42,37 @@ export default function Configuration() {
   const [isTestLoading, setIsTestLoading] = useState(false)
 
   const handleGetConfiguration = async () => {
-    const response = await getConfiguration()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
+    const { response, error }= await getConfiguration() as Response
+    if (error) {
       if (response.status === 404 || !response.data?.connection) {
         localStorage.removeItem('dbConnection')
         navigate('/')
       }
     } else {
-      setConfiguration(response)
+      setConfiguration(response.data)
     }
   }
 
   const handleGetRestrictData = async (dataType?: string) => {
-    const response = await getRestrictData(dataType)
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const { response, error } = await getRestrictData(dataType) as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
       if (dataType) {
         setRestrictDataList((prevState: IRestrictDataList) => ({
           ...prevState,
-          [dataType]: response
+          [dataType]: response.data
         }))
       } else {
-        setRestrictDataList(response)
+        setRestrictDataList(response.data)
       }
     }
   }
 
   const handleLogoutUser = async () => {
-    const response = await logout()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const { response, error } =  await logout() as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
       localStorage.removeItem('token')
       navigate('/login')
@@ -91,15 +80,11 @@ export default function Configuration() {
   }
 
   const handleUpdateConfiguration = async (data: any) => {
-    const response = await updateConfiguration(data)
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const { response, error } =  await updateConfiguration(data) as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       setTimeout(() => {
         handleLogoutUser()
       }, 3000)
@@ -107,13 +92,9 @@ export default function Configuration() {
   }
 
   const handleDeleteMongoDatabaseConnection = async () => {
-    const response = await deleteMongoDatabaseConnection()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const {response, error} = await deleteMongoDatabaseConnection() as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
       notifySuccess(response.data.message)
       setTimeout(() => {
@@ -124,13 +105,9 @@ export default function Configuration() {
 
 
   const handleDeleteApplicationHost = async () => {
-    const response = await deleteApplicationHost()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const {response, error} = await deleteApplicationHost() as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
       notifySuccess(response.data.message)
       localStorage.removeItem('connection')
@@ -140,15 +117,11 @@ export default function Configuration() {
 
   const handleStartProxyServer = async () => {
     setIsStartLoading(true)
-    const response = await startProxyServer()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const {response, error} = await startProxyServer() as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       setIsProxyStarted(true)
     }
     setIsStartLoading(false)
@@ -156,45 +129,34 @@ export default function Configuration() {
 
   const handleStopProxyServer = async () => {
     setIsStopLoading(true)
-    const response = await stopProxyServer()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const {response, error} = await stopProxyServer() as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       setIsProxyStarted(false)
     }
     setIsStopLoading(false)
   }
 
   const handleCheckProxyServer = async () => {
-    const response = await checkProxyServer()
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
+    const {response, error} = await checkProxyServer() as Response
+    if (error) {
+      notifyError(response.message)
     } else {
-      notifySuccess(response.message)
-      setIsProxyStarted(true)
+      notifySuccess(response.data.message)
+      setIsProxyStarted(response.data.isProxyStarted)
     }
   }
 
   const handleCheckApplicationHost = async () => {
     setIsTestLoading(true)
-    const response = await checkApplicationHost(configuration)
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
+    const {response, error }= await checkApplicationHost(configuration) as Response
+    if (error) {
       notifyError(response.message)
       setIsApplicationHostStarted(false)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       setIsApplicationHostStarted(true)
     }
     setIsTestLoading(false)

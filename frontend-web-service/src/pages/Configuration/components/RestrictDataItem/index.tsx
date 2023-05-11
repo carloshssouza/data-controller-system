@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { CardContent, ConfigurationItemRestrictData, RestrictDataCard, RestrictDataContainer, UniqueRestrictDataItem } from './styles'
 import { Button, Form, Input, Popconfirm, Table } from 'antd'
-import api from '../../../../api/axios'
+import { Response } from '../../../../api/axios'
 import { toast, ToastContainer } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { DeleteOutlined, EditOutlined, LoadingOutlined } from '@ant-design/icons'
 import ModalUpdate from './components/ModalUpdate'
-import { deleteRestrictData } from '../../../../api/services/Configuration'
+import { addRestrictData, deleteRestrictData, updateRestrictData } from '../../../../api/services/Configuration'
 
 
 
@@ -27,28 +27,13 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
 
-  const addRestrictData = async (record: any, dataType: string) => {
-    console.log("record", record)
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-
-      const data = {
-        dataName: record.name
-      }
-
-      const response = await api.post(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data?dataType=${dataType}`, data, config)
-      if (response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        notifySuccess(response.data.message)
-        getRestrictData(selectedRecord?.type)
-      }
-    } catch (error: any) {
-      notifyError(error.response.data.message)
+  const handleAddRestrictData = async (record: any, dataType: string) => {
+    const { response, error } = await addRestrictData(record.name, dataType) as Response
+    if (error) {
+      notifyError(response.data.message)
+    } else {
+      notifySuccess(response.data.message)
+      getRestrictData(selectedRecord?.type)
     }
   }
 
@@ -62,41 +47,21 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
     const { dataName } = values;
     addRestrictData(dataName, 'sensible');
   };
-  const updateRestrictData = async (record: any) => {
-    try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      }
-
-      const data = {
-        newDataName: record.name,
-        oldDataName: selectedRecord?.name
-      }
-
-      const response = await api.patch(`${import.meta.env.VITE_BASE_URL}/configuration/restrict-data?dataType=${selectedRecord?.type}`, data, config)
-      if (response.status !== 200) {
-        throw new Error(response.data.message)
-      } else {
-        notifySuccess(response.data.message)
-        getRestrictData(selectedRecord?.type)
-      }
-    } catch (error: any) {
-      notifyError(error.response.data.message)
-    } finally {
-      setUpdateModalVisible(false)
+  
+  const handleUpdateRestrictData = async (record: any) => {
+    const { response, error } = await updateRestrictData(record, selectedRecord?.dataType) as Response
+    if(error) {
+      notifyError(response.data.message)
+    } else {
+      notifySuccess(response.data.message)
+      getRestrictData(selectedRecord?.type)
     }
   }
 
   const handleDeleteRestrictData = async (name: string) => {
-    const response = await deleteRestrictData(name, selectedRecord?.type)
-    if (response.error) {
-      if (response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const {response, error} = await deleteRestrictData(name, selectedRecord?.type) as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
       notifySuccess(response.message)
       getRestrictData(selectedRecord?.type)
@@ -196,12 +161,11 @@ export default function RestrictDataItem({ restrictDataPersonal, restrictDataSen
         </RestrictDataCard>
         <ModalUpdate
           updateModalVisible={updateModalVisible}
-          updateRestrictData={updateRestrictData}
+          updateRestrictData={handleUpdateRestrictData}
           setUpdateModalVisible={setUpdateModalVisible}
           selectedRecord={selectedRecord}
         />
       </RestrictDataContainer>
-      <ToastContainer />
     </ConfigurationItemRestrictData>
   )
 }

@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import api from '../../api/axios'
 import { ToastContainer, toast } from 'react-toastify';
 import io from "socket.io-client"
 import { Button, Spin } from 'antd';
+import ErrorExtraInfoComponent from './components/ErrorExtraInfoComponent/ErrorExtraInfoComponent';
 
 import {
   CommonErrorContainer,
   DashboardContainer,
-  ErrorCard,
-  ErrorContainer, ErrorData,
+  ErrorContainer,
   GraphContainer,
 } from './styles';
 
@@ -17,34 +16,19 @@ import { useNavigate } from 'react-router-dom';
 import ApisBarChart from './Charts/ApisBarChart'
 import LogsComponent from './components/LogsComponent/LogsComponent';
 import ErrorLogLineChart from './Charts/ErrorLogLineChart';
-import { FilterOutlined } from '@ant-design/icons';
-import FilterComponent from './components/FilterComponent/FilterComponent';
-import { getErrorLogs } from '../../api/services/Dashboard';
+import { getAllErrorLogs, getExtraInfos } from '../../api/services/Dashboard';
 import NotFoundComponent from '../../utils/NotFoundComponent/NotFoundComponent';
 import ApisComponent from './components/ApisComponent/ApisComponent';
 import FilterButtonComponent from './components/FilterButtonComponent/FilterButtonComponent';
-
-interface ILeakedData {
-  name: string
-  type: string
-}
-export interface IErrorLog {
-  _id: string
-  title: string
-  description: string
-  endpointPath: string
-  routeName: string
-  routeId: string
-  leakedData: ILeakedData[]
-  level: string
-}
+import { Response } from '../../api/axios';
+import { IErrorExtraInfo } from '../../interfaces/ErrorLog/interfaces';
+import { IErrorLog } from '../../interfaces/ErrorLog/interfaces';
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [errorLog, setErrorLog] = useState<IErrorLog[]>([])
-  const [errorLogSorted, setErrorLogSorted] = useState<IErrorLog[]>([])
-  const [extraInfo, setExtraInfo] = useState({
+  const [extraInfo, setExtraInfo] = useState<IErrorExtraInfo>({
     total: 0,
     mostLeakedDataName: '-',
     mostLeakedRouteName: '-',
@@ -59,7 +43,6 @@ export default function Dashboard() {
 
   const [chartWidth, setChartWidth] = useState(0);
   const [realTimeContainerWidth, setRealTimeContainerWidth] = useState(0);
-  const [cardFilter, setCardFilter] = useState(false);
 
   const notifyError = (message: string) => toast.error(message);
 
@@ -73,21 +56,12 @@ export default function Dashboard() {
     }
   };
 
-  const showCardFilter = () => {
-    setCardFilter(prev => !prev);
-  }
-
-
-  const getExtraInfos = async () => {
-    try {
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/error-log-extra-infos`)
-      if (response.status !== 200) {
-        throw new Error('Error getting extra infos')
-      } else {
-        setExtraInfo(response.data)
-      }
-    } catch (error) {
-      console.log(error)
+  const handleGetExtraInfos = async () => {
+    const { response, error } = await getExtraInfos() as Response
+    if (error) {
+      notifyError(response.message)
+    } else {
+      setExtraInfo(response.data)
     }
   }
 
@@ -104,30 +78,26 @@ export default function Dashboard() {
     return apiErrors
   }
 
-  const getAmountErrorPerLevel = () => {
-
-    return (
-      <div>
-        <div style={{ color: '#F05D5D' }}>High: {extraInfo.amountPerLevel.high}</div>
-        <div style={{ color: '#FFD81D' }}>Medium: {extraInfo.amountPerLevel.medium}</div>
-        <div style={{ color: '#7EED79' }}>Low: {extraInfo.amountPerLevel.low}</div>
-      </div>
-    )
-  }
-
   const handleGetErrorLogsFilter = async (filter: any) => {
-    console.log({filter})
+    console.log({ filter })
     const query = `dateTime=${filter.dateTime}&level=${filter.level.join(',')}${filter.routeName ? `&routeName=${filter.routeName}` : ''}${filter.routeId ? `&routeId=${filter.routeId}` : ''}`
-    const { response } = await getErrorLogs(query) as any
-    setErrorLog(response.data)
+    const { response, error } = await getAllErrorLogs(query) as Response
+    if (error) {
+      notifyError(response.message)
+    } else {
+      setErrorLog(response.data || [])
+    }
   }
 
   const handleGetErrorLogs = async () => {
     const query = `dateTime=30m&level=low,medium,high`
-    const response = await getErrorLogs(query) as any
-    setErrorLog(response.data || [])
+    const { response, error } = await getAllErrorLogs(query) as Response
+    if (error) {
+      notifyError(response.message)
+    } else {
+      setErrorLog(response.data || [])
+    }
   }
-
 
   useEffect(() => {
     setIsLoading(true)
@@ -137,19 +107,14 @@ export default function Dashboard() {
     });
     socket.on('error-log-data', (data) => {
       handleGetErrorLogs()
-      getExtraInfos()
+      handleGetExtraInfos()
     });
     if (errorLog?.length === 0) {
       handleGetErrorLogs()
-      getExtraInfos()
+      handleGetExtraInfos()
     }
     setIsLoading(false)
   }, [])
-
-  useEffect(() => {
-    console.log({errorLog})
-  }, [errorLog])
-
 
   return (
     <Container>
@@ -164,27 +129,13 @@ export default function Dashboard() {
 
             <ErrorContainer>
               <h1>Error Logs</h1>
-              <ErrorData>
-                <ErrorCard>
-                  <div>{extraInfo.total}</div>
-                  <h4>Total Leak Errors</h4>
-                </ErrorCard>
-                <ErrorCard>
-                  {extraInfo.mostLeakedRouteName}
-                  <h4>Most leaked api</h4>
-                </ErrorCard>
-                <ErrorCard>
-                  <div>{extraInfo.mostLeakedDataName}</div>
-                  <h4>Most leaked data</h4>
-                </ErrorCard>
-                <ErrorCard>
-                  {getAmountErrorPerLevel()}
-                  <h4>Error per level</h4>
-                </ErrorCard>
-              </ErrorData>
+              <ErrorExtraInfoComponent extraInfo={extraInfo} />
               <GraphContainer ref={chartRef} >
                 <CommonErrorContainer ref={realTimeContainerRef} style={{ maxWidth: "100%" }}>
-                  <FilterButtonComponent handleGetErrorLogsFilter={handleGetErrorLogsFilter}/>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <h2>Errors</h2>
+                    <FilterButtonComponent handleGetErrorLogsFilter={handleGetErrorLogsFilter} />
+                  </div>
                   {
                     (errorLog && errorLog?.length) ? (
                       <ErrorLogLineChart errorLog={errorLog} />
