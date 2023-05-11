@@ -1,59 +1,33 @@
-import api from "../axios"
+import { createOptions, generateHeaders, requestAPI } from "../axios"
 
 export const login = async (loginData: any) => {
-  try {
-    const response = await api.post(`${import.meta.env.VITE_BASE_URL}/login`, loginData)
-    return response.data
-  } catch (error: any) {
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  const options = createOptions({
+    method: 'POST',
+    url: '/login',
+    data: loginData
+  })
+
+  return requestAPI(options)
 }
 
 export const logout = async () => {
-  try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
-    const response = await api.post(`${import.meta.env.VITE_BASE_URL}/logout`, {}, config)
-    return response.data
-  } catch (error: any) {
-    if (error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  const headers = generateHeaders()
+  const options = createOptions({
+    method: 'POST',
+    url: '/logout',
+    headers,
+  })
+
+  return requestAPI(options)
 }
 
 export const validateToken = async () => {
-  try {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
+  const headers = generateHeaders()
+  const options = createOptions({
+    method: 'POST',
+    url: '/validate-token',
+    headers,
+  })
 
-    const response = await api.post(`${import.meta.env.VITE_BASE_URL}/validate-token`, {}, config)
-    return response.data
-  } catch (error: any) {
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  return requestAPI(options)
 }

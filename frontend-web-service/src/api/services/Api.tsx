@@ -1,128 +1,44 @@
-import api from '../axios'
+import { createOptions, generateHeaders, requestAPI } from '../axios'
 
-export const createApi = async(data: any, selectRequestType: any) => {
-  try {
-    const config = {
-      headers: {
-        'authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    }
-    data.requestType = selectRequestType
-    const response = await api.post(`${import.meta.env.VITE_BASE_URL}/api-info`, data, config)
-    return response.data
-  } catch (error: any) {
-    if(error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+export const createApi = async (data: any, selectRequestType: any) => {
+  data.requestType = selectRequestType
+  const headers = generateHeaders()
+  const options = createOptions({method: 'POST', url:'/api-info', headers, data})
+
+  return requestAPI(options)
 }
 
 export const updateApi = async (data: any, selectedRecord: any) => {
-  try {
-    const config = {
-      headers: {
-        'authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    }
+  const headers = generateHeaders()
+  const options = createOptions({method: 'PUT', url:`/api-info/${selectedRecord._id}`, headers, data})
 
-    const response = await api.put(`${import.meta.env.VITE_BASE_URL}/api/${selectedRecord._id}`, data, config)
-    return response.data
-  } catch (error: any) {
-    if(error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  return requestAPI(options)
 }
 
 export const deleteApi = async (id: string) => {
-  try {
-    const config = {
-      headers: {
-        'authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    }
-    const response = await api.delete(`${import.meta.env.VITE_BASE_URL}/api-info/${id}`, config)
-   return response.data
-  } catch (error: any) {
-    if(error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  const headers = generateHeaders()
+  const options = createOptions({method: 'DELETE', url: `/api-info/${id}`, headers})
+
+  return requestAPI(options)
 }
 
 export const getAllApis = async () => {
-  try {
-    const config = {
-      headers: {
-        authorization: `Bearer ${localStorage.getItem('token')}`
-      }
-    }
-    const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api-info`, config)
-    return response.data
-  } catch (error: any) {
-    if(error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  const headers = generateHeaders()
+  const options = createOptions({method: 'GET', url: '/api-info', headers})
+
+  return requestAPI(options)
+}
+
+export const getApiByName = async (name: string) => {
+  const headers = generateHeaders()
+  const options = createOptions({method: 'GET', url: `/api-info/${name}`, headers})
+
+  return requestAPI(options)
 }
 
 export const onChangeUpdateDataReturnAllowed = async (dataReturnAllowed: boolean, _id: any) => {
-  try {
-    const response = await api.put(`${import.meta.env.VITE_BASE_URL}/api-info/${_id}`, { dataReturnAllowed })
-    return response.data
-  } catch (error: any) {
-    if(error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  const headers = generateHeaders()
+  const options = createOptions({method: 'PUT', url:`/api-info/${_id}`, headers, data: { dataReturnAllowed }})
+
+  return requestAPI(options)
 }
