@@ -121,8 +121,6 @@ class ErrorLogRepository {
     )
     const mostLeakedDataName = sortedLeakedData[0][0]
 
-    console.log('Most leaked data name: ', mostLeakedDataName)
-
     // Find the most leaked route
     const mostLeakedRoute = errors.reduce((acc: any, obj) => {
       if (acc[obj.routeName]) {
