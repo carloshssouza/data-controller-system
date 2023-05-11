@@ -95,6 +95,17 @@ app.get('/admin', (req, res) => {
   return res.json(admin).status(200)
 })
 
+app.get('/manager', (req, res) => {
+  const manager = {
+    name: 'Manager', 
+    cpf: '123456789',
+    phone: '123456789',
+    ip: '123.456.789.123',
+  }
+
+  res.json(manager).status(200)
+})
+
 
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`))
