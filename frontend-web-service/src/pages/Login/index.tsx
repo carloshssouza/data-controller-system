@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { LoginContainer } from "./styles";
 import { Container } from "../../GlobalStyles";
 import { login, validateToken } from "../../api/services/Auth";
+import { Response } from "../../api/axios";
 
 const Login = () => {
   const notifySuccess = (message: string) => toast.success(message);
@@ -13,22 +14,21 @@ const Login = () => {
   const navigate = useNavigate()
 
   const handleLoginData = async (loginData: any) => {
-    const response = await login(loginData)
-    if(response.error) {
+    const { response, error }= await login(loginData) as Response
+
+    if(error) {
       notifyError(response.data.message)
     } else {
       notifySuccess("Login success")
-      localStorage.setItem('token', response.access_token)
+      localStorage.setItem('token', response.data.access_token)
       navigate("/dashboard")
     }
   }
 
   const handleValidateToken = async () => {
-    const response = await validateToken()
-    if(response.error) {
-      if(response.status === 401) {
-        localStorage.removeItem('token')
-      }
+    const {response, error} = await validateToken() as Response
+    if(error) {
+      notifyError(response.data.message)
     } else {
       navigate("/dashboard")
     }

@@ -47,7 +47,6 @@ export default function User() {
         Editar
       </Button>
       </UserContainer>
-      <ToastContainer />
     </Container>
   )
 }
