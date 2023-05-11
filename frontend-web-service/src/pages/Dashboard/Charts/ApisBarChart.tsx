@@ -51,8 +51,9 @@ export default function ApisBarChart({ errorLog, handleQuantityApiErrors, chartW
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" 
           tick={<Tick />}
+          interval={0}
         />
-        <YAxis/>
+        <YAxis interval={0}/>
         <Tooltip cursor={false}  />
         <Legend />
 

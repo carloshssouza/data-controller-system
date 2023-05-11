@@ -1,11 +1,9 @@
 import { Button, Card, Form, Input, Radio } from 'antd'
-import { ReactEventHandler, useCallback, useEffect, useState } from 'react'
+import {  useCallback, useEffect, useState } from 'react'
 import { CardFilter, FilterContainer } from './styles'
 
 interface FilterComponentProps {
   handleGetErrorLogs: (filter: any) => Promise<void>
-  filter: IErrorFilter,
-  setFilter: React.Dispatch<React.SetStateAction<IErrorFilter>>
 }
 
 interface IDateTimes {
@@ -19,7 +17,15 @@ export interface IErrorFilter {
   level: string[]
 }
 
-export default function FilterComponent({ handleGetErrorLogs, filter, setFilter }: FilterComponentProps) {
+export default function FilterComponent({ handleGetErrorLogs }: FilterComponentProps) {
+
+  const [filter, setFilter] = useState({
+    dateTime: '30m',
+    routeName: '',
+    routeId: '',
+    level: ['low', 'medium', 'high']
+  })
+
 
   const radioItems = [
     {
@@ -73,7 +79,7 @@ export default function FilterComponent({ handleGetErrorLogs, filter, setFilter 
       ...prev,
       dateTime: getDateTime(e.target.value) as string
     }))
-  }, [setFilter])
+  }, [])
 
   const onChangeFilterLevel = useCallback((e: any) => {
     const { value } = e.target
@@ -81,7 +87,7 @@ export default function FilterComponent({ handleGetErrorLogs, filter, setFilter 
       ...prev,
       level: getLevel(value) as string[]
     }))
-  }, [setFilter])
+  }, [])
 
   const onChangeFilter = useCallback((e: any) => {
     const { name, value } = e.target
@@ -89,7 +95,7 @@ export default function FilterComponent({ handleGetErrorLogs, filter, setFilter 
       ...prev,
       [name]: value
     }))
-  }, [setFilter])
+  }, [])
   
   const getDateTime = (key: number) => {
     const dateChoose = radioItems.find(item => item.key === key)

@@ -1,15 +1,15 @@
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { TooltipContainer } from './styles'
+import { format } from 'date-fns'
 
 interface ErrorLogLineChartProps {
   errorLog: any[]
 }
 
 export default function ErrorLogLineChart({ errorLog }: ErrorLogLineChartProps) {
-
+  console.log(errorLog)
   const convertErrorLogToChartData = () => {
-    const errorLogSorted = sortErrorLogByTimestamp(errorLog)
-    const errorDataForChart = errorLogSorted.map((item: any) => {
+    const errorDataForChart = errorLog.map((item: any) => {
       return {
         timestamp: `${item.createdAt.split('T')[0]} ${item.createdAt.split('T')[1].split('.')[0]}`,
         amount: item.leakedData.length,
@@ -19,14 +19,6 @@ export default function ErrorLogLineChart({ errorLog }: ErrorLogLineChartProps) 
     })
 
     return errorDataForChart
-  }
-
-  const sortErrorLogByTimestamp = (errorLogDataArray: any[]) => {
-    const errorLogSorted = errorLogDataArray.sort((a: any, b: any) => {
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    })
-
-    return errorLogSorted
   }
 
   const formatYAxisTick = (value: number) => {
@@ -51,7 +43,8 @@ export default function ErrorLogLineChart({ errorLog }: ErrorLogLineChartProps) 
     return null;
   };
 
-  const formatter = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+
 
   return (
     
@@ -60,23 +53,49 @@ export default function ErrorLogLineChart({ errorLog }: ErrorLogLineChartProps) 
           width={600}
           height={400}
           data={convertErrorLogToChartData()}
+
           margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="timestamp"
-            tick={{ fontSize: 14, fill: '#ffffff', transform: 'rotate(0)' }}
-            tickSize={20}
-            tickFormatter={(timestamp) => {
-              const date = new Date(timestamp);
-              return date.getMonth() === 0 ? date.toLocaleDateString() : date.toLocaleDateString(undefined, { month: 'short' });
+            tick={(props) => (
+              <g transform={`translate(${props.x},${props.y})`}>
+                <text
+                  x={0}
+                  y={0}
+                  dy={16}
+                  fontSize={12}
+                  fontWeight="bold"
+                  textAnchor="end"
+                  fill="#858585"
+                  className="axis-label"
+                >
+                  {props.payload.value.split(' ')[0]}
+                </text>
+                <text
+                  x={0}
+                  y={0}
+                  dy={32}
+                  fontSize={13}
+                  textAnchor="end"
+                  fill="#858585"
+                  className="axis-label"
+                >
+                  {props.payload.value.split(' ')[1]}
+                </text>
+              </g>
+            )}
+            tickFormatter={(value: string) => {
+              return format(new Date(value), 'yyyy-MM-dd HH:mm:ss')
             }}
-            interval={3}
+            interval={0}
+            textAnchor='end'
           />
           <YAxis tickFormatter={formatYAxisTick} interval={0} />
           <Tooltip content={CustomTooltip} />
 
-          <Legend />
+          <Legend height={10} wrapperStyle={{ paddingTop: '0.7rem', fontWeight: 'bold' }}/>
           <Line type="monotone" dataKey="amount" name="Leaked Data" stroke="#33aea2" dot={true} isAnimationActive={false} activeDot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
