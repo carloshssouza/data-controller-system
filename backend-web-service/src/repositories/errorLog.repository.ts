@@ -101,7 +101,18 @@ class ErrorLogRepository {
 
   public async getExtraInfosErrorLogs () {
     const errors = await ErrorLog.find({})
-    console.log(errors)
+    if (!errors.length) {
+      return {
+        total: 0,
+        mostLeakedRouteName: '-',
+        mostLeakedDataName: '-',
+        amountPerLevel: {
+          low: 0,
+          medium: 0,
+          high: 0
+        }
+      }
+    }
 
     // Find the most leaked data
     const mostLeakedData = errors.reduce((acc: any, obj: any) => {

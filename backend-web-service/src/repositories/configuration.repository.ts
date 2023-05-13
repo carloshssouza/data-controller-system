@@ -72,6 +72,8 @@ class ConfigurationRepository {
       restrictDataTypeArray.push(dataName)
       restrictDataList.personal = restrictDataTypeArray
 
+      console.log({ restrictDataList })
+
       return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
     }
   }
