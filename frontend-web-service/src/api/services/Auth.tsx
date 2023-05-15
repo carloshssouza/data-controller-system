@@ -24,7 +24,7 @@ export const logout = async () => {
 export const validateToken = async () => {
   const headers = generateHeaders()
   const options = createOptions({
-    method: 'POST',
+    method: 'GET',
     url: '/validate-token',
     headers,
   })

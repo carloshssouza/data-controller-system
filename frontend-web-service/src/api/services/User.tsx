@@ -21,3 +21,13 @@ export const registerUser = async (data: IUser) => {
 
   return requestAPI(options)
 }
+
+export const updateUser = async (data: IUser) => {
+  const options = createOptions({
+    method: 'PUT',
+    url: '/user',
+    data
+  })
+
+  return requestAPI(options)
+}
