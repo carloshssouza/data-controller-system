@@ -4,6 +4,7 @@ import { RegisterAppContainer } from './styles'
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, Input } from 'antd';
 import { getConfiguration, updateAppHost } from '../../api/services/Configuration';
+import { Response } from '../../api/axios';
 
 export default function RegisterApp() {
   const notifySuccess = (message: string) => toast.success(message);
@@ -14,37 +15,35 @@ export default function RegisterApp() {
   const handleAppHostData = async (data: any) => {
     setIsLoading(true)
 
-    const response = await updateAppHost(data)
+    const {response, error} = await updateAppHost(data) as Response
 
-    if (response.error) {
+    if (error) {
       notifyError(response.message)
     } else {
-      notifySuccess(response.message)
-      navigate("/dashboard")
+      notifySuccess(response.data.message)
+      navigate("/login")
     }
     setIsLoading(false)
   }
 
   const handleGetConfiguration = async () => {
-    const response = await getConfiguration()
-    if(response.error) {
-      if(response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      if(response.status === 404 || !response.data?.connection) {
+    const {response, error}= await getConfiguration() as Response
+    if( error || (response.data?.connection && !response.data?.connection)) {
+      if(response.status === 404) {
         localStorage.removeItem('dbConnection')
         navigate('/')
       }
-      notifyError(response.data.message)
+      notifyError(response.message)
     } else {
-      if (response.applicationHost) {
+      console.log('response.data.applicationHost', response.data.applicationHost)
+      if (response.data.applicationHost) {
         navigate('/login')
       }
     }
   }
 
   useEffect(() => {
+
     handleGetConfiguration()
   }, [])
 
