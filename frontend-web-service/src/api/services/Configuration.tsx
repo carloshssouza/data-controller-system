@@ -1,11 +1,9 @@
 import { createOptions, generateHeaders, requestAPI } from "../axios"
 
 export const getConfiguration = async () => {
-  const headers = generateHeaders()
   const options = createOptions({
     method: 'GET',
     url: '/configuration',
-    headers
   })
 
   return requestAPI(options)
@@ -13,7 +11,6 @@ export const getConfiguration = async () => {
 
 export const getRestrictData = async (dataType?: string) => {
   const headers =  generateHeaders()
-  console.log("generate", headers)
   const options = createOptions({
     method: 'GET', 
     url: `/configuration/restrict-data${dataType ? `?dataType=${dataType}` : ''}`, 
@@ -60,7 +57,7 @@ export const deleteApplicationHost = async () => {
 export const startProxyServer = async () => {
   const headers = generateHeaders()
   const options = createOptions({
-    method: 'POST',
+    method: 'GET',
     url: '/configuration/start-proxy',
     headers
   })
@@ -71,7 +68,7 @@ export const startProxyServer = async () => {
 export const stopProxyServer = async () => {
   const headers = generateHeaders()
   const options = createOptions({
-    method: 'POST',
+    method: 'GET',
     url: '/configuration/stop-proxy',
     headers
   })
@@ -116,7 +113,7 @@ export const addRestrictData = async (data: any, dataType: string) => {
 export const updateRestrictData = async (data: any, dataType: string) => {
   const headers = generateHeaders()
   const options = createOptions({
-    method: 'PUT',
+    method: 'PATCH',
     url: `/configuration/restrict-data?dataType=${dataType}`,
     headers,
     data

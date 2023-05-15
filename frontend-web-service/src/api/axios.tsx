@@ -24,8 +24,6 @@ export type Response = {
 export const requestAPI = async (options: Options) => {
   try {
     const response = await API(options);
-    console.log('response', response)
-   
     const notAuthorized = response?.status;
 
     if (notAuthorized === 401) {
@@ -41,7 +39,6 @@ export const requestAPI = async (options: Options) => {
 
     return { error: false, response };
   } catch (error) {
-    console.log(error)
     return { error: true, response: error };
   }
 };
@@ -58,7 +55,6 @@ export const createOptions = ({ method, url, data = null, headers = {} }: Option
 
 export const generateHeaders = () => {
   const headers = {
-    'Content-Type': 'application/json',
     Authorization:`Bearer ${localStorage.getItem('token')}`
   }
 
