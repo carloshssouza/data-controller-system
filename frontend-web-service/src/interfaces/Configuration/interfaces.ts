@@ -1,4 +1,4 @@
-interface IRestrictData {
+interface IRestrictDataList {
   personal: string[];
   sensible: string[];
 }
@@ -7,10 +7,10 @@ interface IConfiguration {
   _id: string;
   mongoUri: string;
   applicationHostUrl: string;
-  restrictDataList: IRestrictData[]
+  restrictDataList: IRestrictDataList[]
 }
 
 export type {
   IConfiguration,
-  IRestrictData
+  IRestrictDataList
 }

@@ -14,7 +14,7 @@ export default function StopProxyButton({isProxyStarted, isLoading, stopProxy}: 
     <StyledButton 
       type="primary"
       disabled={!isProxyStarted || isLoading}
-      typeButton='stop'
+      typebutton='stop'
       onClick={stopProxy}
     >
       {isLoading ? <LoadingOutlined /> : 'Stop proxy'}

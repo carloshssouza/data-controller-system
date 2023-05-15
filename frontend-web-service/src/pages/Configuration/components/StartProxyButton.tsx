@@ -13,7 +13,7 @@ const StartProxyButton = ({isProxyStarted, isLoading, isApplicationHostStarted, 
   return (
     <StyledButton 
       type="primary"
-      typeButton="start" 
+      typebutton="start" 
       disabled={isProxyStarted || isLoading || !isApplicationHostStarted}
       onClick={startProxy}
     >

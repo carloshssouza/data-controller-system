@@ -53,21 +53,7 @@ export default function Configuration() {
     }
   }
 
-  const handleGetRestrictData = async (dataType?: string) => {
-    const { response, error } = await getRestrictData(dataType) as Response
-    if (error) {
-      notifyError(response.data.message)
-    } else {
-      if (dataType) {
-        setRestrictDataList((prevState: IRestrictDataList) => ({
-          ...prevState,
-          [dataType]: response.data
-        }))
-      } else {
-        setRestrictDataList(response.data)
-      }
-    }
-  }
+
 
   const handleLogoutUser = async () => {
     const { response, error } =  await logout() as Response
@@ -141,9 +127,7 @@ export default function Configuration() {
 
   const handleCheckProxyServer = async () => {
     const {response, error} = await checkProxyServer() as Response
-    if (error) {
-      notifyError(response.message)
-    } else {
+    if (!error) {
       notifySuccess(response.data.message)
       setIsProxyStarted(response.data.isProxyStarted)
     }
@@ -162,19 +146,11 @@ export default function Configuration() {
     setIsTestLoading(false)
   }
 
-  const convertData = (restrictDataType: string[], type: string) => {
-    const data = []
-    for (const item of restrictDataType) {
-      data.push({ name: item, type })
-    }
-
-    return data
-  }
+  
 
 
   useEffect(() => {
     handleGetConfiguration()
-    handleGetRestrictData()
     handleCheckProxyServer()
   }, [])
 
@@ -214,16 +190,7 @@ export default function Configuration() {
       </ConfigurationContainer>
 
       <ConfigurationContainerRestrict>
-        <RestrictDataItem
-          restrictDataPersonal={restrictDataList?.personal ?
-            convertData(restrictDataList?.personal, 'personal') : []
-          }
-          restrictDataSensible={restrictDataList?.sensible ?
-            convertData(restrictDataList?.sensible, 'sensible') : []
-          }
-
-          getRestrictData={handleGetRestrictData}
-        />
+        <RestrictDataItem />
       </ConfigurationContainerRestrict>
     </Container>
   )
