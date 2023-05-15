@@ -15,9 +15,8 @@ export default function FilterButtonComponent({ handleGetErrorLogsFilter }: Filt
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <h2>Errors</h2>
-      <Button type="primary" style={{ fontWeight: 'bold', marginLeft: '1rem' }} onClick={showCardFilter}>
+    <>
+       <Button type="primary" style={{ fontWeight: 'bold', marginLeft: '1rem' }} onClick={showCardFilter}>
         Filters
         <FilterOutlined />
       </Button>
@@ -26,6 +25,6 @@ export default function FilterButtonComponent({ handleGetErrorLogsFilter }: Filt
           <FilterComponent handleGetErrorLogs={handleGetErrorLogsFilter} />
         )
       }
-    </div>
+    </>
   )
 }

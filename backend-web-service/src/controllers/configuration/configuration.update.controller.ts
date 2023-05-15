@@ -16,7 +16,7 @@ class ConfigurationUpdateController {
         restrictDataList: configuration.restrictDataList
       }
 
-      await FileService.createConfigFile(restrictDataListConfig, '../../../configs/restrictDataList.config.json')
+      await FileService.createConfigFile(restrictDataListConfig, '../../../../configs/restrictDataList.config.json')
 
       return res.status(200).json({ message: 'Configuration updated' })
     } catch (error) {

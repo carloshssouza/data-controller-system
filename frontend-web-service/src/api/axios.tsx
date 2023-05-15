@@ -1,7 +1,64 @@
-import axios from 'axios'
+import axios from 'axios';
 
-const api = axios.create({
-  baseURL: "http://localhost:3000/api/v1",
+export const API = axios.create({
+  baseURL: import.meta.env.VITE_BASE_URL,
+  
+  validateStatus: function (status) {
+    return status <= 500;
+  },
 });
 
-export default api;
+export type Options = {
+  method: string;
+  data?: any;
+  params?: any;
+  url: string;
+  headers?: any;
+};
+
+export type Response = {
+  response: any;
+  error?: boolean;
+};
+
+export const requestAPI = async (options: Options) => {
+  try {
+    const response = await API(options);
+    const notAuthorized = response?.status;
+
+    if (notAuthorized === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token')
+        window.location.href = '/login';
+      }
+    }
+
+    if (response.status >= 400) {
+      throw new Error(response.data.message);
+    }
+
+    return { error: false, response };
+  } catch (error) {
+    return { error: true, response: error };
+  }
+};
+
+export const createOptions = ({ method, url, data = null, headers = {} }: Options): Options => {
+  return {
+    method,
+    url,
+    data,
+    headers,
+  };
+};
+
+
+export const generateHeaders = () => {
+  const headers = {
+    Authorization:`Bearer ${localStorage.getItem('token')}`
+  }
+
+  return headers
+}
+
+

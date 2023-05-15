@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import api from '../../api/axios'
+import { Response } from '../../api/axios'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import { Button, Table, Popconfirm, Checkbox, Form } from 'antd';
@@ -10,20 +10,14 @@ import ModalUpdateApiComponent from './components/ModalUpdateApiComponent';
 import FormAddApiComponent from './components/FormAddApiComponent';
 import { Container } from '../../GlobalStyles';
 import { createApi, updateApi, deleteApi, getAllApis, onChangeUpdateDataReturnAllowed } from '../../api/services/Api';
-
-interface IApiData {
-  routeName: string;
-  endpointPath: string;
-  requestType: string;
-  dataReturnAllowed: boolean;
-}
+import { IApi } from '../../interfaces/Api/interfaces';
+import NotFoundComponent from '../../utils/NotFoundComponent/NotFoundComponent';
 
 const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
 export default function Api() {
 
-  const navigate = useNavigate()
-  const [listApisData, setListApisData] = useState<IApiData[]>([])
+  const [listApisData, setListApisData] = useState<IApi[]>([])
   const [selectRequestType, setSelectRequestType] = useState<string>(requestType[0])
   const [selectedRecord, setSelectedRecord] = useState<any>();
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
@@ -32,23 +26,17 @@ export default function Api() {
   const notifyError = (message: string) => toast.error(message);
 
   const handleGetAllApis = async () => {
-    const response = await getAllApis()
-    if(response.error) {
-      if(response.status === 401) {
-        navigate('/login')
-      }
+    const { response, error } = await getAllApis() as Response
+    if (error) {
       notifyError(response.message)
     } else {
-      setListApisData(response)
+      setListApisData(response.data)
     }
   }
 
-  const handleCreateApi = async (data: any) => {
-    const response = await createApi(data, selectRequestType)
-    if (response.error) {
-      if(response.status === 401) {
-        navigate('/login')
-      }
+  const handleCreateApi = async (data: IApi) => {
+    const { response, error } = await createApi(data, selectRequestType) as Response
+    if (error) {
       notifyError(response.message)
     } else {
       notifySuccess(response.message)
@@ -57,40 +45,32 @@ export default function Api() {
   }
 
   const handleUpdateApi = async (data: any) => {
-    const response = await updateApi(data, selectedRecord)
-    if(response.error) {
-      if(response.status === 401) {
-        navigate('/login')
-      }
+    const { response, error } = await updateApi(data, selectedRecord) as Response
+    if (error) {
       notifyError(response.message)
     } else {
       notifySuccess(response.message)
       await handleGetAllApis()
     }
+
   }
 
   const handleDeleteApi = async (id: string) => {
-    const response = await deleteApi(id)
-    if(response.error) {
-      if(response.status === 401) {
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const { response, error } = await deleteApi(id) as Response
+    if (error) {
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       await handleGetAllApis()
     }
   }
 
   const handleOnChangeUpdateDataReturnAllowed = async (dataReturnAllowed: boolean, _id: any) => {
-    const response = await onChangeUpdateDataReturnAllowed(dataReturnAllowed, _id)
-    if(response.error) {
-      if(response.status === 401) {
-        navigate('/login')
-      }
-      notifyError(response.message)
+    const {response, error} = await onChangeUpdateDataReturnAllowed(dataReturnAllowed, _id) as Response
+    if(error) {
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       await handleGetAllApis()
     }
   }
@@ -123,14 +103,13 @@ export default function Api() {
             initialValue={record.dataReturnAllowed}
           >
             <Checkbox style={{ color: "black" }} onChange={(event) =>
-                onChangeUpdateDataReturnAllowed(event.target.checked, record._id)}
+              handleOnChangeUpdateDataReturnAllowed(event.target.checked, record._id)}
               defaultChecked={false}
             >
               {record.dataReturnAllowed ? "Yes" : "No"}
             </Checkbox>
           </Form.Item>
         </Form>
-
       )
     },
     {
@@ -153,7 +132,6 @@ export default function Api() {
   const handleUpdate = (record: any) => {
     // Open the update modal and pass the record data
     setUpdateModalVisible(true);
-    console.log("record", record)
     setSelectedRecord(record);
   };
 
@@ -190,14 +168,14 @@ export default function Api() {
                 selectedRecord={selectedRecord}
                 requestType={requestType}
               />
-              <Table columns={columns} dataSource={listApisData} />
+              <Table columns={columns} dataSource={listApisData.map((data: IApi) => ({ ...data, key: data?._id }))} />
             </div>
           ) : (
-            <div>No data</div>
+            <NotFoundComponent />
           )
         }
       </ApiListContainer>
-      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }}/>
+      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }} />
     </Container>
   )
 }

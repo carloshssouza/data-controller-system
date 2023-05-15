@@ -101,7 +101,18 @@ class ErrorLogRepository {
 
   public async getExtraInfosErrorLogs () {
     const errors = await ErrorLog.find({})
-    console.log(errors)
+    if (!errors.length) {
+      return {
+        total: 0,
+        mostLeakedRouteName: '-',
+        mostLeakedDataName: '-',
+        amountPerLevel: {
+          low: 0,
+          medium: 0,
+          high: 0
+        }
+      }
+    }
 
     // Find the most leaked data
     const mostLeakedData = errors.reduce((acc: any, obj: any) => {
@@ -120,8 +131,6 @@ class ErrorLogRepository {
       (a: any, b: any) => b[1].count as any - a[1].count || errors.indexOf(b[1].lastObj) - errors.indexOf(a[1].lastObj)
     )
     const mostLeakedDataName = sortedLeakedData[0][0]
-
-    console.log('Most leaked data name: ', mostLeakedDataName)
 
     // Find the most leaked route
     const mostLeakedRoute = errors.reduce((acc: any, obj) => {

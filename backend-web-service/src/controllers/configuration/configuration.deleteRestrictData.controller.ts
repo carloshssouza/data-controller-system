@@ -7,7 +7,8 @@ class ConfigurationDeleteRestrictDataController {
   async deleteRestrictData (req: Request, res: Response): Promise<Response> {
     try {
       const dataType = req.query.dataType as unknown as string
-      const configuration = await ConfigurationEntity.deleteRestrictData(req.body.dataName, dataType)
+      const dataName = req.query.dataName as unknown as string
+      const configuration = await ConfigurationEntity.deleteRestrictData(dataName, dataType)
 
       if (!configuration) {
         throw new ErrorRes(400, 'Error deleting configuration restrict data')
@@ -17,7 +18,7 @@ class ConfigurationDeleteRestrictDataController {
         restrictDataList: configuration.restrictDataList
       }
 
-      await FileService.createConfigFile(restrictDataListConfig, '../../../configs/restrictDataList.config.json')
+      await FileService.createConfigFile(restrictDataListConfig, '../../../../configs/restrictDataList.config.json')
 
       return res.status(200).json({ message: 'Restrict data deleted' })
     } catch (error) {

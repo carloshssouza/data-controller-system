@@ -5,6 +5,7 @@ const ConfigurationItemRestrictData = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-bottom: 2rem;
 `
 
 const RestrictDataContainer = styled.div`

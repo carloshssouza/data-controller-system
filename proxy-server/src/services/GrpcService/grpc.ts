@@ -61,6 +61,28 @@ class GrpcClient {
       })
     })
   }
+
+  public async getRestrictDataList () {
+    return new Promise((resolve, reject) => {
+      this.client.getRestrictDataList({}, (err: any, response: any) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(response)
+      })
+    })
+  }
+
+  public async getApplicationHost () {
+    return new Promise((resolve, reject) => {
+      this.client.getApplicationHost({}, (err: any, response: any) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(response)
+      })
+    })
+  }
 }
 
 export default new GrpcClient()

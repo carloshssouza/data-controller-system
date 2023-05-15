@@ -4,6 +4,7 @@ import path from 'path'
 import ApiEntity from './entities/api/api.entity'
 import ErrorLogEntity from './entities/errorLog/erroLog.entity'
 import { io } from '.'
+import configurationEntity from './entities/configuration/configuration.entity'
 
 class GrpcServer {
   private server: grpc.Server
@@ -15,7 +16,9 @@ class GrpcServer {
     this.server = new grpc.Server()
     this.server.addService(controlSystemPackage.ControlSystemService.service, {
       getApiPermission: this.getApiPermission,
-      createErrorLog: this.createErrorLog
+      createErrorLog: this.createErrorLog,
+      getRestrictDataList: this.getRestrictDataList,
+      getApplicationHost: this.getApplicationHost
     })
   }
 
@@ -57,6 +60,26 @@ class GrpcServer {
       io.emit('error-log-data', JSON.stringify(errorLog))
       callback(null, errorLog)
     } catch (error) {
+      callback(null, error)
+    }
+  }
+
+  public async getRestrictDataList (call: any, callback: any) {
+    try {
+      const apiPermission = await configurationEntity.getRestrictData()
+      callback(null, apiPermission)
+    } catch (error) {
+      console.log(error)
+      callback(null, error)
+    }
+  }
+
+  public async getApplicationHost (call: any, callback: any) {
+    try {
+      const { applicationHost } = await configurationEntity.getConfiguration()
+      callback(null, applicationHost)
+    } catch (error) {
+      console.log(error)
       callback(null, error)
     }
   }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { ApiContainer, ApiSearchContainer, CardItem, CardValue, DataApi, LabelApi } from './styles'
 import { Button, Form, Input } from 'antd'
-import api from '../../../../api/axios'
+import { Response } from '../../../../api/axios'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { getAllApis, getApiByName } from '../../../../api/services/Api'
 
 
 export default function ApisComponent() {
@@ -11,46 +12,27 @@ export default function ApisComponent() {
   const notifyError = (message: string) => toast.error(message)
   const [listApiData, setListApiData] = useState<any[]>([])
 
-  const getAllApis = async () => {
-    try {
-      const response = await api.get(`${import.meta.env.VITE_BASE_URL}/api-info`)
-      if (response.status !== 200) {
-        throw new Error('Error getting all apis')
-      } else {
-        setListApiData(response.data)
-      }
-    } catch (error: any) {
-      notifyError(error.response.data.message)
-      if (error.response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
+  const handleGetAllApis = async () => {
+    const { response, error } = await getAllApis() as Response
+    if(error) {
+      notifyError(response.data.message)
+    } else {
+      setListApiData(response.data)
     }
   }
 
 
-  const getApiByName = async (name: string) => {
-    try {
-      const response = await api.get(`${import.meta.env.BASE_URL}/api-info/${name}`)
-      if (response.status !== 200) {
-        throw new Error(response.data.message)
-      }
-      else {
-        return response.data
-      }
-
-    } catch (error: any) {
-      console.error(error);
-      if (error.response.status === 401) {
-        localStorage.removeItem('token')
-        navigate('/login')
-      }
-      notifyError(error.message)
+  const handleGetApiByName = async (name: string) => {
+    const { response, error } = await getApiByName(name) as Response
+    if (error) {
+      notifyError(response.data.message)
+    } else {
+      
     }
   }
-
+  
   useEffect(() => {
-    getAllApis()
+    handleGetAllApis()
   }, [])
 
   return (
@@ -60,7 +42,7 @@ export default function ApisComponent() {
         <Form
           name="basic"
           initialValues={{ remember: true }}
-          onFinish={getApiByName}
+          onFinish={handleGetApiByName}
         >
           <Form.Item>
             <Input placeholder='Search for Api' />

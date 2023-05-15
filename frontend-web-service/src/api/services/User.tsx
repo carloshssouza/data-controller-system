@@ -1,27 +1,33 @@
-import api from "../axios"
+import { IUser } from "../../interfaces/User/interfaces"
+import { createOptions, generateHeaders, requestAPI } from "../axios"
 
 export const getUser = async () => {
-  try {
-    const config = {
-      headers: {
-        'authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    }
-    const response = await api.get(`${import.meta.env.VITE_BASE_URL}/user/me`, config)
-    return response.data
-  } catch (error: any) {
-    if(error.response.status === 401) {
-      localStorage.removeItem('token')
-      return {
-        error: true,
-        message: error.response.data.message,
-        status: error.response.status
-      }
-    }
-    return {
-      error: true,
-      message: error.response.data.message,
-      status: error.response.status
-    }
-  }
+  const headers = generateHeaders()
+  const options = createOptions({
+    method: 'GET',
+    url: '/user/me',
+    headers,
+  })
+
+  return requestAPI(options)
+}
+
+export const registerUser = async (data: IUser) => {
+  const options = createOptions({
+    method: 'POST',
+    url: '/user',
+    data
+  })
+
+  return requestAPI(options)
+}
+
+export const updateUser = async (data: IUser) => {
+  const options = createOptions({
+    method: 'PUT',
+    url: '/user',
+    data
+  })
+
+  return requestAPI(options)
 }

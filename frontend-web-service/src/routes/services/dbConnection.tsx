@@ -1,16 +1,17 @@
 import React from 'react'
-import api from '../../api/axios'
+import { Response, requestAPI } from '../../api/axios'
 
 export default async function isDbConnected() {
-  try {
-    const response = await api.get(`${import.meta.env.VITE_BASE_URL}/configuration/db-connection`)
-    if (response.status === 200) {
-      return true
-    } else {
-      return false
+    const options = {
+      method: 'GET',
+      url: `${import.meta.env.VITE_BASE_URL}/configuration/db-connection`
     }
-  } catch (error: any) {
-    console.log(error)
-    return false
-  } 
+    const { response, error }= await requestAPI(options) as Response
+    
+
+    if (error || response.status !== 200) {
+      return false
+    } else {
+      return true
+    }
 }
