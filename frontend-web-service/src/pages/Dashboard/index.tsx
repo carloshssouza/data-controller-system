@@ -79,7 +79,6 @@ export default function Dashboard() {
   }
 
   const handleGetErrorLogsFilter = async (filter: any) => {
-    console.log({ filter })
     const query = `dateTime=${filter.dateTime}&level=${filter.level.join(',')}${filter.routeName ? `&routeName=${filter.routeName}` : ''}${filter.routeId ? `&routeId=${filter.routeId}` : ''}`
     const { response, error } = await getAllErrorLogs(query) as Response
     if (error) {

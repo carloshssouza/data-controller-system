@@ -9,11 +9,12 @@ interface ErrorExtraInfoComponentProps {
 export default function ErrorExtraInfoComponent({ extraInfo }: ErrorExtraInfoComponentProps) {
   
   const getAmountErrorPerLevel = () => {
+    console.log("extraInfo", extraInfo)
     return (
       <div>
-        <div style={{ color: '#F05D5D' }}>High: {extraInfo.amountPerLevel.high}</div>
-        <div style={{ color: '#FFD81D' }}>Medium: {extraInfo.amountPerLevel.medium}</div>
-        <div style={{ color: '#7EED79' }}>Low: {extraInfo.amountPerLevel.low}</div>
+        <div style={{ color: '#F05D5D' }}>High: {extraInfo?.amountPerLevel?.high}</div>
+        <div style={{ color: '#FFD81D' }}>Medium: {extraInfo?.amountPerLevel?.medium}</div>
+        <div style={{ color: '#7EED79' }}>Low: {extraInfo?.amountPerLevel?.low}</div>
       </div>
     )
   }
