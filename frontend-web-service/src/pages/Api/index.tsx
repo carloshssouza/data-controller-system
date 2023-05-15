@@ -11,6 +11,7 @@ import FormAddApiComponent from './components/FormAddApiComponent';
 import { Container } from '../../GlobalStyles';
 import { createApi, updateApi, deleteApi, getAllApis, onChangeUpdateDataReturnAllowed } from '../../api/services/Api';
 import { IApi } from '../../interfaces/Api/interfaces';
+import NotFoundComponent from '../../utils/NotFoundComponent/NotFoundComponent';
 
 const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 
@@ -167,10 +168,10 @@ export default function Api() {
                 selectedRecord={selectedRecord}
                 requestType={requestType}
               />
-              <Table columns={columns} dataSource={listApisData} />
+              <Table columns={columns} dataSource={listApisData.map((data: IApi) => ({ ...data, key: data?._id }))} />
             </div>
           ) : (
-            <div>No data</div>
+            <NotFoundComponent />
           )
         }
       </ApiListContainer>
