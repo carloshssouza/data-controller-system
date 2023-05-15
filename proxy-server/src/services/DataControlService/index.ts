@@ -3,8 +3,7 @@ import Identifier from '../IdentifierService'
 import { IncomingMessage } from '../../types/http'
 import Auxiliary from './utils/auxiliary'
 import { ILeakedData } from '../../interfaces/errorLogData.interface'
-import fs from 'fs'
-import path from 'path'
+import { IRestrictDataList } from 'src/interfaces/configuration.interface'
 class DataControlService extends Auxiliary {
   /**
    * Method responsible for run all the functions to control the data response from external server
@@ -22,9 +21,8 @@ class DataControlService extends Auxiliary {
     }
 
     if (apiResponse && !apiResponse.dataReturnAllowed) {
-      const pathConfig = path.resolve(__dirname, '../../../../configs/restrictDataList.config.json')
-      const configuration = JSON.parse(fs.readFileSync(pathConfig, 'utf8')) as any
-      const privateDataFound = await Identifier.findPrivateData(body, configuration.restrictDataList) as ILeakedData[]
+      const restrictDataList = await GrpcClient.getRestrictDataList() as IRestrictDataList
+      const privateDataFound = await Identifier.findPrivateData(body, restrictDataList) as ILeakedData[]
       if (privateDataFound.length) {
         const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse)
 

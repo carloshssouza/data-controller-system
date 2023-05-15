@@ -5,6 +5,8 @@ package controlSystemPackage;
 service ControlSystemService {
   rpc getApiPermission(ApiRequest) returns (ApiResponse);
   rpc createErrorLog(ErrorLogRequest) returns (ErrorLogResponse);
+  rpc getRestrictDataList() returns (RestrictDataListResponse);
+  rpc getApplicationHost() returns (ApplicationHostResponse);
 }
 
 message ApiRequest {
@@ -39,6 +41,20 @@ message ErrorLogResponse {
 }
 
 message LeakedData {
-    string name = 1;
-    string type = 2;
+  string name = 1;
+  string type = 2;
 }
+
+message RestrictDataListResponse {
+  repeated RestrictDataList restrictDataList = 1;
+}
+
+message RestrictDataList {
+  repeated string personal = 1;
+  repeated string sensible = 2;
+}
+
+message ApplicationHostResponse {
+  string applicationHost = 1;
+}
+
