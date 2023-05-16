@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Container } from '../../GlobalStyles'
-import { UserContainer } from './styles'
+import { UserContainer, UserItem } from './styles'
 import { Button, Form, Input, Modal } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { getUser, updateUser } from '../../api/services/User'
@@ -17,8 +17,16 @@ interface IUserData {
 export default function User() {
   const [userData, setUserData] = useState<IUserData>({})
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [formData, setFormData] = useState({
+    name: '',
+    password: ''
+  })
   const notifyError = (message: string) => toast.error(message);
   const navigate = useNavigate()
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true)
+  }
 
   const handleGetUser = async() => {
     const {response, error} = await getUser() as Response
@@ -34,6 +42,13 @@ export default function User() {
     }
   }
 
+  const onChangeFormData = (e: any) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    })
+  }
+
   useEffect(() => {
     handleGetUser()
   }, [])
@@ -44,27 +59,46 @@ export default function User() {
       <UserContainer>
       <h1>My account</h1>
       <div>
-      <div>{userData.name}</div>
-      <div>{userData.email}</div>
+        <span>Name: <UserItem>{userData.name}</UserItem></span>
+        <span>Email: <UserItem>{userData.email}</UserItem></span>
       </div>
-      <Button>
+      <Button onClick={handleModalOpen}>
         Update
       </Button>
       <Modal
         title="Update user"
         open={isModalOpen}
-        onCancel={() => setIsModalOpen(false)}
-        onOk={() => setIsModalOpen(false)}
+        onCancel={() => {
+
+          setIsModalOpen(false)
+        }}
+        destroyOnClose={true}
       >
-        <Form
-          onFinish={handleUpdateUser}
+       <Form
+          name="basic"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+          style={{ maxWidth: 600 }}
+          initialValues={{ remember: true }}
+          onFinish={updateUser}
+          autoComplete="off"
         >
-          <Form.Item>
-            <Input />
+          <Form.Item
+            label={<label style={{ color: 'black' }}>Name</label>}
+            name="name"
+            rules={[{ required: false}]}
+            initialValue={userData.name || formData.name}
+          >
+            <Input name="name" onChange={onChangeFormData}/>
           </Form.Item>
-          <Button htmlType='submit'>
-            Confirm
-          </Button>
+          <Form.Item
+            label={<label style={{ color: 'black' }}>Password</label>}
+            name="password"
+            
+            rules={[{ required: false }]}
+          >
+            <Input.Password  name="password" onChange={onChangeFormData}/>
+          </Form.Item>
         </Form>
       </Modal>
       </UserContainer>

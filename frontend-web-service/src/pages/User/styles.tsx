@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const UserContainer = styled.div`
-   display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   color: white;
@@ -12,6 +12,17 @@ const UserContainer = styled.div`
   margin-top: 70px; 
 `
 
+const UserItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  background: #17181e;
+  margin-bottom: 1rem;
+  padding: 5px;
+  border-radius: 5px;
+
+`
+
 export {
-  UserContainer
+  UserContainer,
+  UserItem
 }
