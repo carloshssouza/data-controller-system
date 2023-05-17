@@ -1,10 +1,7 @@
 import ErrorRes from '../../utils/Erro'
 import ConfigurationEntity from '../../entities/configuration/configuration.entity'
 import { Request, Response } from '../../types/express'
-import fs from 'fs'
-import path from 'path'
-import mongoose from 'mongoose'
-
+import { mongoose } from '../../types/mongoose'
 class ConfigurationGetController {
   public async getConfiguration (req: Request, res: Response): Promise<Response> {
     try {
@@ -12,7 +9,6 @@ class ConfigurationGetController {
 
       if (!configuration) {
         mongoose.connection.close()
-        fs.unlinkSync(path.resolve(__dirname, '../../../db.connection.json'))
         throw new ErrorRes(404, 'Configuration not found')
       }
 
