@@ -7,7 +7,7 @@ class UserSchemaValidator {
     const schema = Joi.object({
       name: Joi.string().required(),
       email: Joi.string().email().required(),
-      password: Joi.string().required(),
+      password: Joi.string().required().min(6).max(16),
       type: Joi.string().valid('common', 'admin').optional()
     })
 
@@ -17,8 +17,8 @@ class UserSchemaValidator {
   updateUserValidation (httpBody: UserUpdateData) {
     const schema = Joi.object({
       name: Joi.string().optional(),
-      email: Joi.string().email().optional()
-    }).or('name', 'email')
+      password: Joi.string().optional().min(6).max(16)
+    }).or('name', 'password')
 
     return schema.validate(httpBody)
   }

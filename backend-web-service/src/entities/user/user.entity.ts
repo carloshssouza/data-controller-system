@@ -34,4 +34,16 @@ export default class UserEntity {
     }
     return UserRepository.updateUser(_id, data)
   }
+
+  public async getAllUsers () {
+    return UserRepository.getAllUsers()
+  }
+
+  public deleteUser (_id: TypeId) {
+    const validate = UserValidator.getUserValidation(_id)
+    if (validate.error) {
+      throw new ErrorRes(400, validate.error.message)
+    }
+    return UserRepository.deleteUser(_id)
+  }
 }
