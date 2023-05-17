@@ -37,6 +37,7 @@ export default function ApplicationHostItem({
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
         footer={null}
+        destroyOnClose={true}
       >
         <Form
           style={{ display: 'flex', flexDirection: 'column', alignItems: 'start', width: '100%' }}
@@ -47,6 +48,9 @@ export default function ApplicationHostItem({
         >
           <Form.Item
             label="Application Host"
+            name="applicationHost"
+            rules={[{ required: true, message: 'Application host is required' }]}
+            initialValue={configuration.applicationHost}
           >
             <Input type="text"/>
           </Form.Item>

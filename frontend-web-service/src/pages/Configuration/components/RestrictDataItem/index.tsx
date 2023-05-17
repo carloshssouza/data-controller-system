@@ -200,7 +200,7 @@ export default function RestrictDataItem() {
               />
               <div style={{ background: '#27293D', borderRadius: '5px', padding: '0.5rem', marginLeft: '1rem' }}>
                 <h3>Add data</h3>
-                <Input placeholder='Data name' style={{ marginBottom: '1rem' }} value={addDataPersonal} onChange={onChangeAddDataPersonal} />
+                <Input placeholder='Data name' style={{ marginBottom: '1rem' }} value={addDataPersonal} onChange={onChangeAddDataPersonal}/>
                 <Button onClick={handleAddPersonalData} disabled={isPersonalLoading}>{isPersonalLoading ? <LoadingOutlined /> : 'Confirm'}</Button>
               </div>
             </CardContent>
