@@ -79,6 +79,7 @@ class GrpcClient {
         if (err) {
           reject(err)
         }
+        console.log(response)
         resolve(response)
       })
     })

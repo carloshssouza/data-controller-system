@@ -19,7 +19,8 @@ const option = {
 
 async function startProxyServer () {
   try {
-    const applicationHost = await Grpc.getApplicationHost() as string
+    const config = await Grpc.getApplicationHost() as { applicationHost: string }
+    const applicationHost = config.applicationHost
     option.target = applicationHost // set target after getting application host
 
     process.on('SIGINT', () => {
@@ -61,6 +62,7 @@ async function startProxyServer () {
     })
 
     server.listen(PORT)
+    console.log(applicationHost)
     console.log(`Proxy server listening on ${PORT} with target ${applicationHost}`)
   } catch (error) {
     console.error(error)
