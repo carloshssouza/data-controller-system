@@ -23,10 +23,34 @@ export const registerUser = async (data: IUser) => {
 }
 
 export const updateUser = async (data: IUser) => {
+  const headers = generateHeaders()
   const options = createOptions({
     method: 'PUT',
+    url: `/user/${data._id}`,
+    data,
+    headers
+  })
+
+  return requestAPI(options)
+}
+
+export const getAllUsers = async () => {
+  const headers = generateHeaders()
+  const options = createOptions({
+    method: 'GET',
     url: '/user',
-    data
+    headers
+  })
+
+  return requestAPI(options)
+}
+
+export const deleteUser = async (_id: string) => {
+  const headers = generateHeaders()
+  const options = createOptions({
+    method: 'DELETE',
+    url: `/user/${_id}`,
+    headers
   })
 
   return requestAPI(options)
