@@ -66,8 +66,8 @@ class GrpcServer {
 
   public async getRestrictDataList (call: any, callback: any) {
     try {
-      const apiPermission = await configurationEntity.getRestrictData()
-      callback(null, apiPermission)
+      const restrictDataList = await configurationEntity.getRestrictData()
+      callback(null, { restrictDataList })
     } catch (error) {
       console.log(error)
       callback(null, error)
@@ -77,7 +77,8 @@ class GrpcServer {
   public async getApplicationHost (call: any, callback: any) {
     try {
       const { applicationHost } = await configurationEntity.getConfiguration()
-      callback(null, applicationHost)
+
+      callback(null, { applicationHost })
     } catch (error) {
       console.log(error)
       callback(null, error)
