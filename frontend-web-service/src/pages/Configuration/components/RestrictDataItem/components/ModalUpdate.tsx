@@ -17,6 +17,7 @@ export default function ModalUpdate({ updateRestrictData, updateModalVisible, se
       }}
       cancelButtonProps={{ style: { display: 'none' } }}
       okButtonProps={{ style: { display: 'none' } }}
+      destroyOnClose={true}
     >
       <Form
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}

@@ -33,9 +33,15 @@ export default function MongoItem({
             open={isModalMongoConnectionVisible}
             onCancel={() => setIsModalMongoConnectionVisible(false)}
             footer={null}
+            destroyOnClose={true}
           >
             <Form>
-              <Form.Item>
+              <Form.Item
+                label="Mongo Database Connection"
+                name="mongoUriHost"
+                rules={[{ required: true, message: 'Mongo Database Connection is required' }]}
+                initialValue={configuration.mongoUriHost}
+              >
                 <Input placeholder="Mongo Database Connection" />
               </Form.Item>
             </Form>

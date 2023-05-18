@@ -42,7 +42,7 @@ export default function Configuration() {
   const [isTestLoading, setIsTestLoading] = useState(false)
 
   const handleGetConfiguration = async () => {
-    const { response, error }= await getConfiguration() as Response
+    const { response, error } = await getConfiguration() as Response
     if (error) {
       if (response.status === 404 || !response.data?.connection) {
         localStorage.removeItem('dbConnection')
@@ -56,7 +56,7 @@ export default function Configuration() {
 
 
   const handleLogoutUser = async () => {
-    const { response, error } =  await logout() as Response
+    const { response, error } = await logout() as Response
     if (error) {
       notifyError(response.data.message)
     } else {
@@ -66,7 +66,7 @@ export default function Configuration() {
   }
 
   const handleUpdateConfiguration = async (data: any) => {
-    const { response, error } =  await updateConfiguration(data) as Response
+    const { response, error } = await updateConfiguration(data) as Response
     if (error) {
       notifyError(response.data.message)
     } else {
@@ -78,7 +78,7 @@ export default function Configuration() {
   }
 
   const handleDeleteMongoDatabaseConnection = async () => {
-    const {response, error} = await deleteMongoDatabaseConnection() as Response
+    const { response, error } = await deleteMongoDatabaseConnection() as Response
     if (error) {
       notifyError(response.data.message)
     } else {
@@ -91,7 +91,7 @@ export default function Configuration() {
 
 
   const handleDeleteApplicationHost = async () => {
-    const {response, error} = await deleteApplicationHost() as Response
+    const { response, error } = await deleteApplicationHost() as Response
     if (error) {
       notifyError(response.data.message)
     } else {
@@ -103,7 +103,7 @@ export default function Configuration() {
 
   const handleStartProxyServer = async () => {
     setIsStartLoading(true)
-    const {response, error} = await startProxyServer() as Response
+    const { response, error } = await startProxyServer() as Response
     if (error) {
       notifyError(response.data.message)
     } else {
@@ -115,7 +115,7 @@ export default function Configuration() {
 
   const handleStopProxyServer = async () => {
     setIsStopLoading(true)
-    const {response, error} = await stopProxyServer() as Response
+    const { response, error } = await stopProxyServer() as Response
     if (error) {
       notifyError(response.data.message)
     } else {
@@ -126,7 +126,7 @@ export default function Configuration() {
   }
 
   const handleCheckProxyServer = async () => {
-    const {response, error} = await checkProxyServer() as Response
+    const { response, error } = await checkProxyServer() as Response
     if (!error) {
       notifySuccess(response.data.message)
       setIsProxyStarted(response.data.isProxyStarted)
@@ -135,7 +135,7 @@ export default function Configuration() {
 
   const handleCheckApplicationHost = async () => {
     setIsTestLoading(true)
-    const {response, error }= await checkApplicationHost(configuration) as Response
+    const { response, error } = await checkApplicationHost(configuration) as Response
     if (error) {
       notifyError(response.message)
       setIsApplicationHostStarted(false)
@@ -145,9 +145,6 @@ export default function Configuration() {
     }
     setIsTestLoading(false)
   }
-
-  
-
 
   useEffect(() => {
     handleGetConfiguration()
@@ -175,7 +172,7 @@ export default function Configuration() {
             isApplicationHostStarted={isApplicationHostStarted}
             startProxy={handleStartProxyServer}
           />
-          <StopProxyButton 
+          <StopProxyButton
             isLoading={isStopLoading}
             isProxyStarted={isProxyStarted}
             stopProxy={handleStopProxyServer}

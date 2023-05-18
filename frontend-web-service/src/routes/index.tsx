@@ -6,14 +6,32 @@ import SuperRoute from './services/SuperRoute'
 import Configuration from '../pages/Configuration'
 import Navbar from '../components/Navbar'
 import User from '../pages/User'
+import Users from '../pages/Users'
 import RouteDbConnected from './services/RouteDbConnected'
+import { getUser } from '../api/services/User'
+import { Response } from '../api/axios'
+import { useEffect, useState } from 'react'
 
 export default function routes() {
+  const [type, setType] = useState('')
+  const handleTypeUser = async () => {
+    const { response, error } = await getUser() as Response
+    if (!error) {
+      setType(response.data.type)
+    }
+  }
+
+  useEffect(() => {
+    if(localStorage.getItem('token'))  {
+      handleTypeUser()
+    }
+  }, [])
+
   return (
     <Router>
       <Routes>
         <Route path="/" element={
-            <FirstRegister />
+          <FirstRegister />
         } />
         <Route path="/register-host" element={
           <RouteDbConnected>
@@ -22,25 +40,25 @@ export default function routes() {
         } />
         <Route path="/api" element={
           <SuperRoute>
-            <Navbar/>
+            <Navbar />
             <Api />
           </SuperRoute>
         } />
         <Route path="/dashboard" element={
           <SuperRoute>
-            <Navbar/>
-            <Dashboard/>
+            <Navbar />
+            <Dashboard />
           </SuperRoute>
         } />
         <Route path="/config" element={
           <SuperRoute>
-            <Navbar/>
+            <Navbar />
             <Configuration />
           </SuperRoute>
         } />
         <Route path="/user" element={
           <SuperRoute>
-            <Navbar/>
+            <Navbar />
             <User />
           </SuperRoute>
         } />
@@ -50,10 +68,22 @@ export default function routes() {
             <Login />
           </RouteDbConnected>
         } />
+        {
+          type === 'admin' && (
+            <Route path="/users" element={
+              <RouteDbConnected>
+                <Navbar />
+
+                <Users />
+              </RouteDbConnected>
+            } />
+          )
+        }
+
         <Route path="*" element={
           <>
             <Error />
-          </>      
+          </>
         } />
       </Routes>
     </Router>

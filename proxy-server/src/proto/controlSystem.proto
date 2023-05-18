@@ -5,9 +5,11 @@ package controlSystemPackage;
 service ControlSystemService {
   rpc getApiPermission(ApiRequest) returns (ApiResponse);
   rpc createErrorLog(ErrorLogRequest) returns (ErrorLogResponse);
-  rpc getRestrictDataList() returns (RestrictDataListResponse);
-  rpc getApplicationHost() returns (ApplicationHostResponse);
+  rpc getRestrictDataList(Void) returns (RestrictDataListResponse);
+  rpc getApplicationHost(Void) returns (ApplicationHostResponse);
 }
+
+message Void {}
 
 message ApiRequest {
   string endpointPath = 1;

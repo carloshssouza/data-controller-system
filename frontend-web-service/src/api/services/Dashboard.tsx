@@ -2,9 +2,11 @@ import { requestAPI } from "../../pages/Dashboard/components/api"
 import { generateHeaders } from "../axios"
 
 export const getAllErrorLogs = async (filter: string) => {
+  const headers = generateHeaders()
   const options = {
     method: "GET",
     url: `/error-log?${filter}`,
+    headers
   }
   
   return requestAPI(options)
@@ -22,9 +24,11 @@ export const getExtraInfos = async () => {
 }
 
 export const getApis = async () => {
+  const headers = generateHeaders()
   const options = {
     method: "GET",
     url: "/api-info",
+    headers
   }
 
   return requestAPI(options)
