@@ -1,7 +1,6 @@
 import ErrorRes from '../../utils/Erro'
 import { Request, Response } from '../../types/express'
 import ConfigurationEntity from '../../entities/configuration/configuration.entity'
-import FileService from '../../utils/Services/FileService'
 
 class ConfigurationDeleteRestrictDataController {
   async deleteRestrictData (req: Request, res: Response): Promise<Response> {
@@ -13,12 +12,6 @@ class ConfigurationDeleteRestrictDataController {
       if (!configuration) {
         throw new ErrorRes(400, 'Error deleting configuration restrict data')
       }
-
-      const restrictDataListConfig = {
-        restrictDataList: configuration.restrictDataList
-      }
-
-      await FileService.createConfigFile(restrictDataListConfig, '../../../../configs/restrictDataList.config.json')
 
       return res.status(200).json({ message: 'Restrict data deleted' })
     } catch (error) {
