@@ -6,7 +6,7 @@ import { TypeId } from '../../types/mongoose'
 class UserGetController {
   public async getUser (req: Request, res: Response): Promise<Response> {
     try {
-      const user = await new UserEntity().getUser(req.params._id as unknown as TypeId)
+      const user = await UserEntity.getUser(req.params._id as unknown as TypeId)
 
       if (!user) {
         throw new ErrorRes(500, 'Error getting user')

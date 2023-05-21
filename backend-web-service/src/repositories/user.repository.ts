@@ -3,8 +3,8 @@ import { TypeId } from '../types/mongoose'
 import User from './schemas/User'
 
 class UserRepository {
-  public loadUser (email: string) {
-    return User.findOne({ email })
+  public loadUser (accountName: string) {
+    return User.findOne({ accountName })
   }
 
   public createUser (data: UserCreateData) {
@@ -15,6 +15,10 @@ class UserRepository {
     return User.findOne({ _id }).select('-password -createdAt -updatedAt')
   }
 
+  public getDefaultUser (accountName: string) {
+    return User.findOne({ accountName })
+  }
+
   public updateUser (_id: TypeId, data: UserUpdateData) {
     return User.findOneAndUpdate({ _id }, data)
   }
@@ -23,8 +27,13 @@ class UserRepository {
     return User.find({}).select('-password -createdAt -updatedAt')
   }
 
-  public deleteUser (_id: TypeId) {
-    return User.findOneAndDelete({ _id })
+  public async deleteUser (_id: TypeId, userAdminId: TypeId) {
+    const user = await User.findOne({ _id })
+    if (user._id.toString() === userAdminId.toString()) {
+      throw new Error('You cannot delete yourself')
+    } else {
+      return User.findOneAndDelete({ _id })
+    }
   }
 }
 

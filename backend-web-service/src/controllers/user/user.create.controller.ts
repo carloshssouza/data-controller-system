@@ -5,7 +5,7 @@ import { Request, Response } from '../../types/express'
 class UserCreateController {
   public async createUser (req: Request, res: Response): Promise<Response> {
     try {
-      const user = await new UserEntity().createUser(req.body)
+      const user = await UserEntity.createUser(req.body)
 
       if (!user) {
         throw new ErrorRes(500, 'Error creating user')

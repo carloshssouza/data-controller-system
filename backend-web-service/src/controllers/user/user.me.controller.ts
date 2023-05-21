@@ -9,7 +9,7 @@ class UserMeController {
     try {
       const tokenDecoded = JwtService.decode(req.headers.authorization)
 
-      const user = await new UserEntity().getUser(tokenDecoded.sub as unknown as TypeId)
+      const user = await UserEntity.getUser(tokenDecoded.sub as unknown as TypeId)
 
       if (!user) {
         throw new ErrorRes(500, 'Error getting user')
