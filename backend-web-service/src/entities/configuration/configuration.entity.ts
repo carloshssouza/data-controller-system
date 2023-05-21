@@ -1,46 +1,17 @@
-import { ConfigurationCreateData, ConfigurationUpdateData } from '../../interfaces/configuration'
+import { ConfigurationUpdateData } from '../../interfaces/configuration'
 import ErrorRes from '../../utils/Erro/index'
 import ConfigurationValidator from './configuration.validator'
 import ConfigurationRepository from '../../repositories/configuration.repository'
-import Database from '../../repositories/database/config'
-import isAppRunning from '../../utils/Services/CheckConnectionService'
-import restrictDataList from '../../utils/defaultRestrictDataList'
+import { IRestrictData } from '../../repositories/interfaces/interfaces.schemas'
 
 class ConfigurationEntity {
-  public async createConfiguration (data: ConfigurationCreateData) {
-    data.restrictDataList = restrictDataList
-    const validate = await ConfigurationValidator.createConfiguration(data)
+  public async createConfiguration (restrictDataList: IRestrictData) {
+    const validate = await ConfigurationValidator.createConfigurationValidation(restrictDataList)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
 
-    const connection = await Database.connect(data.mongoUriHost)
-
-    if (connection) {
-      const configuration = await ConfigurationRepository.getConfiguration()
-      if (configuration && configuration.mongoUriHost === '') {
-        return ConfigurationRepository.updateConfigurationMongoUri(data.mongoUriHost)
-      }
-      if (configuration && configuration.mongoUriHost) {
-        return configuration
-      } else {
-        return ConfigurationRepository.createConfiguration(data)
-      }
-    } else {
-      throw new ErrorRes(500, 'Error connecting to database')
-    }
-  }
-
-  public async addApplicationHost (data: ConfigurationUpdateData) {
-    const validate = await ConfigurationValidator.updateConfiguration(data)
-    if (validate.error) {
-      throw new ErrorRes(400, validate.error.message)
-    }
-
-    const appConnected = await isAppRunning(data.applicationHost)
-    if (!appConnected) throw new ErrorRes(500, 'Application host is not running')
-
-    return ConfigurationRepository.updateConfiguration(data)
+    return ConfigurationRepository.createConfiguration(restrictDataList)
   }
 
   public async updateConfiguration (data: ConfigurationUpdateData) {
@@ -54,14 +25,6 @@ class ConfigurationEntity {
 
   public getConfiguration () {
     return ConfigurationRepository.getConfiguration()
-  }
-
-  public deleteApplicationHost () {
-    return ConfigurationRepository.deleteApplicationHost()
-  }
-
-  public deleteMongoHost () {
-    return ConfigurationRepository.deleteMongoHost()
   }
 
   public connectToDatabase () {

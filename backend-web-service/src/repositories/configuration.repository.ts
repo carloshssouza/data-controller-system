@@ -1,14 +1,19 @@
-import { ConfigurationCreateData, ConfigurationUpdateData } from '../interfaces/configuration'
+import { ConfigurationUpdateData, IRestrictDataList } from '../interfaces/configuration'
 import Configuration from './schemas/Configuration'
 import Database from './database/config'
 import ArrayUtils from '../utils/Array/ArrayUtils'
 import CacheManager from '../utils/Services/CacheManager'
 
 class ConfigurationRepository {
-  public createConfiguration (data: ConfigurationCreateData) {
-    const configuration = Configuration.create(data)
-    CacheManager.clear()
-    return configuration
+  public async createConfiguration (restrictDataList: IRestrictDataList) {
+    const configuration = await Configuration.find({})
+    if (configuration.length > 0) {
+      throw new Error('Configuration already exists')
+    } else {
+      const configurationCreated = Configuration.create({ restrictDataList })
+      CacheManager.delete('configuration')
+      return configurationCreated
+    }
   }
 
   public async getConfiguration () {
@@ -31,40 +36,6 @@ class ConfigurationRepository {
       const configurationUpdated = Configuration.findOneAndUpdate({ _id: configuration[0]._id }, data)
       CacheManager.delete('configuration')
       return configurationUpdated
-    }
-  }
-
-  public async updateConfigurationMongoUri (mongoUri: string) {
-    const configuration = await Configuration.find({}) as any
-    if (!configuration) {
-      throw new Error('Configuration not found')
-    } else {
-      CacheManager.delete('configuration')
-      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { mongoUriHost: mongoUri })
-    }
-  }
-
-  public async deleteApplicationHost () {
-    const configuration = await Configuration.find({}) as any
-    if (!configuration) {
-      throw new Error('Configuration not found')
-    } else {
-      CacheManager.delete('configuration')
-      return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { applicationHost: '' })
-    }
-  }
-
-  public async deleteMongoHost () {
-    const configuration = await Configuration.find({}) as any
-    if (!configuration) {
-      throw new Error('Configuration not found')
-    } else {
-      const deleteConfiguration = await Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { mongoUriHost: '' })
-      CacheManager.delete('configuration')
-      if (deleteConfiguration) {
-        Database.disconnect()
-        return true
-      }
     }
   }
 

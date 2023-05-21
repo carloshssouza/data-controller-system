@@ -1,6 +1,7 @@
 
 import { Schema, model } from '../../types/mongoose'
 import { IConfiguration, IRestrictData } from '../interfaces/interfaces.schemas'
+import restrictDataList from '../utils/defaultRestrictDataList'
 
 const RestrictDataListSchema = new Schema<IRestrictData>({
   personal: { type: [String], required: true },
@@ -8,9 +9,7 @@ const RestrictDataListSchema = new Schema<IRestrictData>({
 })
 
 const ConfigurationSchema = new Schema<IConfiguration>({
-  mongoUriHost: { type: String, required: true },
-  applicationHost: { type: String, required: false, allowNull: true },
-  restrictDataList: { type: RestrictDataListSchema, required: true }
+  restrictDataList: { type: RestrictDataListSchema, required: true, defaultValue: restrictDataList }
 }, {
   timestamps: true,
   versionKey: false
