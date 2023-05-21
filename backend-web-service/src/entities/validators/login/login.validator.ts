@@ -4,10 +4,9 @@ import { LoginInterface } from '../../../interfaces/login/login.interface'
 class LoginSchemaValidator {
   authenticateValidation (httpBody: LoginInterface) {
     const schema = Joi.object({
-      email: Joi.string().email().required(),
+      accountName: Joi.string().required(),
       password: Joi.string().required()
     })
-
     return schema.validate(httpBody)
   }
 }

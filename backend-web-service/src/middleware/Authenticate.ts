@@ -2,6 +2,7 @@ import ErrorRes from '../utils/Erro'
 import { Request, Response, NextFunction } from '../types/express'
 import TokenJWT, { IToken } from '../utils/Services/JwtService'
 import BlackListEntity from '../entities/blackList/blackList.entity'
+import UserEntity from '../entities/user/user.entity'
 
 class Authenticate {
   public async authenticateAdmin (req: Request, res: Response, next: NextFunction) {
@@ -18,6 +19,12 @@ class Authenticate {
         if (token.error) {
           throw new ErrorRes(401, token.message)
         }
+
+        const user = await UserEntity.getUser(token.sub)
+        if (!user) {
+          throw new ErrorRes(401, 'User not found')
+        }
+        token.type = user.type
 
         if (token.type !== 'admin') {
           throw new ErrorRes(401, 'User not authorized')
