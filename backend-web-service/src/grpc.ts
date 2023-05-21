@@ -10,7 +10,7 @@ class GrpcServer {
   private server: grpc.Server
 
   constructor () {
-    const packageDef = protoLoader.loadSync(path.resolve(__dirname, './proto/controlSystem.proto'), {})
+    const packageDef = protoLoader.loadSync(path.resolve(__dirname, 'proto', 'controlSystem.proto'), {})
     const grpcObject = grpc.loadPackageDefinition(packageDef)
     const controlSystemPackage = grpcObject.controlSystemPackage as any
     this.server = new grpc.Server()
@@ -57,6 +57,7 @@ class GrpcServer {
       if (!errorLog) {
         throw new Error('Error creating log error')
       }
+      console.log({ errorLog })
       io.emit('error-log-data', JSON.stringify(errorLog))
       callback(null, errorLog)
     } catch (error) {
@@ -77,6 +78,10 @@ class GrpcServer {
   public async getApplicationHost (call: any, callback: any) {
     try {
       const { applicationHost } = await configurationEntity.getConfiguration()
+      if (!applicationHost) {
+        console.log('Application host not found emit')
+        io.emit('proxy-status', JSON.stringify({ status: false }))
+      }
 
       callback(null, { applicationHost })
     } catch (error) {
