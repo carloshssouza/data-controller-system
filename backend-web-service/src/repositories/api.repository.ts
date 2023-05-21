@@ -78,6 +78,14 @@ class ApiRepository {
         requestType
       }).select('requestType endpointPath endpointPathLength dataReturnAllowed')
 
+      if (api.length === 0) {
+        return {
+          _id: null,
+          endpointPath: null,
+          requestType: null,
+          endpointPathLength: null
+        }
+      }
       return api[0]
     }
 

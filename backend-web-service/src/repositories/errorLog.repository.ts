@@ -158,6 +158,14 @@ class ErrorLogRepository {
       return acc
     }, {})
 
+    // Ensure all levels are present in amountPerLevel
+    const levels = ['high', 'medium', 'low']
+    for (const level of levels) {
+      if (amountPerLevel[level] === undefined) {
+        amountPerLevel[level] = 0
+      }
+    }
+
     const response = {
       total: errors.length,
       mostLeakedDataName,
