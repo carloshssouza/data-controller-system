@@ -5,7 +5,7 @@ import { UserCreateData, UserUpdateData } from '../../interfaces/user'
 import UserValidator from './user.validator'
 import ErrorRes from '../../utils/Erro'
 
-export default class UserEntity {
+class UserEntity {
   public async createUser (data: UserCreateData) {
     const validate = await UserValidator.createUserValidation(data)
     if (validate.error) {
@@ -39,11 +39,17 @@ export default class UserEntity {
     return UserRepository.getAllUsers()
   }
 
-  public deleteUser (_id: TypeId) {
+  public getDefaultUser (accountName: string) {
+    return UserRepository.getDefaultUser(accountName)
+  }
+
+  public deleteUser (_id: TypeId, userAdminId: TypeId) {
     const validate = UserValidator.getUserValidation(_id)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    return UserRepository.deleteUser(_id)
+    return UserRepository.deleteUser(_id, userAdminId)
   }
 }
+
+export default new UserEntity()

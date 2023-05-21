@@ -13,16 +13,20 @@ class DataControlService extends Auxiliary {
    */
   public async runController (req: IncomingMessage, body: any) {
     const apiResponse = await GrpcClient.getApiPermission(req.url, req.method)
-
     const grpcApiService = await this.checkForError(apiResponse, true)
-
     if (grpcApiService.error) {
       return grpcApiService.data
     }
 
     if (apiResponse && !apiResponse.dataReturnAllowed) {
-      const restrictDataList = await GrpcClient.getRestrictDataList() as IRestrictDataList
-      const privateDataFound = await Identifier.findPrivateData(body, restrictDataList) as ILeakedData[]
+      const restrictDataListResponse = await GrpcClient.getRestrictDataList()
+
+      const grpcRestrictDataService = await this.checkForError(restrictDataListResponse, false)
+      if (grpcRestrictDataService.error) {
+        return grpcRestrictDataService.data
+      }
+
+      const privateDataFound = await Identifier.findPrivateData(body, restrictDataListResponse.restrictDataList as IRestrictDataList) as ILeakedData[]
       if (privateDataFound.length) {
         const errorLogData = await this.createErrorLogData(privateDataFound, apiResponse)
 

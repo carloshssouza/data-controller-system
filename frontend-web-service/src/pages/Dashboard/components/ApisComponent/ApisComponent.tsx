@@ -6,8 +6,12 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { getAllApis, getApiByName } from '../../../../api/services/Api'
 
+interface ApisComponentProps {
+  errorLog: any
+}
 
-export default function ApisComponent() {
+
+export default function ApisComponent({errorLog}: ApisComponentProps) {
   const navigate = useNavigate()
   const notifyError = (message: string) => toast.error(message)
   const [listApiData, setListApiData] = useState<any[]>([])
@@ -33,7 +37,7 @@ export default function ApisComponent() {
   
   useEffect(() => {
     handleGetAllApis()
-  }, [])
+  }, [errorLog])
 
   return (
     <ApiContainer>

@@ -7,7 +7,6 @@ interface ErrorLogLineChartProps {
 }
 
 export default function ErrorLogLineChart({ errorLog }: ErrorLogLineChartProps) {
-  console.log(errorLog)
   const convertErrorLogToChartData = () => {
     const errorDataForChart = errorLog.map((item: any) => {
       return {

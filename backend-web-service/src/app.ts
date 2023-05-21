@@ -4,7 +4,6 @@ import morgan from 'morgan'
 import swaggerUI from 'swagger-ui-express'
 import swaggerDocument from '../docs/swagger.json'
 import dotenv from 'dotenv'
-import FileService from './utils/Services/FileService'
 import Database from './repositories/database/config'
 
 import {
@@ -44,15 +43,7 @@ class App {
   }
 
   private async databaseConnect () {
-    try {
-      const config = await FileService.readConfigFile('../../../../configs/db.connection.json')
-
-      if (config.mongoUriHost) {
-        await Database.connect(config.mongoUriHost)
-      }
-    } catch (error) {
-      console.error(`Error checking for or reading file: ${error}`)
-    }
+    Database.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/database')
   }
 }
 

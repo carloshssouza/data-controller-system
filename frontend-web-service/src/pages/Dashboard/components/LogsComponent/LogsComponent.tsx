@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { IErrorLog } from '../..'
 import { LogsContainer, LogsItem } from './styles'
+import { IErrorLog } from '../../../../interfaces/ErrorLog/interfaces'
 
 interface LogsComponentProps {
   logs: IErrorLog[]

@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "jest --passWithNoTests --watch"
+    "test": "jest --passWithNoTests --watch",
+    "build": "rimraf dist && tsc",
+    "start:prod": "yarn build && node dist/src/index.js"
   },
   "license": "MIT",
   "dependencies": {
@@ -15,7 +17,6 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "grpc": "^1.24.11",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.5.2",
@@ -46,6 +47,7 @@
     "jest-cli": "^28.1.3",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.19",
+    "rimraf": "^5.0.1",
     "ts-jest": "^28.0.4",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"

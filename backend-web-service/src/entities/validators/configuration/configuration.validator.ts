@@ -1,23 +1,20 @@
 import { Joi } from '../../../types/joi'
-import { ConfigurationCreateData, ConfigurationUpdateData } from '../../../interfaces/configuration'
+import { ConfigurationCreateData, ConfigurationUpdateData, IRestrictDataList } from '../../../interfaces/configuration'
 
 class ConfigurationSchemaValidator {
-  createConfigurationValidation (httpBody: ConfigurationCreateData) {
-    const schema = Joi.object({
-      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\//).required(),
+  createConfigurationValidation (restrictDataList: IRestrictDataList) {
+    const schema = Joi.object<ConfigurationCreateData>({
       restrictDataList: Joi.object({
         personal: Joi.array().items(Joi.string()).required(),
         sensible: Joi.array().items(Joi.string()).required()
       }).required()
     })
 
-    return schema.validate(httpBody)
+    return schema.validate({ restrictDataList })
   }
 
   updateConfigurationValidation (httpBody: ConfigurationUpdateData) {
-    const schema = Joi.object({
-      mongoUriHost: Joi.string().uri().regex(/^mongodb(?:\+srv)?:\/\/(?:(?:[^:]+:[^@]+)@)?([^/?]+)(?:\/([^?]+))?(?:\?(?:[^=&]+=[^&]+(?:&[^=&]+=[^&]+)*)?)?$/i).optional(),
-      applicationHost: Joi.string().uri({ scheme: ['http', 'https'] }).optional(),
+    const schema = Joi.object<ConfigurationUpdateData>({
       restrictDataList: Joi.object({
         personal: Joi.array().items(Joi.string()).optional(),
         sensible: Joi.array().items(Joi.string()).optional()

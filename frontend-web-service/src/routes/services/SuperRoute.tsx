@@ -32,7 +32,7 @@ export default function SuperRoute({ children }: any) {
 
   if (!isAuthenticatedUser) {
     // The user is not authenticated, so navigate to the login page
-    return <Navigate to="/login" />
+    return <Navigate to="/" />
   }
 
   // The database connection and authentication succeeded, so render the children

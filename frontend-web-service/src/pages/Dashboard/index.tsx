@@ -100,11 +100,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     setIsLoading(true)
-    const socket = io('http://localhost:8000')
+    const socket = io(import.meta.env.VITE_BASE_URL_SOCKET as string)
     handleResize()
     socket.on('message', (message) => {
+      console.log({ message })
     });
     socket.on('error-log-data', (data) => {
+      console.log({data})
       handleGetErrorLogs()
       handleGetExtraInfos()
     });
@@ -124,7 +126,7 @@ export default function Dashboard() {
           </Container>
         ) : (
           <DashboardContainer>
-            <ApisComponent />
+            <ApisComponent errorLog={errorLog}/>
 
             <ErrorContainer>
               <h1>Error Logs</h1>

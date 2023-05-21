@@ -3,12 +3,9 @@ import { login } from '../../../../api/services/Auth'
 import { Response } from '../../../../api/axios'
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { getUser } from '../../../../api/services/User';
 
-interface LoginFormComponentProps {
-  onClickRegister: () => void
-}
-
-export default function LoginFormComponent({ onClickRegister }: LoginFormComponentProps) {
+export default function LoginFormComponent() {
   const navigate = useNavigate()
   const notifyError = (message: string) => toast.error(message);
 
@@ -19,7 +16,14 @@ export default function LoginFormComponent({ onClickRegister }: LoginFormCompone
       notifyError(response.data.message)
     } else {
       localStorage.setItem('token', response.data.access_token)
-      navigate("/dashboard")
+      const responseUser = await getUser() as Response
+      if(responseUser.error) {
+        notifyError(responseUser.response.data.message)
+        return
+      } else {
+        localStorage.setItem('type', responseUser.response.data.type)
+        navigate("/dashboard")
+      }
     }
   }
 
@@ -34,17 +38,17 @@ export default function LoginFormComponent({ onClickRegister }: LoginFormCompone
       autoComplete="off"
     >
       <Form.Item
-        label={<label style={{ color: 'white' }}>Email</label>}
-        name="email"
-        rules={[{ required: true, message: 'Please input your email!' }]}
+        label={<label style={{ color: 'white' }}>Account name</label>}
+        name="accountName"
+        rules={[{ required: true, message: 'Please, input your account name' }]}
       >
-        <Input type="email" />
+        <Input type="text" />
       </Form.Item>
 
       <Form.Item
         label={<label style={{ color: 'white' }}>Password</label>}
         name="password"
-        rules={[{ required: true, message: 'Please input your password!' }]}
+        rules={[{ required: true, message: 'Please, input your password!' }]}
       >
         <Input.Password />
       </Form.Item>
@@ -52,9 +56,6 @@ export default function LoginFormComponent({ onClickRegister }: LoginFormCompone
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Button type="primary" htmlType="submit">
           Login
-        </Button>
-        <Button style={{ marginLeft: "1rem" }} onClick={onClickRegister}>
-          Register
         </Button>
       </Form.Item>
     </Form>

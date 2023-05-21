@@ -12,7 +12,6 @@ const { Header } = Layout;
 
 const Navbar = () => {
   const navigate = useNavigate()
-  const [type, setType] = useState('')
   const notifyError = (message: string) => toast.error(message);
 
 
@@ -22,20 +21,9 @@ const Navbar = () => {
       notifyError(response.data.message)
     } else {
       localStorage.removeItem('token')
-      navigate('/login')
+      navigate('/')
     }
   }
-
-  const handleTypeUser = async () => {
-    const { response, error } = await getUser() as Response
-    if (!error) {
-      setType(response.data.type)
-    }
-  }
-
-  useEffect(() => {
-    handleTypeUser()
-  }, [])
 
   const userMenu = (
     <Menu>
@@ -56,7 +44,7 @@ const Navbar = () => {
         <Menu.Item key="2"><Link to="/api">API</Link></Menu.Item>
         <Menu.Item key="3"><Link to="/config">Configuration</Link></Menu.Item>
         {
-          type === 'admin' && (<Menu.Item key="4"><Link to="/users">Users</Link></Menu.Item>
+          localStorage.getItem('type') === 'admin' && (<Menu.Item key="4"><Link to="/users">Users</Link></Menu.Item>
           )
         }
         <Menu.Item key="5" style={{ marginLeft: 'auto' }}>

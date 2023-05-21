@@ -104,7 +104,6 @@ export default function FilterComponent({ handleGetErrorLogs }: FilterComponentP
 
   const getLevel = (key: number) => {
     const levelChoose = radioLevelItems.find(item => item.key === key)
-    console.log("levelChoose", levelChoose)
     if(levelChoose?.value === 'all') return ['low', 'medium', 'high']
     return [levelChoose?.value]
   }

@@ -5,7 +5,7 @@ import { Request, Response } from '../../types/express'
 class UserGetController {
   public async getAllUsers (req: Request, res: Response): Promise<Response> {
     try {
-      const users = await new UserEntity().getAllUsers()
+      const users = await UserEntity.getAllUsers()
 
       if (!users) {
         throw new ErrorRes(500, 'Error getting all users')

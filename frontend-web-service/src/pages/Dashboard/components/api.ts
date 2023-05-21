@@ -29,7 +29,7 @@ export const requestAPI = async (options: Options) => {
 
     if (notAuthorized === 401) {
       if (typeof window !== 'undefined') {
-        window.location.href = '/login';
+        window.location.href = '/';
       }
     }
     return { error: false, response };

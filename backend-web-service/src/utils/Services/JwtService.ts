@@ -22,7 +22,7 @@ class JwtService {
    */
   generate (data: any) {
     return jwt.sign(data, process.env.SECRET_KEY || '', {
-      expiresIn: '1h'
+      expiresIn: '10h'
     })
   }
   /**

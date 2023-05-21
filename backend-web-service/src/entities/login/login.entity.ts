@@ -5,12 +5,12 @@ import JwtService from '../../utils/Services/JwtService'
 import LoginValidator from './login.validator'
 
 class LoginEntity {
-  public async loginUser (email: string, password: string) {
-    const validate = await LoginValidator.authenticate({ email, password })
+  public async loginUser (accountName: string, password: string) {
+    const validate = await LoginValidator.authenticate({ accountName, password })
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)
     }
-    const user = await UserRepository.loadUser(email)
+    const user = await UserRepository.loadUser(accountName)
     if (!user) {
       throw new ErrorRes(401, 'Unauthorized')
     }
@@ -20,7 +20,7 @@ class LoginEntity {
       throw new ErrorRes(401, 'Unauthorized')
     }
 
-    return JwtService.generate({ sub: user._id, type: user.type })
+    return JwtService.generate({ sub: user._id })
   }
 }
 
