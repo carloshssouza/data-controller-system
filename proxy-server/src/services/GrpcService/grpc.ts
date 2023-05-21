@@ -10,6 +10,7 @@ import {
 import { IErrorLogData } from '../../interfaces/errorLogData.interface'
 import IApiData from '../../interfaces/apiData.interface'
 import dotenv from 'dotenv'
+import { IRestrictDataList } from 'src/interfaces/configuration.interface'
 
 dotenv.config()
 
@@ -20,7 +21,8 @@ class GrpcClient {
   private client: any
 
   constructor () {
-    this.packageDef = protoLoader.loadSync(path.resolve(__dirname, '../../proto/controlSystem.proto'), {})
+    console.log('teste', path.resolve(__dirname, 'proto', 'controlSystem.proto'))
+    this.packageDef = protoLoader.loadSync(path.resolve(__dirname, 'proto', 'controlSystem.proto'), {})
     this.grpcObject = grpc.loadPackageDefinition(this.packageDef)
     this.controlSystemPackage = this.grpcObject.controlSystemPackage
     this.client = new this.controlSystemPackage.ControlSystemService(`${process.env.GRPC_HOST}`, grpc.credentials.createInsecure())
@@ -62,7 +64,7 @@ class GrpcClient {
     })
   }
 
-  public async getRestrictDataList () {
+  public async getRestrictDataList (): Promise < IRestrictDataList | any > {
     return new Promise((resolve, reject) => {
       this.client.getRestrictDataList({}, (err: any, response: any) => {
         if (err) {

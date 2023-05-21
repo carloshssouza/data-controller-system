@@ -2,7 +2,6 @@ import { createProxyServer } from 'http-proxy'
 import DataControlService from './services/DataControlService'
 import { IncomingMessage, http } from './types/http'
 import dotenv from 'dotenv'
-import Grpc from './services/GrpcService/grpc'
 
 const EventEmitter = require('events')
 
@@ -13,16 +12,12 @@ dotenv.config()
 const PORT = process.env.PROXY_PORT || 8888
 const proxy = createProxyServer()
 const option = {
-  target: '', // initialize with empty string
+  target: process.env.TARGET,
   selfHandleResponse: true
 }
 
 async function startProxyServer () {
   try {
-    const config = await Grpc.getApplicationHost() as { applicationHost: string }
-    const applicationHost = config.applicationHost
-    option.target = applicationHost // set target after getting application host
-
     process.on('SIGINT', () => {
       console.log('Received SIGINT signal. Stopping server...')
       process.exit(0)
@@ -62,8 +57,7 @@ async function startProxyServer () {
     })
 
     server.listen(PORT)
-    console.log(applicationHost)
-    console.log(`Proxy server listening on ${PORT} with target ${applicationHost}`)
+    console.log(`Proxy server listening on ${PORT} with target ${option.target}`)
   } catch (error) {
     console.error(error)
   }
