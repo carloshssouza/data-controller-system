@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start:prod": "yarn build && yarn preview"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",

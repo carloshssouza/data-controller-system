@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE ${PORT}
 
-CMD ["yarn", "server"]
+CMD ["yarn", "start:prod"]

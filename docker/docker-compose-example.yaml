@@ -1,0 +1,66 @@
+version: "3.5"
+
+services:
+  backend-web-service:
+    build: ../backend-web-service
+    command: yarn start
+    env_file:
+      - ../backend-web-service/.env
+    environment:
+      - EXPRESS_PORT=8000 // your express port
+      - PREFIX=/api/v1 // your prefix
+      - GRPC_HOST=0.0.0.0:8080 // your grpc host(recommend keep it default)
+      - SECRET_KEY= secret key // your secret key
+    ports:
+      - 8000:8000 // your express port
+    networks:
+      - grpc
+      - default
+    volumes:
+      - ../backend-web-service:/usr/backend-web-service
+  
+  frontend-web-service:
+    build: ../frontend-web-service
+    command: yarn preview
+    env_file:
+      - ../frontend-web-service/.env
+    environment:
+      - VITE_BASE_URL=http://localhost:8000/api/v1 // your backend base url
+      - VITE_DEV_SERVER_PORT=3001 // your frontend port
+    ports: 
+      - 3001:3001 // your frontend port
+    volumes: 
+      - ../frontend-web-service:/usr/frontend-web-service
+    networks:
+      - default
+    depends_on:
+      - backend-web-service
+
+  proxy-server:
+    build: ../proxy-server
+    env_file:
+      - ../proxy-server/.env
+    environment:
+      - TARGET=http://localhost:3333 // the target server
+      - PROXY_PORT=8888 // your proxy port
+      - GPRC_HOST=0.0.0.0:8080 // your grpc host(recommend keep it default)
+      - SECRET_KEY=secretkey // your secret key
+    
+    command: yarn start:proxy
+
+    ports:
+      - 8888:8888 // your proxy port
+    volumes:
+      - ../proxy-server:/usr/proxy-server
+
+    networks:
+      - grpc
+      
+    depends_on:
+      - backend-web-service
+
+networks:
+  default:
+    external: true
+  grpc:
+    driver: bridge
