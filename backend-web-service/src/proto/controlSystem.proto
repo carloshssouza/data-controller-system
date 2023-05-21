@@ -48,7 +48,7 @@ message LeakedData {
 }
 
 message RestrictDataListResponse {
-  repeated RestrictDataList restrictDataList = 1;
+  RestrictDataList restrictDataList = 1;
 }
 
 message RestrictDataList {
