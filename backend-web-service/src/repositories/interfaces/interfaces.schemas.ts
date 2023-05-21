@@ -2,9 +2,10 @@ import { TypeId } from '../../types/mongoose'
 
 export interface IUser {
     name: string;
-    email: string;
+    accountName: string;
     password: string;
     type: string;
+    extraPermissions: string[]
 }
 
 export interface ILeakedData {
@@ -41,9 +42,7 @@ export interface IRestrictData {
     sensible: string[]
 }
 export interface IConfiguration {
-    mongoUriHost: string
-    applicationHost?: string
-    restrictDataList?: IRestrictData
+    restrictDataList: IRestrictData
 }
 
 export interface IBlackList {
