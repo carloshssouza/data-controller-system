@@ -11,13 +11,11 @@ import { IRestrictDataList } from '../../../../interfaces/Configuration/interfac
 import { v4 as uuidv4 } from 'uuid';
 
 
-
 export default function RestrictDataItem() {
   const navigate = useNavigate()
 
   const [updateModalVisible, setUpdateModalVisible] = useState(false)
   const [selectedRecord, setSelectedRecord] = useState<any>({})
-  const [isLoading, setIsLoading] = useState(false)
   const [isPersonalLoading, setIsPersonalLoading] = useState(false)
   const [isSensibleLoading, setIsSensibleLoading] = useState(false)
   const [restrictDataList, setRestrictDataList] = useState<IRestrictDataList>({
@@ -111,7 +109,7 @@ export default function RestrictDataItem() {
     if (error) {
       notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       handleGetRestrictData(record?.type)
     }
   }
@@ -181,10 +179,10 @@ export default function RestrictDataItem() {
 
   return (
     <ConfigurationItemRestrictData>
-      <h2>Restrict Data List</h2>
+      <h1>Restrict Data List</h1>
       <RestrictDataContainer>
         <RestrictDataCard>
-          <h3>Personal Data</h3>
+          <h2>Personal Data</h2>
           {
             <CardContent>
               <Table
@@ -192,7 +190,7 @@ export default function RestrictDataItem() {
                 columns={columns}
                 dataSource={convertData(restrictDataList?.personal, 'personal')}
                 scroll={{ y: 300 }}
-                style={{ width: '600px' }}
+                style={{ width: '400px' }}
                 rowKey="id"
                 pagination={{
                   style: {backgroundColor: '#ffffff', borderRadius: '5px'},
@@ -207,7 +205,7 @@ export default function RestrictDataItem() {
           }
         </RestrictDataCard>
         <RestrictDataCard>
-          <h3>Sensible Data</h3>
+          <h2>Sensible Data</h2>
           {
             <CardContent>
               <Table
@@ -215,7 +213,7 @@ export default function RestrictDataItem() {
                 columns={columns}
                 dataSource={convertData(restrictDataList?.sensible, 'sensible')}
                 scroll={{ y: 300 }}
-                style={{ width: '600px' }}
+                style={{ width: '400px' }}
                 rowKey="id"
                 pagination={{
                   style: {backgroundColor: '#ffffff', borderRadius: '5px'},

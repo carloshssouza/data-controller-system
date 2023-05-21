@@ -28,7 +28,7 @@ export default function Api() {
   const handleGetAllApis = async () => {
     const { response, error } = await getAllApis() as Response
     if (error) {
-      notifyError(response.message)
+      notifyError(response.data.message)
     } else {
       setListApisData(response.data)
     }
@@ -37,9 +37,9 @@ export default function Api() {
   const handleCreateApi = async (data: IApi) => {
     const { response, error } = await createApi(data, selectRequestType) as Response
     if (error) {
-      notifyError(response.message)
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       await handleGetAllApis()
     }
   }
@@ -47,9 +47,9 @@ export default function Api() {
   const handleUpdateApi = async (data: any) => {
     const { response, error } = await updateApi(data, selectedRecord) as Response
     if (error) {
-      notifyError(response.message)
+      notifyError(response.data.message)
     } else {
-      notifySuccess(response.message)
+      notifySuccess(response.data.message)
       await handleGetAllApis()
     }
 
@@ -175,7 +175,6 @@ export default function Api() {
           )
         }
       </ApiListContainer>
-      <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }} />
     </Container>
   )
 }

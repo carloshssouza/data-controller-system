@@ -1,85 +1,53 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Dashboard, Api, Login, Error } from '../pages'
-import FirstRegister from '../pages/FirstRegister'
-import RegisterApp from '../pages/RegisterApp'
-import SuperRoute from './services/SuperRoute'
+import ProtectedRoute from './services/ProtectedRoute'
 import Configuration from '../pages/Configuration'
 import Navbar from '../components/Navbar'
 import User from '../pages/User'
 import Users from '../pages/Users'
-import RouteDbConnected from './services/RouteDbConnected'
-import { getUser } from '../api/services/User'
-import { Response } from '../api/axios'
-import { useEffect, useState } from 'react'
 
 export default function routes() {
-  const [type, setType] = useState('')
-  const handleTypeUser = async () => {
-    const { response, error } = await getUser() as Response
-    if (!error) {
-      setType(response.data.type)
-    }
-  }
-
-  useEffect(() => {
-    if(localStorage.getItem('token'))  {
-      handleTypeUser()
-    }
-  }, [])
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={
-          <FirstRegister />
-        } />
-        <Route path="/register-host" element={
-          <RouteDbConnected>
-            <RegisterApp />
-          </RouteDbConnected>
-        } />
         <Route path="/api" element={
-          <SuperRoute>
+          <ProtectedRoute>
             <Navbar />
             <Api />
-          </SuperRoute>
+          </ProtectedRoute>
         } />
         <Route path="/dashboard" element={
-          <SuperRoute>
+          <ProtectedRoute>
             <Navbar />
             <Dashboard />
-          </SuperRoute>
+          </ProtectedRoute>
         } />
         <Route path="/config" element={
-          <SuperRoute>
+          <ProtectedRoute>
             <Navbar />
             <Configuration />
-          </SuperRoute>
+          </ProtectedRoute>
         } />
         <Route path="/user" element={
-          <SuperRoute>
+          <ProtectedRoute>
             <Navbar />
             <User />
-          </SuperRoute>
+          </ProtectedRoute>
         } />
 
-        <Route path="/login" element={
-          <RouteDbConnected>
-            <Login />
-          </RouteDbConnected>
+        <Route path="/" element={
+          <Login />
         } />
         {
-          type === 'admin' && (
+          localStorage.getItem('type') === 'admin' && (
             <Route path="/users" element={
-              <RouteDbConnected>
+              <ProtectedRoute>
                 <Navbar />
-
                 <Users />
-              </RouteDbConnected>
+              </ProtectedRoute>
             } />
           )
         }
-
         <Route path="*" element={
           <>
             <Error />

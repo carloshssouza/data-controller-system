@@ -9,7 +9,6 @@ interface ErrorExtraInfoComponentProps {
 export default function ErrorExtraInfoComponent({ extraInfo }: ErrorExtraInfoComponentProps) {
   
   const getAmountErrorPerLevel = () => {
-    console.log("extraInfo", extraInfo)
     return (
       <div>
         <div style={{ color: '#F05D5D' }}>High: {extraInfo?.amountPerLevel?.high}</div>

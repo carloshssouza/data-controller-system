@@ -6,13 +6,11 @@ import { LoginContainer } from "./styles";
 import { Container } from "../../GlobalStyles";
 import { validateToken } from "../../api/services/Auth";
 import { Response } from "../../api/axios";
-import RegisterFormComponent from "./components/RegisterFormComponent/RegisterFormComponent";
 import LoginFormComponent from "./components/LoginFormComponent/LoginFormComponent";
 
 const Login = () => {
   const notifyError = (message: string) => toast.error(message);
   const navigate = useNavigate()
-  const [registerWindow, setRegisterWindow] = useState(false)
 
   const handleValidateToken = async () => {
     const { response, error } = await validateToken() as Response
@@ -21,14 +19,6 @@ const Login = () => {
     } else {
       navigate("/dashboard")
     }
-  }
-
-  const onClickRegister = () => {
-    setRegisterWindow((prev: boolean) => !prev)
-  }
-
-  const onClickBack = () => {
-    setRegisterWindow(false)
   }
 
   useEffect(() => {
@@ -40,13 +30,7 @@ const Login = () => {
   return (
     <Container>
       <LoginContainer>
-        {
-          registerWindow ? (
-            <RegisterFormComponent onClickBack={onClickBack} />
-          ) : (
-            <LoginFormComponent onClickRegister={onClickRegister} />
-          )
-        }
+        <LoginFormComponent />
         <ToastContainer toastStyle={{ backgroundColor: "black", color: "white" }} />
       </LoginContainer>
     </Container>

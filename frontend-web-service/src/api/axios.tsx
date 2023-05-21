@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export const API = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
@@ -22,6 +23,8 @@ export type Response = {
 };
 
 export const requestAPI = async (options: Options) => {
+  const notifyError = (message: string) => toast.error(message);
+
   try {
     const response = await API(options);
     const notAuthorized = response?.status;
@@ -29,7 +32,10 @@ export const requestAPI = async (options: Options) => {
     if (notAuthorized === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token')
-        window.location.href = '/login';
+        if(!(location.href === '/')) {
+          return notifyError(response.data.message)
+        }
+        location.href = '/';
       }
     }
 

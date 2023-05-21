@@ -6,26 +6,31 @@ const ConfigurationItemRestrictData = styled.div`
   align-items: center;
   width: 100%;
   margin-bottom: 2rem;
+  margin-top: 70px;
+  color: white;
 `
 
 const RestrictDataContainer = styled.div`
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
   align-items: start;
   width: 100%;
+  margin-top: 1rem;
+ 
 `
 
 const RestrictDataCard = styled.div`
-  background: #1B1D2B;
+  background: #0000002a;
   margin: 2px;
   padding: 2px;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
+  margin-bottom: 1rem;
   
   div {
     margin-bottom: 0.5rem;
