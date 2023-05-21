@@ -1,0 +1,52 @@
+version: "3.5"
+
+services:
+  backend-web-service:
+    build: ./backend-web-service
+    command: yarn start
+    env_file: .env
+    environment:
+      - EXPRESS_PORT=${EXPRESS_PORT}
+      - PREFIX=${PREFIX}
+      - GRPC_HOST=${GRPC_HOST}
+      - SECRET_KEY=${SECRET_KEY}
+    ports:
+      - $EXPRESS_PORT:${EXPRESS_PORT}
+    volumes:
+      - ./backend-web-service:/usr/backend-web-service
+    networks:
+      - host
+  
+  frontend-web-service:
+    build: ./frontend-web-service
+    command: yarn vite
+    env_file: .env
+    environment:
+      - VITE_BASE_URL=${VITE_BASE_URL}
+      - VITE_DEV_SERVER_PORT=${VITE_DEV_SERVER_PORT}
+    ports: 
+      - $VITE_DEV_SERVER_PORT:${VITE_DEV_SERVER_PORT}
+    volumes: 
+      - ./frontend-web-service:/usr/frontend-web-service
+    networks:
+      - host
+
+  proxy-server:
+    build: ./proxy-server
+    environment:
+      - TARGET=${TARGET}
+      - PROXY_PORT=${PROXY_PORT}
+      - GPRC_HOST=${GPRC_HOST}
+      - SECRET_KEY=${SECRET_KEY}
+    ports:
+      - ${PROXY_PORT}:${PROXY_PORT}
+    volumes:
+      - ./proxy-server:/usr/proxy-server
+    networks:
+      - host
+
+networks:
+  default:
+    external: true
+  host:
+    driver: bridge
