@@ -21,7 +21,7 @@ class ErrorLogEntity {
     return ErrorLogRepository.getErrorLog(_id)
   }
 
-  public getAllErrorLogs (filter: ErrorLogFilter) {
+  public getAllErrorLogs (filter?: ErrorLogFilter) {
     const validate = ErrorLogValidator.getAllErrorLogValidation(filter)
     if (validate.error) {
       throw new ErrorRes(400, validate.error.message)

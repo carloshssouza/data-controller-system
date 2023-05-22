@@ -29,6 +29,7 @@ export interface IParameters {
 }
 
 export interface IApi {
+    _id?: TypeId
     routeName: string;
     endpointPath: string;
     requestType: string
