@@ -48,6 +48,10 @@ export default function FilterComponent({ handleGetErrorLogs }: FilterComponentP
       key: 4,
       value: '30d',
       label: '30 days'
+    }, {
+      key: 5,
+      value: 'all',
+      label: 'All'
     }
   ]
 
@@ -75,6 +79,7 @@ export default function FilterComponent({ handleGetErrorLogs }: FilterComponentP
   ]
 
   const onChangeFilterDateTime = useCallback((e: any) => {
+    console.log(e.target.value)
     setFilter((prev) => ({
       ...prev,
       dateTime: getDateTime(e.target.value) as string
@@ -99,6 +104,7 @@ export default function FilterComponent({ handleGetErrorLogs }: FilterComponentP
   
   const getDateTime = (key: number) => {
     const dateChoose = radioItems.find(item => item.key === key)
+    console.log(dateChoose?.value)
     return dateChoose?.value
   }
 
@@ -120,6 +126,7 @@ export default function FilterComponent({ handleGetErrorLogs }: FilterComponentP
             <Radio value={2}>2 hours</Radio>
             <Radio value={3}>24 hours</Radio>
             <Radio value={4}>30 days</Radio>
+            <Radio value={5}>All</Radio>
           </Radio.Group>
         </div>
         <div>
