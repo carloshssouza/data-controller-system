@@ -7,6 +7,7 @@ RUN yarn
 
 COPY . .
 
-EXPOSE ${PORT}
+EXPOSE ${EXPRESS_PORT}
+EXPOSE ${GPRC_PORT}
 
 CMD ["yarn", "start:prod"]

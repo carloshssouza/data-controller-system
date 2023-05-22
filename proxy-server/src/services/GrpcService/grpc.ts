@@ -21,7 +21,6 @@ class GrpcClient {
   private client: any
 
   constructor () {
-    console.log('teste', path.resolve(__dirname, 'proto', 'controlSystem.proto'))
     this.packageDef = protoLoader.loadSync(path.resolve(__dirname, 'proto', 'controlSystem.proto'), {})
     this.grpcObject = grpc.loadPackageDefinition(this.packageDef)
     this.controlSystemPackage = this.grpcObject.controlSystemPackage

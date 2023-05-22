@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  backend-web-service:
+    container_name: restguardian-backend-web-service
+    build: ../backend-web-service
+    command: yarn start:prod
+    environment:
+      - EXPRESS_PORT=8000 //8000 is a example. Pass the port to run the express server (You can keep this for default)
+      - PREFIX=/api/v1 // Pass the prefix to the express server(You can keep this for default)
+      - GRPC_PORT=8080 // Pass the port to run the grpc server (You can keep this for default)
+      - SECRET_KEY=secretkey // Pass the secret key to jwt
+      - MONGO_URL=mongodb://mongo:27017/restguardian // Pass the mongo url(Can be a local mongo, docker mongo or a mongo atlas cloud)
+    ports:
+      - 8000:8000 // Expose the port to the express
+      - 8080:8080 // Expose the port to the grpc
+    networks:
+      - my-network
+    volumes:
+      - ../backend-web-service:/usr/backend-web-service
+  
+  frontend-web-service:
+    container_name: restguardian-frontend-web-service
+    build: ../frontend-web-service
+    command: yarn start:prod
+    environment:
+      - VITE_BASE_URL=http://localhost:8000/api/v1 // Pass the base url to the vite(This need to be the same as the host express, so you can keep this for default)
+      - VITE_BASE_URL_SOCKET=http://localhost:8000 // Pass the base url to the vite(without prefix)
+      - VITE_DEV_SERVER_PORT=3001 // Pass the port to run the vite
+    ports: 
+      - 3001:3001 // Expose the port to the vite
+    volumes: 
+      - ../frontend-web-service:/usr/frontend-web-service
+    networks:
+      - my-network
+    depends_on:
+      - backend-web-service
+
+  proxy-server:
+    container_name: restguardian-proxy-server
+    build: ../proxy-server
+    command: yarn start:prod
+    environment:
+      - TARGET=http://172.17.0.1:3333 // Pass the target to the proxy server (This is the host from your backend to be analyzed)
+      - PROXY_PORT=8888 // Pass the port to the proxy server (Your frontend will call this port instead your backend port)
+      - GRPC_HOST=restguardian-backend-web-service:8080 // Pass the grpc host
+    ports:
+      - 8888:8888 // Expose the port to the proxy server
+    volumes:
+      - ../proxy-server:/usr/proxy-server
+    networks:
+      - my-network
+    depends_on:
+      - backend-web-service
+    restart: always
+
+networks:
+  my-network:
+    driver: bridge
