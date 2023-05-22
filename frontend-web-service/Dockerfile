@@ -7,6 +7,6 @@ RUN yarn
 
 COPY . .
 
-EXPOSE ${PORT}
+EXPOSE ${VITE_DEV_SERVER_PORT}
 
 CMD ["yarn", "start:prod"]
