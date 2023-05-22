@@ -15,6 +15,16 @@ export default function ApisComponent({errorLog}: ApisComponentProps) {
   const navigate = useNavigate()
   const notifyError = (message: string) => toast.error(message)
   const [listApiData, setListApiData] = useState<any[]>([])
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: any) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const filteredApiData = listApiData.filter((api) => {
+    // Filter based on route name
+    return api.routeName.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   const handleGetAllApis = async () => {
     const { response, error } = await getAllApis() as Response
@@ -43,19 +53,16 @@ export default function ApisComponent({errorLog}: ApisComponentProps) {
     <ApiContainer>
       <h1>APIs</h1>
       <ApiSearchContainer>
-        <Form
-          name="basic"
-          initialValues={{ remember: true }}
-          onFinish={handleGetApiByName}
-        >
-          <Form.Item>
-            <Input placeholder='Search for Api' />
-            <Button type="primary">Search</Button>
-          </Form.Item>
-        </Form>
+            <Input 
+              placeholder='Search for route name' 
+              type="text" 
+              value={searchQuery} 
+              onChange={handleSearch}
+              style={{width: '300px', marginBottom: '20px'}}
+            />
       </ApiSearchContainer>
       <div>
-        {listApiData.length ? listApiData.map((api: any) => {
+        {filteredApiData.length ? filteredApiData.map((api: any) => {
           return (
             <CardItem key={api._id}>
               <div>

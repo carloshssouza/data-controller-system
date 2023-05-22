@@ -22,7 +22,10 @@ class ErrorLogRepository {
     return ErrorLog.findOne({ _id })
   }
 
-  public async getAllErrorLogs (filter: any) {
+  public async getAllErrorLogs (filter?: any) {
+    if (!filter) {
+      return ErrorLog.find().sort({ createdAt: 1 })
+    }
     const errors = await ErrorLog.find(filter).sort({ createdAt: 1 })
     return errors
   }

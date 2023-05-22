@@ -9,6 +9,14 @@ class ErrorLogGetAllController {
   public async getAllErrorLogs (req: Request, res: Response): Promise<Response> {
     try {
       const dateTime = req.query.dateTime as string
+
+      if (dateTime && dateTime === 'all') {
+        const ErrorLogs = await ErrorLogEntity.getAllErrorLogs()
+        if (!ErrorLogs) {
+          throw new ErrorRes(500, 'Error getting all log errors')
+        }
+        return res.status(200).json(ErrorLogs)
+      }
       const { startDate, endDate } = getDateFilter(dateTime)
       const routeId = req.query.routeId as unknown as TypeId
       const routeName = req.query.routeName as string

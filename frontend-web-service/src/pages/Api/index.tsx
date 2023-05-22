@@ -9,7 +9,7 @@ import { ApiAddContainer, ApiListContainer } from './styles';
 import ModalUpdateApiComponent from './components/ModalUpdateApiComponent';
 import FormAddApiComponent from './components/FormAddApiComponent';
 import { Container } from '../../GlobalStyles';
-import { createApi, updateApi, deleteApi, getAllApis, onChangeUpdateDataReturnAllowed } from '../../api/services/Api';
+import { updateApi, deleteApi, getAllApis, onChangeUpdateDataReturnAllowed } from '../../api/services/Api';
 import { IApi } from '../../interfaces/Api/interfaces';
 import NotFoundComponent from '../../utils/NotFoundComponent/NotFoundComponent';
 
@@ -18,9 +18,9 @@ const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 export default function Api() {
 
   const [listApisData, setListApisData] = useState<IApi[]>([])
-  const [selectRequestType, setSelectRequestType] = useState<string>(requestType[0])
   const [selectedRecord, setSelectedRecord] = useState<any>();
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
@@ -34,16 +34,6 @@ export default function Api() {
     }
   }
 
-  const handleCreateApi = async (data: IApi) => {
-    const { response, error } = await createApi(data, selectRequestType) as Response
-    if (error) {
-      notifyError(response.data.message)
-    } else {
-      notifySuccess(response.data.message)
-      await handleGetAllApis()
-    }
-  }
-
   const handleUpdateApi = async (data: any) => {
     const { response, error } = await updateApi(data, selectedRecord) as Response
     if (error) {
@@ -52,7 +42,6 @@ export default function Api() {
       notifySuccess(response.data.message)
       await handleGetAllApis()
     }
-
   }
 
   const handleDeleteApi = async (id: string) => {
@@ -71,9 +60,10 @@ export default function Api() {
       notifyError(response.data.message)
     } else {
       notifySuccess(response.data.message)
-      await handleGetAllApis()
+      await getAllApis()
     }
   }
+
 
   const columns = [
     {
@@ -135,10 +125,6 @@ export default function Api() {
     setSelectedRecord(record);
   };
 
-  const handleChangeRequestType = useCallback((requestType: string) => {
-    setSelectRequestType(requestType)
-  }, [])
-
   useEffect(() => {
     if (!listApisData.length) {
       handleGetAllApis()
@@ -150,10 +136,7 @@ export default function Api() {
       <ApiAddContainer>
         <h1>Add new APIs</h1>
         <FormAddApiComponent
-          createApi={handleCreateApi}
-          selectRequestType={selectRequestType}
-          handleChangeRequestType={handleChangeRequestType}
-          requestType={requestType}
+          getAllApis={handleGetAllApis}
         />
       </ApiAddContainer>
       <ApiListContainer>
@@ -168,7 +151,14 @@ export default function Api() {
                 selectedRecord={selectedRecord}
                 requestType={requestType}
               />
-              <Table columns={columns} dataSource={listApisData.map((data: IApi) => ({ ...data, key: data?._id }))} />
+              <div style={{minWidth: '20%'}}>
+              <Table 
+                columns={columns}
+                dataSource={listApisData.map((data: IApi) => ({ ...data, key: data?._id }))}
+                scroll={{ y: 400, x: 600 }}
+                style={{ width: '1000px' }}
+              />
+              </div> 
             </div>
           ) : (
             <NotFoundComponent />

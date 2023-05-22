@@ -58,7 +58,7 @@ version: "3.9"
 services:
   backend-web-service:
     container_name: restguardian-backend-web-service
-    image: restguardian/backend-web-service:v1.0.0
+    image: carlos94souza/restguardian-backend-server:v1.0
     command: yarn start:prod
     environment:
       - EXPRESS_PORT=8000 //8000 is a example. Pass the port to run the express server (You can keep this for default)
@@ -76,7 +76,7 @@ services:
   
   frontend-web-service:
     container_name: restguardian-frontend-web-service
-    image: restguardian/frontend-web-service:v1.0.0
+    image: carlos94souza/restguardian-frontend-app:v1.0
     command: yarn start:prod
     environment:
       - VITE_BASE_URL=http://localhost:8000/api/v1 // Pass the base url to the vite(This need to be the same as the host express, so you can keep this for default)
@@ -93,7 +93,7 @@ services:
 
   proxy-server:
     container_name: restguardian-proxy-server
-    image: restguardian/proxy-server:v1.0.0
+    image: carlos94souza/restguardian-proxy-server:v1.0
     command: yarn start:prod
     environment:
       - TARGET=http://172.17.0.1:3333 // Pass the target to the proxy server (This is the host from your backend to be analyzed)
@@ -127,11 +127,12 @@ networks:
 
   3 - According to your backend APIs, you need to register all the routes and indicate whether or not it allows the return of personal and sensitive data. Follow the gif below to register the routes.
    - Route name: Give a name to the route.
-   - Route path: The path of the route. You don't need pass the query string. Example:
+   - Route path: The path of the route. You don't need pass the query string. For params is accepted `:` and `{}` Example:
       - /users CORRECT
       - /users/:id CORRECT
       - /users/:id/posts CORRECT
       - /users/:id/posts?limit=10&offset=0 WRONG
+      -/user/{id}/posts CORRECT
   - Request Type: The type of the request. Example:
       - GET
       - POST
@@ -204,7 +205,7 @@ GRPC_HOST= # the grpc host (this needs to be the same as the backend grpc host f
 ```
 3. Run the command `yarn start` to run the proxy server
 
-Now you can access the frontend and backend in the ports you provided in the .env file and the proxy server will wait for requests. Don't forget to run your backend before try to make requests
+Now you can access the frontend and backend in the ports you provided in the .env file and the proxy server will wait for requests. Don't forget to run your backend(target) and register the routes in the frontend before make requests.
 
 ---
 

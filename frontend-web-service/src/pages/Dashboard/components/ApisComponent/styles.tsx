@@ -12,12 +12,14 @@ const ApiContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 80%;
   background: #27293D;
   color: white;
   border-radius: 10px;
   margin-top: 2rem;
   margin-bottom: 2rem;
   padding: 1rem;
+  overflow-x: auto;
   div {
     display: flex;
     align-items: center;

@@ -1,19 +1,47 @@
 import { Button, Checkbox, Input, Select, Form } from 'antd'
+import { useCallback, useEffect, useState } from 'react'
+import { IApi } from '../../../../interfaces/Api/interfaces'
+import { createApi } from '../../../../api/services/Api'
+import { Response } from '../../../../api/axios'
+import { toast } from 'react-toastify'
 
 interface FormAddApiComponent {
-  createApi: (data: any) => Promise<void>,
-  selectRequestType: string,
-  handleChangeRequestType: (data: any) => void,
-  requestType: string[],
+  getAllApis: () => Promise<void>
 }
 
-export default function FormAddApiComponent({ createApi, selectRequestType, handleChangeRequestType, requestType }: FormAddApiComponent) {
+const requestType = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+
+export default function FormAddApiComponent({ getAllApis }: FormAddApiComponent) {
+  const [selectRequestType, setSelectRequestType] = useState<string>(requestType[0])
+  const notifySuccess = (message: string) => toast.success(message);
+  const notifyError = (message: string) => toast.error(message);
+  const [form] = Form.useForm();
+
+
+  const handleCreateApi = async (data: IApi) => {
+    const { response, error } = await createApi(data, selectRequestType) as Response
+    if (error) {
+      notifyError(response.data.message)
+    } else {
+      notifySuccess(response.data.message)
+      form.resetFields()
+      setSelectRequestType(requestType[0])
+      await getAllApis()
+    }
+  }
+
+  const handleChangeRequestType = useCallback((requestType: string) => {
+    setSelectRequestType(requestType)
+  }, [])
+
+
   return (
     <div>
           <Form
+            form={form}
             name="basic"
             initialValues={{ remember: true }}
-            onFinish={createApi}
+            onFinish={handleCreateApi}
             autoComplete="off"
           >
             <Form.Item

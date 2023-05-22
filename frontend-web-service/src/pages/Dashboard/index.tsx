@@ -65,7 +65,6 @@ export default function Dashboard() {
     }
   }
 
-
   const handleQuantityApiErrors = (apiId: string) => {
     //I have the list of errors, i need to count the quantity of errors by api
     let apiErrors = 0
@@ -79,6 +78,10 @@ export default function Dashboard() {
   }
 
   const handleGetErrorLogsFilter = async (filter: any) => {
+    if(filter.dateTime === 'all') {
+      handleGetErrorLogs(filter.dateTime)
+      return
+    }
     const query = `dateTime=${filter.dateTime}&level=${filter.level.join(',')}${filter.routeName ? `&routeName=${filter.routeName}` : ''}${filter.routeId ? `&routeId=${filter.routeId}` : ''}`
     const { response, error } = await getAllErrorLogs(query) as Response
     if (error) {
@@ -88,7 +91,17 @@ export default function Dashboard() {
     }
   }
 
-  const handleGetErrorLogs = async () => {
+  const handleGetErrorLogs = async (all?: boolean) => {
+    if(all) {
+      const query = `dateTime=all`
+      const { response, error } = await getAllErrorLogs(query) as Response
+      if (error) {
+        notifyError(response.message)
+      } else {
+        setErrorLog(response.data || [])
+      }
+      return
+    }
     const query = `dateTime=30m&level=low,medium,high`
     const { response, error } = await getAllErrorLogs(query) as Response
     if (error) {
@@ -148,7 +161,7 @@ export default function Dashboard() {
                   }
                 </CommonErrorContainer>
                 <CommonErrorContainer>
-                  <h2>Api Errors Comparison</h2>
+                  <h2>Number of errors per API</h2>
                   {
                     errorLog?.length ? <ApisBarChart errorLog={errorLog} handleQuantityApiErrors={handleQuantityApiErrors} chartWidth={chartWidth} /> : <NotFoundComponent />
                   }

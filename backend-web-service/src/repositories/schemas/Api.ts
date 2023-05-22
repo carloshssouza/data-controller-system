@@ -54,4 +54,11 @@ ApiSchema.pre<Query<IApi | null, IApi>>(/^findOneAndUpdate/, async function (nex
 
   next()
 })
+
+// if api delete, delete all error logs that reference it
+ApiSchema.pre<Query<IApi | null, IApi>>(/^findOneAndDelete/, async function (next) {
+  const apiId = this.getQuery()._id
+  await ErrorLog.deleteMany({ routeId: apiId })
+  next()
+})
 export default model('Api', ApiSchema)

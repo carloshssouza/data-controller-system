@@ -1,4 +1,4 @@
-import { requestAPI } from "../../pages/Dashboard/components/api"
+import { requestAPI } from "../axios"
 import { generateHeaders } from "../axios"
 
 export const getAllErrorLogs = async (filter: string) => {
