@@ -23,7 +23,7 @@
 ---
 ## Description
 
-RESTGuardian is a personal data and sensitive data controller system in REST API responses. It sits between your frontend and backend, analyzing the responses returned from the APIs and generating errors if any personal or sensitive data is leaked in the JSON of the response. This system is composed of three parts: Backend, Frontend and Proxy Server. 
+RESTGuardian is a personal data and sensitive data controller system in REST API responses. It sits between your frontend and backend, analyzing the responses returned from the APIs and generating errors if any personal or sensitive data is leaked in the JSON of the response. This system is composed of three parts: Backend, Frontend and Proxy Server. This project is open source and free to use.
 This repository contains all the necessary files and documentation related to the project.
 ### Technologies used
 - Typescript
@@ -49,8 +49,7 @@ You need to have installed the following tools:
 - Docker and Docker Compose
 - MongoDB(can be installed with Docker, local or cloud service)
 ### How to install
- 1. Access the dockerhub repository of the project and download the image of the project.
- 2. Create a docker-compose.yml file in the root of your project and add the following code:
+ 1. Create a docker-compose.yml file in the root of your project and add the following code:
 
  ``` yml
 version: "3.9"
@@ -121,13 +120,13 @@ networks:
 
 ---
  ## How to configure
-  1 - Access the frontend in the port you passed in the docker compose file, so you will se the login page. Enter with the default credentials: `admin` and `admin`.(This user is created in the first run of the backend)
+  1. Access the frontend in the port you passed in the docker compose file, so you will se the login page. Enter with the default credentials: `admin` and `admin`.(This user is created in the first run of the backend)
 
-  2 - Now you will see the dashboard page. Click in the `APIs` button in the navbar.
+  2. Now you will see the dashboard page. Click in the `APIs` button in the navbar.
 
-  3 - According to your backend APIs, you need to register all the routes and indicate whether or not it allows the return of personal and sensitive data. Follow the gif below to register the routes.
+  3. According to your backend APIs, you need to register all the routes and indicate whether or not it allows the return of personal and sensitive data. Follow the gif below to register the routes.
    - Route name: Give a name to the route.
-   - Route path: The path of the route. You don't need pass the query string. For params is accepted `:` and `{}` Example:
+   - Endpoint path: The path of the route. You don't need pass the query string. For params is accepted `:` and `{}` Example:
       - /users CORRECT
       - /users/:id CORRECT
       - /users/:id/posts CORRECT
@@ -141,20 +140,35 @@ networks:
       - PATCH
   - Allow Personal Data: If the route allows the return of personal data, check this option. This will control if the route can return personal data in the response, if can not return will, generate a error.
   
-  4 - Click in the button `Add` to register the route. You can register how many routes you want and see all in the table below.
+  4. Click in the button `Add` to register the route. You can register how many routes you want and see all in the table below. Follow the gif:
 
 
-  GIF
+  <div align="center">
+    <img src="./images/gifs/apipage.gif" alt="Logo">
+  </div>
 
-  5 - For default, the backend generate a restrict data list for personal and sensitive data for default. You can see this list in the `Configuration` button in the navbar. This application follow the Brazilian General Data Protection Law (LGPD) rules. But, you can add, edit or delete as per your need. Can you check the site https://www.lgpdbrasil.com.br/ for more information about the LGPD and https://www.gov.br/cidadania/pt-br/acesso-a-informacao/lgpd/classificacao-dos-dados for more information about the data classification.
+  5. For default, the backend generate a restrict data list for personal and sensitive data for default. You can see this list in the `Configuration` button in the navbar. This application follow the Brazilian General Data Protection Law (LGPD) rules. But, you can add, edit or delete as per your need. Can you check the site https://www.lgpdbrasil.com.br/ for more information about the LGPD and https://www.gov.br/cidadania/pt-br/acesso-a-informacao/lgpd/classificacao-dos-dados for more information about the data classification. Follow the gif below to add more data to the list.
+
+  <div align="center">
+   <img src="./images/gifs/configurationpage.gif" alt="Logo">
+  </div>
+  <br>
+  6. Now, on the dashboard page you have the APIs registered and you can now make a request for the routes(Make sure your backend is running). If it is allowed to return personal or passenger data then it will not generate any error, but if it is not allowed then it will return a 500 error and information about the leaked data. You can see logs and charts about the data leaked. Follow the gif:
+
+  <div align="center">
+   <img src="./images/gifs/dashboard.gif" alt="Logo">
+  </div>
+  <br>
+
+  7. In page Users, you can add users of type "user" or "admin". Both can access dashboard page, apis pages, configuration page and my account page. But, only the admin can access the users page(Can add, update and delete). Just for control, the admin user is created in the first run of the backend. So if you updated password and forgot, you can delete the user *admin* and run the backend container again. Follow the gif:
+
+
+
+  <div align="center">
+   <img src="./images/gifs/userspage.gif" alt="Logo">
+  </div>
   
-   Follow the gif below to add more data to the list.
-
-  6 - Now, on the dashboard page you have the APIs registered and you can now make a request for the routes(Make sure your backend is running). If it is allowed to return personal or passenger data then it will not generate any error, but if it is not allowed then it will return a 500 error and information about the leaked data. You can see logs and charts about the data leaked.
-
-  GIF
-
-  ---
+---
 ## How to run locally
 
 ### Requirements
