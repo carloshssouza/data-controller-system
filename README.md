@@ -49,8 +49,7 @@ You need to have installed the following tools:
 - Docker and Docker Compose
 - MongoDB(can be installed with Docker, local or cloud service)
 ### How to install
- 1. Access the dockerhub repository of the project and download the image of the project.
- 2. Create a docker-compose.yml file in the root of your project and add the following code:
+ 1. Create a docker-compose.yml file in the root of your project and add the following code:
 
  ``` yml
 version: "3.9"
