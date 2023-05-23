@@ -10,7 +10,8 @@ import { Response } from '../../api/axios'
 
 interface IUserData {
   name?: string
-  email?: string
+  accountName?: string
+  type?: string
 }
 
 
@@ -61,9 +62,10 @@ export default function User() {
       <h1>My account</h1>
       <div>
         <span>Name: <UserItem>{userData.name}</UserItem></span>
-        <span>Email: <UserItem>{userData.email}</UserItem></span>
+        <span>Accout name: <UserItem>{userData.accountName}</UserItem></span>
+        <span>Type: <UserItem>{userData.type}</UserItem></span>
       </div>
-      <Button onClick={handleModalOpen}>
+      <Button onClick={handleModalOpen} style={{marginBottom: '10px'}}>
         Update
       </Button>
       <Modal
