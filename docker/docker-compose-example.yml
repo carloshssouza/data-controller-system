@@ -3,7 +3,7 @@ version: "3.9"
 services:
   backend-web-service:
     container_name: restguardian-backend-web-service
-    build: ../backend-web-service
+    image: carlos94souza/restguardian-backend-server:v1.0
     command: yarn start:prod
     environment:
       - EXPRESS_PORT=8000 //8000 is a example. Pass the port to run the express server (You can keep this for default)
@@ -21,7 +21,7 @@ services:
   
   frontend-web-service:
     container_name: restguardian-frontend-web-service
-    build: ../frontend-web-service
+    image: carlos94souza/restguardian-frontend-app:v1.0
     command: yarn start:prod
     environment:
       - VITE_BASE_URL=http://localhost:8000/api/v1 // Pass the base url to the vite(This need to be the same as the host express, so you can keep this for default)
@@ -38,7 +38,7 @@ services:
 
   proxy-server:
     container_name: restguardian-proxy-server
-    build: ../proxy-server
+    image: carlos94souza/restguardian-proxy-server:v1.0
     command: yarn start:prod
     environment:
       - TARGET=http://172.17.0.1:3333 // Pass the target to the proxy server (This is the host from your backend to be analyzed)
