@@ -162,8 +162,6 @@ networks:
 
   7. In page Users, you can add users of type "user" or "admin". Both can access dashboard page, apis pages, configuration page and my account page. But, only the admin can access the users page(Can add, update and delete). Just for control, the admin user is created in the first run of the backend. So if you updated password and forgot, you can delete the user *admin* and run the backend container again. Follow the gif:
 
-
-
   <div align="center">
    <img src="./images/gifs/userspage.gif" alt="Logo">
   </div>
