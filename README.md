@@ -23,7 +23,7 @@
 ---
 ## Description
 
-RESTGuardian is a personal data and sensitive data controller system in REST API responses. It sits between your frontend and backend, analyzing the responses returned from the APIs and generating errors if any personal or sensitive data is leaked in the JSON of the response. This system is composed of three parts: Backend, Frontend and Proxy Server. 
+RESTGuardian is a personal data and sensitive data controller system in REST API responses. It sits between your frontend and backend, analyzing the responses returned from the APIs and generating errors if any personal or sensitive data is leaked in the JSON of the response. This system is composed of three parts: Backend, Frontend and Proxy Server. This project is open source and free to use.
 This repository contains all the necessary files and documentation related to the project.
 ### Technologies used
 - Typescript
