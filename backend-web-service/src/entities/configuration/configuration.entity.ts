@@ -27,10 +27,6 @@ class ConfigurationEntity {
     return ConfigurationRepository.getConfiguration()
   }
 
-  public connectToDatabase () {
-    return ConfigurationRepository.connectToDatabase()
-  }
-
   public async addRestrictData (dataName: string, dataType: string) {
     const validate = await ConfigurationValidator.addRestrictData(dataName, dataType)
     if (validate.error) {
