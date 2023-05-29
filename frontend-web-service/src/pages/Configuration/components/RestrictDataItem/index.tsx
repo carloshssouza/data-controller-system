@@ -17,13 +17,13 @@ export default function RestrictDataItem() {
   const [updateModalVisible, setUpdateModalVisible] = useState(false)
   const [selectedRecord, setSelectedRecord] = useState<any>({})
   const [isPersonalLoading, setIsPersonalLoading] = useState(false)
-  const [isSensibleLoading, setIsSensibleLoading] = useState(false)
+  const [isSensitiveLoading, setIsSensitiveLoading] = useState(false)
   const [restrictDataList, setRestrictDataList] = useState<IRestrictDataList>({
     personal: [],
-    sensible: []
+    sensitive: []
   })
   const [addDataPersonal, setAddDataPersonal] = useState<string>('')
-  const [addDataSensible, setAddDataSensible] = useState<string>('')
+  const [addDataSensitive, setAddDataSensitive] = useState<string>('')
 
   const notifySuccess = (message: string) => toast.success(message);
   const notifyError = (message: string) => toast.error(message);
@@ -67,25 +67,25 @@ export default function RestrictDataItem() {
     }
   };
 
-  const handleAddSensibleData = async () => {
-    if (addDataSensible === '' || addDataSensible === undefined || addDataSensible === null) {
+  const handleAddSensitiveData = async () => {
+    if (addDataSensitive === '' || addDataSensitive === undefined || addDataSensitive === null) {
       notifyError('Please enter a data name')
       return
     }
     const data = {
-      dataName: addDataSensible,
+      dataName: addDataSensitive,
     }
 
-    setIsSensibleLoading(true)
-    const { response, error } = await addRestrictData(data, 'sensible') as Response
-    setIsSensibleLoading(false)
+    setIsSensitiveLoading(true)
+    const { response, error } = await addRestrictData(data, 'sensitive') as Response
+    setIsSensitiveLoading(false)
 
     if (error) {
       notifyError(response.data.message)
     } else {
       notifySuccess(response.data.message)
-      clearInputSensible()
-      handleGetRestrictData('sensible')
+      clearInputSensitive()
+      handleGetRestrictData('sensitive')
     }
   };
 
@@ -120,19 +120,19 @@ export default function RestrictDataItem() {
       : e.target.value.trim())
   }, [setAddDataPersonal])
 
-  const onChangeAddDataSensible = useCallback((e: any) => {
-    setAddDataSensible(!(e.target.value.trim().length === 0)
+  const onChangeAddDataSensitive = useCallback((e: any) => {
+    setAddDataSensitive(!(e.target.value.trim().length === 0)
       ? e.target.value
       : e.target.value.trim(),)
-  }, [setAddDataSensible])
+  }, [setAddDataSensitive])
 
   const clearInputPersonal = useCallback(() => {
     setAddDataPersonal('')
   }, [setAddDataPersonal])
 
-  const clearInputSensible = useCallback(() => {
-    setAddDataSensible('')
-  }, [setAddDataSensible])
+  const clearInputSensitive = useCallback(() => {
+    setAddDataSensitive('')
+  }, [setAddDataSensitive])
 
   const onClickUpdate = (record: any) => {
     setSelectedRecord(record)
@@ -205,13 +205,13 @@ export default function RestrictDataItem() {
           }
         </RestrictDataCard>
         <RestrictDataCard>
-          <h2>Sensible Data</h2>
+          <h2>Sensitive Data</h2>
           {
             <CardContent>
               <Table
-                key="sensible"
+                key="sensitive"
                 columns={columns}
-                dataSource={convertData(restrictDataList?.sensible, 'sensible')}
+                dataSource={convertData(restrictDataList?.sensitive, 'sensitive')}
                 scroll={{ y: 300 }}
                 style={{ width: '400px' }}
                 rowKey="id"
@@ -222,8 +222,8 @@ export default function RestrictDataItem() {
               <div style={{ background: '#27293D', borderRadius: '5px', padding: '0.5rem', marginLeft: '1rem' }}>
                 <h3>Add data</h3>
                 <div style={{ background: '#27293D', borderRadius: '5px', padding: '0.5rem' }}>
-                  <Input placeholder='Data name' value={addDataSensible} style={{ marginBottom: '1rem' }} onChange={onChangeAddDataSensible} />
-                  <Button onClick={handleAddSensibleData} disabled={isSensibleLoading}>{isSensibleLoading ? <LoadingOutlined /> : 'Confirm'}</Button>
+                  <Input placeholder='Data name' value={addDataSensitive} style={{ marginBottom: '1rem' }} onChange={onChangeAddDataSensitive} />
+                  <Button onClick={handleAddSensitiveData} disabled={isSensitiveLoading}>{isSensitiveLoading ? <LoadingOutlined /> : 'Confirm'}</Button>
                 </div>
               </div>
             </CardContent>

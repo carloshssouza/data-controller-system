@@ -75,9 +75,9 @@ export default function LogsComponent({ logs }: LogsComponentProps) {
             }
           </ModalDataItem>
           <ModalDataItem>
-            <h4>Sensible data</h4>
+            <h4>Sensitive data</h4>
             {
-              openModal && leakedData && leakedData.length > 0 && formatLeakedData('sensible').map((data: any) => {
+              openModal && leakedData && leakedData.length > 0 && formatLeakedData('sensitive').map((data: any) => {
                 return (
                   <div key={data._id}>
                     <p>{data.name}</p>
@@ -86,7 +86,7 @@ export default function LogsComponent({ logs }: LogsComponentProps) {
               })
             }
             {
-              openModal && leakedData && leakedData.length > 0 && formatLeakedData('sensible').length === 0 && <p>No sensible data leaked</p>
+              openModal && leakedData && leakedData.length > 0 && formatLeakedData('sensitive').length === 0 && <p>No sensitive data leaked</p>
             }
           </ModalDataItem>
         </ModalBodyContainer>

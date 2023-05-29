@@ -53,7 +53,7 @@ message RestrictDataListResponse {
 
 message RestrictDataList {
   repeated string personal = 1;
-  repeated string sensible = 2;
+  repeated string sensitive = 2;
 }
 
 message ApplicationHostResponse {

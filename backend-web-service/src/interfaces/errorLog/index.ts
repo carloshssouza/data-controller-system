@@ -34,7 +34,7 @@ interface ErrorLogFilter {
 
 interface IFilterLeakedData {
   personal?: string
-  sensible?: string
+  sensitive?: string
 }
 
 export {

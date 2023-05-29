@@ -10,22 +10,22 @@ class ErrorLogLeakedDataController {
 
   public async getErrorLogLeakedData (req: Request, res: Response): Promise<Response> {
     try {
-      const { sensible, personal } = req.query
+      const { sensitive, personal } = req.query
 
-      if (!sensible && !personal) {
+      if (!sensitive && !personal) {
         const errorLog = await this.getLeakedData()
         return res.status(200).json(errorLog)
       }
 
       const filter = {} as IFilterLeakedData
 
-      if (personal && !sensible) {
+      if (personal && !sensitive) {
         filter.personal = 'personal'
-      } else if (!personal && sensible) {
-        filter.sensible = 'sensible'
+      } else if (!personal && sensitive) {
+        filter.sensitive = 'sensitive'
       }
 
-      const errorLog = await this.getLeakedData(filter.personal ?? filter.sensible)
+      const errorLog = await this.getLeakedData(filter.personal ?? filter.sensitive)
 
       return res.status(200).json(errorLog)
     } catch (error) {

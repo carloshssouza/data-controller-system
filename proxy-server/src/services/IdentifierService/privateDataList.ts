@@ -1,6 +1,6 @@
 export interface IPrivateDataList {
   personal: string[],
-  sensible: string[]
+  sensitive: string[]
 }
 
 const privateDataList = {
@@ -21,7 +21,7 @@ const privateDataList = {
     'image_profile',
     'location'
   ],
-  sensible: [
+  sensitive: [
     'race',
     'ethnicity',
     'religion',
