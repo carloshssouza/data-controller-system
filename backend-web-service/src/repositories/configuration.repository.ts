@@ -55,7 +55,7 @@ class ConfigurationRepository {
       throw new Error('Configuration not exists')
     } else {
       const restrictDataList = configuration[0].restrictDataList
-      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensible
+      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensitive
       restrictDataTypeArray.push(dataName)
       restrictDataList.personal = restrictDataTypeArray
       CacheManager.delete('configuration')
@@ -69,14 +69,14 @@ class ConfigurationRepository {
       throw new Error('Configuration not exists')
     } else {
       const restrictDataList = configuration[0].restrictDataList
-      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensible
+      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensitive
       const index = restrictDataTypeArray.indexOf(oldDataName)
 
       if (index !== -1) {
         restrictDataTypeArray[index] = newDataName
       }
 
-      restrictDataList[dataType === 'personal' ? 'personal' : 'sensible'] = ArrayUtils.updateStringElement(restrictDataTypeArray, oldDataName, newDataName)
+      restrictDataList[dataType === 'personal' ? 'personal' : 'sensitive'] = ArrayUtils.updateStringElement(restrictDataTypeArray, oldDataName, newDataName)
       CacheManager.delete('restrictDataList')
 
       return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
@@ -89,14 +89,14 @@ class ConfigurationRepository {
       throw new Error('Configuration not exists')
     } else {
       const restrictDataList = configuration[0].restrictDataList
-      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensible
+      const restrictDataTypeArray = dataType === 'personal' ? restrictDataList.personal : restrictDataList.sensitive
       const index = restrictDataTypeArray.indexOf(dataName)
 
       if (index !== -1) {
         restrictDataTypeArray.splice(index, 1)
       }
 
-      restrictDataList[dataType === 'personal' ? 'personal' : 'sensible'] = restrictDataTypeArray
+      restrictDataList[dataType === 'personal' ? 'personal' : 'sensitive'] = restrictDataTypeArray
       CacheManager.delete('restrictDataList')
 
       return Configuration.findOneAndUpdate({ _id: configuration[0]._id }, { restrictDataList })
@@ -116,7 +116,7 @@ class ConfigurationRepository {
       return config[0].restrictDataList
     } else {
       const config = await Configuration.find({}).select('restrictDataList -_id')
-      const restrictDataListType = dataType === 'personal' ? config[0].restrictDataList.personal : config[0].restrictDataList.sensible
+      const restrictDataListType = dataType === 'personal' ? config[0].restrictDataList.personal : config[0].restrictDataList.sensitive
       return restrictDataListType
     }
   }

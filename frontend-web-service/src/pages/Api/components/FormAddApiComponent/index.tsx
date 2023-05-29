@@ -81,7 +81,7 @@ export default function FormAddApiComponent({ getAllApis }: FormAddApiComponent)
               initialValue={false}
               style={{ marginRight: "2rem" }}
             >
-              <Checkbox style={{color: "white"}}>Return personal and sensible data</Checkbox>
+              <Checkbox style={{color: "white"}}>Return personal and sensitive data</Checkbox>
             </Form.Item>
             <Button type="primary"  htmlType="submit">Add</Button>
           </Form>

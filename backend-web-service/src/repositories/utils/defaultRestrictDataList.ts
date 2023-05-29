@@ -1,6 +1,6 @@
 export interface IRestrictDataList {
   personal: string[],
-  sensible: string[]
+  sensitive: string[]
 }
 
 const restrictDataList = {
@@ -21,7 +21,7 @@ const restrictDataList = {
     'image_profile',
     'location'
   ],
-  sensible: [
+  sensitive: [
     'race',
     'ethnicity',
     'religion',

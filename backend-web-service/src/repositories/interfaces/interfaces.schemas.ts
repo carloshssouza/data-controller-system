@@ -40,7 +40,7 @@ export interface IApi {
 
 export interface IRestrictData {
     personal: string[]
-    sensible: string[]
+    sensitive: string[]
 }
 export interface IConfiguration {
     restrictDataList: IRestrictData

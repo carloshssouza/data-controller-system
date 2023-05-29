@@ -21,12 +21,12 @@ export default abstract class Auxiliary {
   private async getDescriptionErrorLog (privateDataFound: ILeakedData[]) {
     const dataTypes = privateDataFound.map((element: ILeakedData) => element.type)
     let description = 'Your API is leaking '
-    if (dataTypes.includes('personal') && !dataTypes.includes('sensible')) {
+    if (dataTypes.includes('personal') && !dataTypes.includes('sensitive')) {
       description += 'personal data'
-    } else if (dataTypes.includes('personal') && dataTypes.includes('sensible')) {
-      description += 'personal and sensible data'
-    } else if (!dataTypes.includes('personal') && dataTypes.includes('sensible')) {
-      description += 'sensible data'
+    } else if (dataTypes.includes('personal') && dataTypes.includes('sensitive')) {
+      description += 'personal and sensitive data'
+    } else if (!dataTypes.includes('personal') && dataTypes.includes('sensitive')) {
+      description += 'sensitive data'
     }
 
     return description

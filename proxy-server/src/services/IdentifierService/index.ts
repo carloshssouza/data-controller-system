@@ -3,10 +3,10 @@ import { IPrivateDataList } from './privateDataList'
 
 class Identifier {
   /**
-   * Method to find personal and sensible data inside the external server response
+   * Method to find personal and sensitive data inside the external server response
    * @param responseObject Object from the external server
-   * @param privateDataList Array of the private data(personal and sensible)
-   * @returns Returns the list of personal and sensible data
+   * @param privateDataList Array of the private data(personal and sensitive)
+   * @returns Returns the list of personal and sensitive data
    */
   public async findPrivateData (responseObject: any, privateDataList: IPrivateDataList) {
     const result = new Set()

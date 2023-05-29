@@ -6,7 +6,7 @@ class ConfigurationSchemaValidator {
     const schema = Joi.object<ConfigurationCreateData>({
       restrictDataList: Joi.object({
         personal: Joi.array().items(Joi.string()).required(),
-        sensible: Joi.array().items(Joi.string()).required()
+        sensitive: Joi.array().items(Joi.string()).required()
       }).required()
     })
 
@@ -17,7 +17,7 @@ class ConfigurationSchemaValidator {
     const schema = Joi.object<ConfigurationUpdateData>({
       restrictDataList: Joi.object({
         personal: Joi.array().items(Joi.string()).optional(),
-        sensible: Joi.array().items(Joi.string()).optional()
+        sensitive: Joi.array().items(Joi.string()).optional()
       }).optional()
     }).or('mongoUriHost', 'applicationHost')
 
