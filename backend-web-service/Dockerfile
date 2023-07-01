@@ -7,6 +7,8 @@ RUN yarn
 
 COPY . .
 
+RUN yarn build
+
 EXPOSE ${EXPRESS_PORT}
 EXPOSE ${GPRC_PORT}
 

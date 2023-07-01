@@ -58,8 +58,13 @@ class ApiEntity {
     if (data.endpointPath && (!data.endpointPath.includes(':') || !data.endpointPath.includes('{'))) {
       return ApiRepository.updateApi(_id, data)
     } else {
-      const routeSplitted = data.endpointPath.split('/')
-      routeSplitted.shift()
+      let routeSplitted
+
+      if (data.endpointPath) {
+        routeSplitted = data.endpointPath.split('/')
+        routeSplitted.shift()
+        data.endpointPathLength = routeSplitted.length
+      }
 
       return ApiRepository.updateApi(_id, data)
     }

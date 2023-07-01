@@ -16,51 +16,38 @@ const option = {
   selfHandleResponse: true
 }
 
-async function startProxyServer () {
+proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMessage, res: http.ServerResponse) {
   try {
-    process.on('SIGINT', () => {
-      console.log('Received SIGINT signal. Stopping server...')
-      process.exit(0)
+    let body: any = []
+    proxyRes.on('data', function (chunk: any) {
+      body.push(chunk)
     })
-
-    proxy.on('proxyRes', async function (proxyRes: IncomingMessage, req: IncomingMessage, res: http.ServerResponse) {
-      try {
-        let body: any = []
-        proxyRes.on('data', function (chunk: any) {
-          body.push(chunk)
-        })
-        proxyRes.on('end', async () => {
-          if (proxyRes.statusCode === 404) {
-            res.statusCode = 404
-            return res.end(JSON.stringify({
-              message: proxyRes.statusMessage
-            }))
-          }
-          body = Buffer.concat(body).toString()
-          const bodyResponse = await DataControlService.runController(req, JSON.parse(body))
-          if (JSON.stringify(body) === bodyResponse) {
-            res.statusCode = proxyRes.statusCode
-            res.end(body)
-          } else {
-            res.statusCode = 500
-            return res.end(JSON.stringify(bodyResponse))
-          }
-        })
-      } catch (error) {
-        console.log(error)
-        return res.end(JSON.stringify(error))
+    proxyRes.on('end', async () => {
+      if (proxyRes.statusCode === 404) {
+        res.statusCode = 404
+        return res.end(JSON.stringify({
+          message: proxyRes.statusMessage
+        }))
+      }
+      body = Buffer.concat(body).toString()
+      const bodyResponse = await DataControlService.runController(req, JSON.parse(body))
+      if (JSON.stringify(body) === bodyResponse) {
+        res.statusCode = proxyRes.statusCode
+        res.end(body)
+      } else {
+        res.statusCode = 500
+        return res.end(JSON.stringify(bodyResponse))
       }
     })
-
-    const server = http.createServer((req: any, res: any) => {
-      proxy.web(req, res, option)
-    })
-
-    server.listen(PORT)
-    console.log(`Proxy server listening on ${PORT} with target ${option.target}`)
   } catch (error) {
-    console.error(error)
+    console.log(error)
+    return res.end(JSON.stringify(error))
   }
-}
+})
 
-startProxyServer()
+const server = http.createServer((req: any, res: any) => {
+  proxy.web(req, res, option)
+})
+
+server.listen(PORT)
+console.log(`Proxy server listening on ${PORT} with target ${option.target}`)

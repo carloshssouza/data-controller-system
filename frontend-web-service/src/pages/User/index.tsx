@@ -5,7 +5,6 @@ import { UserContainer, UserItem } from './styles'
 import { Button, Form, Input, Modal } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { getUser, updateUser } from '../../api/services/User'
-import { set } from 'date-fns'
 import { Response } from '../../api/axios'
 
 interface IUserData {
