@@ -71,7 +71,7 @@ services:
     networks:
       - my-network
     volumes:
-      - ../backend-web-service:/usr/backend-web-service
+      - backend-web-service-data:/usr/backend-web-service
   
   frontend-web-service:
     container_name: restguardian-frontend-web-service
@@ -84,7 +84,7 @@ services:
     ports: 
       - 3001:3001 // Expose the port to the vite
     volumes: 
-      - ../frontend-web-service:/usr/frontend-web-service
+      - frontend-web-service-data:/usr/frontend-web-service
     networks:
       - my-network
     depends_on:
@@ -101,7 +101,7 @@ services:
     ports:
       - 8888:8888 // Expose the port to the proxy server
     volumes:
-      - ../proxy-server:/usr/proxy-server
+      - proxy-server-data:/usr/proxy-server
     networks:
       - my-network
     depends_on:
@@ -112,6 +112,10 @@ networks:
   my-network:
     driver: bridge
 
+volumes:
+  backend-web-service-data:
+  frontend-web-service-data:
+  proxy-server-data:
  ```
 
  3. Run the command `docker-compose up -d` in the same directory of the docker-compose.yml file.
