@@ -5,7 +5,7 @@ export interface IPrivateDataList {
 
 const privateDataList = {
   personal: [
-    'name',
+    'first_name',
     'last_name',
     'password',
     'cpf',
