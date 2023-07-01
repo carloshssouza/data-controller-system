@@ -8,7 +8,7 @@
     "start": "nodemon src/index.ts",
     "build": "rimraf dist && tsc && mkdir dist/services/GrpcService/proto && cp src/services/GrpcService/proto/controlSystem.proto dist/services/GrpcService/proto",
     "start:proxy": "npx ts-node src/index.ts",
-    "start:prod": "yarn build && node dist/index.js"
+    "start:prod": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
